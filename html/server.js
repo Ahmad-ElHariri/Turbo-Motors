@@ -62,10 +62,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/chat", (req, res) => {
-    res.render("chat");
+    res.sendFile(path.join(__dirname, "views", "chat.html"));
 });
+
 app.get("/admin-chat", (req, res) => {
-    res.render("admin-chat");
+    res.sendFile(path.join(__dirname, "views", "admin-chat.html"));
 });
 
 const users = {};
