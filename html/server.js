@@ -1,4 +1,4 @@
-
+const http=require("http");
 const express = require("express");
 const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
@@ -60,6 +60,127 @@ app.post("/send-message", async (req, res) => {
 app.get("/", (req, res) => {
     res.send("Welcome to Turbo Motors!");
 });
-app.listen(port, () => {
+
+app.get("/chat", (req, res) => {
+    res.render("chat");
+});
+app.get("/admin-chat", (req, res) => {
+    res.render("admin-chat");
+});
+
+const users = {};
+const admins = {};
+const chatHistory = {};
+
+io.on("connection", (socket) => {
+    console.log("New user connected");
+
+    socket.on("joinRoom", (username) => {
+        const referer = socket.handshake.headers.referer;
+        const role = referer.includes("/admin-chat") ? "Admin" : "User";
+
+        if (role === "Admin") {
+            socket.role = "Admin";
+            socket.username = username;
+            admins[socket.id] = username;
+            socket.join("adminRoom");
+            console.log(`Admin ${username} connected`);
+            socket.emit("message", `Admin ${username} connected`);
+
+            io.to("adminRoom").emit("userList", Object.values(users).map(user => user.username));
+
+            Object.keys(chatHistory).forEach((room) => {
+                if (chatHistory[room]) {
+                    socket.emit("previousMessages", chatHistory[room]);
+                }
+            });
+
+        } else {
+            socket.role = "User";
+            socket.username = username;
+            socket.room = username;
+            users[socket.id] = { username, room: username };
+            socket.join(socket.room);
+
+            console.log(`${username} joined room: ${socket.room}`);
+            socket.emit("message", `Welcome, ${username}!`);
+            io.to("adminRoom").emit("message", `${username} joined the chat`);
+
+            if (!chatHistory[socket.room]) chatHistory[socket.room] = [];
+            chatHistory[socket.room].push(`Welcome, ${username}!`);
+
+            if (chatHistory[socket.room]) {
+                socket.emit("previousMessages", chatHistory[socket.room]);
+            }
+
+            io.to("adminRoom").emit("userList", Object.values(users).map(user => user.username));
+        }
+    });
+
+    socket.on("switchRoom", (room) => {
+        if (socket.role === "Admin") {
+            socket.leave(socket.room);
+            socket.room = room;
+            socket.join(socket.room);
+            console.log(`Admin switched to room: ${room}`);
+            socket.emit("message", `Switched to chat with ${room}`);
+
+            if (chatHistory[room]) {
+                socket.emit("previousMessages", chatHistory[room]);
+            } else {
+                socket.emit("message", `No previous messages with ${room}`);
+            }
+        }
+    });
+
+
+socket.on("chatMessage", (data) => {
+    const room = socket.room || data.roomId;
+    const sender = socket.username || "Admin";
+    const messageText = data.text || "No message content";
+    const formattedMessage = `${sender}: ${messageText}`;
+
+    if (!chatHistory[room]) chatHistory[room] = [];
+    chatHistory[room].push(formattedMessage);
+
+    if (chatHistory[room].length > 50) {
+        chatHistory[room].shift();
+    }
+
+
+    io.to(room).emit("message", formattedMessage);
+
+
+    if (socket.role !== "Admin") {
+        io.to("adminRoom").emit("message", `[${sender}]: ${messageText}`);
+    }
+});
+
+    socket.on("requestHistory", (room) => {
+        if (chatHistory[room]) {
+            socket.emit("previousMessages", chatHistory[room]);
+        }
+    });
+
+    socket.on("disconnect", () => {
+        if (users[socket.id]) {
+            const disconnectedUser = users[socket.id].username;
+            delete users[socket.id];
+            io.to("adminRoom").emit("userList", Object.values(users).map(user => user.username));
+            console.log(`${disconnectedUser} disconnected`);
+            io.emit("message", `${disconnectedUser} disconnected`);
+        }
+
+        if (admins[socket.id]) {
+            const disconnectedAdmin = admins[socket.id];
+            delete admins[socket.id];
+            console.log(`Admin ${disconnectedAdmin} disconnected`);
+        }
+    });
+});
+
+
+
+server.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
