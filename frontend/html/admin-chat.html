@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Turbo Motors - Admin Chat</title>
+    <link rel="stylesheet" href="/css/common_styles.css">
+    <link rel="stylesheet" href="/css/adminchat.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/admin-chat.js" defer></script>
+</head>
+<body>
+    <nav>
+        <div class="logo">Turbo Motors Chat</div>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/cars">Cars</a></li>
+            <li><a href="/aboutus">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+            <li><a href="/signin" class="btn">Sign In</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h2 class="admin-header">Admin Chat Dashboard</h2>
+    <div class="admin-chat-container">
+        <div class="user-list">
+            <h3>Active Users:</h3>
+            <ul id="user-list"></ul>
+        </div>
+        <div class="chat-area">
+            <div id="chat-box" class="chat-box" data-current-room=""></div>
+            <form id="chat-form" class="chat-form">
+                <input id="messageInput" type="text" placeholder="Type your message..." autocomplete="off" class="chat-input">
+                <button id="sendButton" type="submit" class="chat-send-btn">Send</button>
+            </form>
+        </div>
+    </div>
+    </main>
+    
+    
+    <footer>
+        <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+    </footer>
+    </body>
+    </html>
+    
