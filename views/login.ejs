@@ -23,22 +23,29 @@
     </nav>
 
     <div class="login">
-        <div id="container">
-          <h1>Login</h1>
-          <form action="/login" method="POST">
-            <div class="form-group">
-              <p>Username</p>
-              <input type="text" name="username" placeholder="Enter your username" required autocomplete="off">
-            </div>
-            <div class="form-group">
-              <p>Password</p>
-              <input type="password" name="password" placeholder="Enter your password" required>
-            </div>
-            <button type="submit">Login</button>
-          </form>
-          <p class="signup-text" style="margin-top: 15px;">New to Turbo? <a href="/signup">Sign Up</a></p>
-        </div>
+      <div id="container">
+        <h1>Login</h1>
+    
+        <% if (typeof message !== "undefined") { %>
+          <div class="alert" style="color: red; margin-bottom: 15px;"><%= message %></div>
+        <% } %>
+    
+        <form action="/login" method="POST">
+          <div class="form-group">
+            <p>Username</p>
+            <input type="text" name="username" placeholder="Enter your username" required autocomplete="off">
+          </div>
+          <div class="form-group">
+            <p>Password</p>
+            <input type="password" name="password" placeholder="Enter your password" required>
+          </div>
+          <button type="submit">Login</button>
+        </form>
+    
+        <p class="signup-text" style="margin-top: 15px;">New to Turbo? <a href="/signup">Sign Up</a></p>
       </div>
+    </div>
+    
       
 
     <footer>

@@ -18,6 +18,20 @@ const Loginschema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false
+    },
+    age: {
+      type: Number,
+      min: 18,
+      max: 75,
+      default: null
+    },
+    points: {
+      type: Number,
+      default: 0
     }
 });
 
