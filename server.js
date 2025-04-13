@@ -197,6 +197,11 @@ app.get("/logout", (req, res) => {
 });
 
 
+// Make user available in all EJS files
+app.use((req, res, next) => {
+  res.locals.user = req.cookies.user || null;
+  next();
+});
 
 // // Socket.IO Chat Logic
 // const users = {};
