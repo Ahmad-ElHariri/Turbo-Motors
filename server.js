@@ -1,21 +1,18 @@
 // Load environment variables
 require("dotenv").config();
+const PORT = process.env.PORT || 5000;
+
 
 const express = require("express");
 const http = require("http");
 const bodyParser = require("body-parser");
-const nodemailer = require("nodemailer");
 const path = require("path");
-const { Server } = require("socket.io");
-const User = require("../models/user");
+const bcrypt = require('bcrypt');
+const collection = require("./config");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
-const helmet = require("helmet");
-app.use(helmet());
 
-const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -26,53 +23,118 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-const connectDB = require('./config/connectDB'); // adjust path if needed
-connectDB();
 
 // Routes
-// Static HTML routes
+// Redirect root to /home
 app.get("/", (req, res) => {
-    res.redirect("/home.html");
-  });
-  
-app.get("/home.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "home.html"));
-  });
-  
-  app.get("/about.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "about.html"));
-  });
-  
-  app.get("/admin-chat.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "admin-chat.html"));
-  });
-  
-  app.get("/allcars.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "allcars.html"));
-  });
-  
-  app.get("/chat.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "chat.html"));
-  });
-  
-  // contact is already handled with EJS (no need for contact.html route)
-  
-  app.get("/login.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "login.html"));
-  });
-  
-  app.get("/reservation.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "reservation.html"));
-  });
-  
-  app.get("/reviews.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "reviews.html"));
-  });
-  
-  app.get("/signup.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "signup.html"));
-  });
-  
+  res.redirect("/home");
+});
+
+// Render EJS views from /views folder
+app.get("/home", (req, res) => {
+  res.render("home");
+});
+
+app.get("/about", (req, res) => {
+  res.render("about");
+});
+
+app.get("/admin-chat", (req, res) => {
+  res.render("admin-chat");
+});
+
+app.get("/allcars", (req, res) => {
+  res.render("allcars");
+});
+
+app.get("/chat", (req, res) => {
+  res.render("chat");
+});
+
+app.get("/login", (req, res) => {
+  res.render("login");
+});
+
+app.get("/reservation", (req, res) => {
+  res.render("reservation");
+});
+
+app.get("/reviews", (req, res) => {
+  res.render("reviews");
+});
+
+app.get("/signup", (req, res) => {
+  res.render("signup");
+});
+
+// Add route for contact.ejs
+app.get("/contact", (req, res) => {
+  res.render("contact");
+});
+
+
+
+// Register User
+app.post("/signup", async (req, res) => {
+  const data = {
+      name: req.body.username,
+      password: req.body.password
+  };
+
+  const existingUser = await collection.findOne({ name: data.name });
+
+  if (existingUser) {
+      res.send('User already exists. Please choose a different username.');
+  } else {
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(data.password, saltRounds);
+      data.password = hashedPassword;
+
+      const userdata = await collection.insertMany(data);
+      console.log(userdata);
+
+      // ✅ Send response to browser
+      res.send("Signup successful!");
+      // Or: res.redirect("/");
+  }
+});
+
+
+// Login user 
+app.post("/login", async (req, res) => {
+  try {
+      const check = await collection.findOne({ name: req.body.username });
+      if (!check) {
+          res.send("User name cannot found")
+      }
+      // Compare the hashed password from the database with the plaintext password
+      const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+      if (!isPasswordMatch) {
+          res.send("wrong Password");
+      }
+      else {
+          res.render("home");
+      }
+  }
+  catch {
+      res.send("wrong Details");
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.post("/send-message", async (req, res) => {
   const { name, email, message } = req.body;
