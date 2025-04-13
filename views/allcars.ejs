@@ -31,19 +31,174 @@
   <main>
     <div class="allcars-container">
       <h1 class="section-title">All Cars</h1>
-      <div class="car-grid">
-        <div class="car-box"><img src="/images/bmw-z4-7.jpg"><p class="car-name">BMW Z4</p></div>
-        <div class="car-box"><img src="/images/nissan-leaf-6.jpg"><p class="car-name">Nissan Leaf</p></div>
-        <div class="car-box"><img src="/images/nissan-patrol-3.jpg"><p class="car-name">Nissan Patrol</p></div>
-        <div class="car-box"><img src="/images/audi-a8-12.jpeg"><p class="car-name">Audi A8</p></div>
-        <div class="car-box"><img src="/images/bmw-7-10.jpeg"><p class="car-name">BMW 7 Series</p></div>
-        <div class="car-box"><img src="/images/mercedes-s-10.jpeg"><p class="car-name">Mercedes S-Class</p></div>
-        <div class="car-box"><img src="/images/audi-a5-9.jpeg"><p class="car-name">Audi A5</p></div>
-        <div class="car-box"><img src="/images/ford-mustang-8.jpeg"><p class="car-name">Ford Mustang</p></div>
-        <div class="car-box"><img src="/images/hyundai-ioniq-5.jpeg"><p class="car-name">Hyundai Ioniq 5</p></div>
-        <div class="car-box"><img src="/images/tesla-model-3.jpeg"><p class="car-name">Tesla Model 3</p></div>
-        <div class="car-box"><img src="/images/lexus-lx-2.jpeg"><p class="car-name">Lexus LX</p></div>
-        <div class="car-box"><img src="/images/toyota-land-cruiser-1.jpeg"><p class="car-name">Toyota Land Cruiser</p></div>
+    </div>
+    <div class="car-grid">
+      <div class="car-box" onclick="openModal(this)"
+        data-name="BMW Z4"
+        data-type="Convertible"
+        data-engine="2500 cc"
+        data-doors="2"
+        data-passengers="2"
+        data-fuel="Gasoline"
+        data-gearbox="Manual"
+        data-ac="Yes"
+        data-img="/images/bmw-z4-7.jpg">
+        <img src="/images/bmw-z4-7.jpg" alt="BMW Z4">
+        <p class="car-name">BMW Z4</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Nissan Leaf"
+        data-type="Electric"
+        data-engine="0 cc"
+        data-doors="4"
+        data-passengers="5"
+        data-fuel="Electric"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/nissan-leaf-6.jpg">
+        <img src="/images/nissan-leaf-6.jpg" alt="Nissan Leaf">
+        <p class="car-name">Nissan Leaf</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Nissan Patrol"
+        data-type="SUV"
+        data-engine="4000 cc"
+        data-doors="4"
+        data-passengers="7"
+        data-fuel="Gasoline"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/nissan-patrol-3.jpg">
+        <img src="/images/nissan-patrol-3.jpg" alt="Nissan Patrol">
+        <p class="car-name">Nissan Patrol</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Audi A8"
+        data-type="Luxury"
+        data-engine="3000 cc"
+        data-doors="4"
+        data-passengers="5"
+        data-fuel="Gasoline"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/audi-a8-12.jpeg">
+        <img src="/images/audi-a8-12.jpeg" alt="Audi A8">
+        <p class="car-name">Audi A8</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="BMW 7 Series"
+        data-type="Luxury"
+        data-engine="3000 cc"
+        data-doors="4"
+        data-passengers="5"
+        data-fuel="Gasoline"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/bmw-7-10.jpeg">
+        <img src="/images/bmw-7-10.jpeg" alt="BMW 7 Series">
+        <p class="car-name">BMW 7 Series</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Mercedes S-Class"
+        data-type="Luxury"
+        data-engine="3000 cc"
+        data-doors="4"
+        data-passengers="5"
+        data-fuel="Gasoline"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/mercedes-s-10.jpeg">
+        <img src="/images/mercedes-s-10.jpeg" alt="Mercedes S-Class">
+        <p class="car-name">Mercedes S-Class</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Audi A5 Cabriolet"
+        data-type="Convertible"
+        data-engine="2000 cc"
+        data-doors="2"
+        data-passengers="4"
+        data-fuel="Gasoline"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/audi-a5-9.jpeg">
+        <img src="/images/audi-a5-9.jpeg" alt="Audi A5">
+        <p class="car-name">Audi A5</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Ford Mustang"
+        data-type="Convertible"
+        data-engine="5000 cc"
+        data-doors="2"
+        data-passengers="4"
+        data-fuel="Gasoline"
+        data-gearbox="Manual"
+        data-ac="Yes"
+        data-img="/images/ford-mustang-8.jpeg">
+        <img src="/images/ford-mustang-8.jpeg" alt="Ford Mustang">
+        <p class="car-name">Ford Mustang</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Hyundai Ioniq 5"
+        data-type="Electric"
+        data-engine="0 cc"
+        data-doors="4"
+        data-passengers="5"
+        data-fuel="Electric"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/hyundai-ioniq-5.jpeg">
+        <img src="/images/hyundai-ioniq-5.jpeg" alt="Hyundai Ioniq 5">
+        <p class="car-name">Hyundai Ioniq 5</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Tesla Model 3"
+        data-type="Electric"
+        data-engine="0 cc"
+        data-doors="4"
+        data-passengers="5"
+        data-fuel="Electric"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/tesla-model-3.jpeg">
+        <img src="/images/tesla-model-3.jpeg" alt="Tesla Model 3">
+        <p class="car-name">Tesla Model 3</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Lexus LX"
+        data-type="SUV"
+        data-engine="3500 cc"
+        data-doors="4"
+        data-passengers="7"
+        data-fuel="Gasoline"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/lexus-lx-2.jpeg">
+        <img src="/images/lexus-lx-2.jpeg" alt="Lexus LX">
+        <p class="car-name">Lexus LX</p>
+      </div>
+    
+      <div class="car-box" onclick="openModal(this)"
+        data-name="Toyota Land Cruiser"
+        data-type="SUV"
+        data-engine="4500 cc"
+        data-doors="4"
+        data-passengers="7"
+        data-fuel="Diesel"
+        data-gearbox="Automatic"
+        data-ac="Yes"
+        data-img="/images/toyota-land-cruiser-1.jpeg">
+        <img src="/images/toyota-land-cruiser-1.jpeg" alt="Toyota Land Cruiser">
+        <p class="car-name">Toyota Land Cruiser</p>
       </div>
     </div>
   </main>
@@ -61,5 +216,44 @@
       </div>
     </div>
   </footer>
+ 
+  
+  
+  
+  
+<script>
+  function openModal(card) {
+    document.getElementById("modalName").textContent = card.dataset.name;
+    document.getElementById("modalType").textContent = card.dataset.type;
+    document.getElementById("modalEngine").textContent = card.dataset.engine;
+    document.getElementById("modalDoors").textContent = card.dataset.doors;
+    document.getElementById("modalPassengers").textContent = card.dataset.passengers;
+    document.getElementById("modalFuel").textContent = card.dataset.fuel;
+    document.getElementById("modalGearbox").textContent = card.dataset.gearbox;
+    document.getElementById("modalAC").textContent = card.dataset.ac;
+    document.getElementById("modalImage").src = card.dataset.img;
+
+    document.getElementById("carModal").style.display = "flex";
+  }
+
+  function closeModal() {
+    document.getElementById("carModal").style.display = "none";
+  }
+</script>
+<div class="modal" id="carModal">
+  <div class="modal-content">
+    <h3 id="modalName"></h3>
+    <p><strong>Type:</strong> <span id="modalType"></span></p>
+    <p><strong>Engine Size:</strong> <span id="modalEngine"></span></p>
+    <p><strong>Doors:</strong> <span id="modalDoors"></span></p>
+    <p><strong>Passengers:</strong> <span id="modalPassengers"></span></p>
+    <p><strong>Fuel Type:</strong> <span id="modalFuel"></span></p>
+    <p><strong>Gearbox:</strong> <span id="modalGearbox"></span></p>
+    <p><strong>AC:</strong> <span id="modalAC"></span></p>
+    <img id="modalImage" style="max-width: 100%; margin-top: 10px; border-radius: 8px;" />
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
 </body>
 </html>
