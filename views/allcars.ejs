@@ -1,98 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Cars</title>
-    <link rel="stylesheet" href="/css/common_styles.css">
-    <link rel="stylesheet" href="/css/timeline.css">
-    <link rel="stylesheet" href="/css/allcars.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Cars</title>
+  <link rel="stylesheet" href="/css/common_styles.css" />
+  <link rel="stylesheet" href="/css/allcarsfull.css" />
 </head>
+
 <body>
-    <nav>
-        <div class="logo">Turbo Motors</div>
-        <ul class="nav-links">
-          <li><a href="/home">Home</a></li>
-          <li><a href="/allcars">All Cars</a></li>
-          <li><a href="/about">About Us</a></li>
-          <li><a href="/contact">Contact</a></li>
-          <% if (user) { %>
-            <li><a href="/logout" class="btn">Logout</a></li>
-            <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
-        <% } else { %>
-            <li><a href="/login" class="btn">Sign In</a></li>
-            <li><a href="/signup" class="btn">Sign Up</a></li>
-        <% } %>
-        
-        </ul>
-        
-    </nav>
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/allcars">All Cars</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <% if (user) { %>
+        <li><a href="/logout" class="btn">Logout</a></li>
+        <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
+      <% } else { %>
+        <li><a href="/login" class="btn">Sign In</a></li>
+        <li><a href="/signup" class="btn">Sign Up</a></li>
+      <% } %>
+    </ul>
+  </nav>
 
-    <main>
-        <section class="timeline">
-            <hr>
-            <div class="step" style="margin-left: 4%;">
-                <p class="circles">1</p>
-                <p>Choose Date & Location</p>
-            </div>
-            <div class="step">
-                <p class="circles selected_cricle">2</p>
-                <p>Add Cars</p>
-            </div>
-            <div class="step">
-                <p class="circles">3</p>
-                <p>Check Out</p>
-            </div>
-        </section>
+  <!-- MAIN CONTENT -->
+  <main>
+    <div class="allcars-container">
+      <h1 class="section-title">All Cars</h1>
+      <div class="car-grid">
+        <div class="car-box"><img src="/images/bmw-z4-7.jpg"><p class="car-name">BMW Z4</p></div>
+        <div class="car-box"><img src="/images/nissan-leaf-6.jpg"><p class="car-name">Nissan Leaf</p></div>
+        <div class="car-box"><img src="/images/nissan-patrol-3.jpg"><p class="car-name">Nissan Patrol</p></div>
+        <div class="car-box"><img src="/images/audi-a8-12.jpeg"><p class="car-name">Audi A8</p></div>
+        <div class="car-box"><img src="/images/bmw-7-10.jpeg"><p class="car-name">BMW 7 Series</p></div>
+        <div class="car-box"><img src="/images/mercedes-s-10.jpeg"><p class="car-name">Mercedes S-Class</p></div>
+        <div class="car-box"><img src="/images/audi-a5-9.jpeg"><p class="car-name">Audi A5</p></div>
+        <div class="car-box"><img src="/images/ford-mustang-8.jpeg"><p class="car-name">Ford Mustang</p></div>
+        <div class="car-box"><img src="/images/hyundai-ioniq-5.jpeg"><p class="car-name">Hyundai Ioniq 5</p></div>
+        <div class="car-box"><img src="/images/tesla-model-3.jpeg"><p class="car-name">Tesla Model 3</p></div>
+        <div class="car-box"><img src="/images/lexus-lx-2.jpeg"><p class="car-name">Lexus LX</p></div>
+        <div class="car-box"><img src="/images/toyota-land-cruiser-1.jpeg"><p class="car-name">Toyota Land Cruiser</p></div>
+      </div>
+    </div>
+  </main>
 
-        <section class="Select_Cars">
-            <h1>Select Cars</h1>
-            
-
-
-            <div class="car-listing">
-    
-                <!-- Tesla Model 3 -->
-                <div class="car-card">
-                  <img src="/images/tesla-model-3.webp" alt="Tesla Model 3 2021" class="car-image">
-                  <div class="car-details">
-                    <h2>Tesla Model 3 2021</h2>
-                    <p class="rating">4.99 ★ (143 trips)</p>
-                    <p class="location">San Bruno<br>Apr 4 – 7</p>
-                    <p class="savings">Save $5</p>
-                    <p class="price">
-                      <span class="old-price">$56</span>
-                      <span class="new-price">$54/day</span>
-                    </p>
-                    <p class="fees">$163 excl. taxes & fees</p>
-                  </div>
-                </div>
-            
-                <!-- Lexus LX 2025 -->
-                <div class="car-card">
-                  <img src="/images/lexus-2025.avif" alt="Lexus LX 2025" class="car-image">
-                  <div class="car-details">
-                    <h2>Lexus LX 2025</h2>
-                    <p class="rating">New listing</p>
-                    <p class="location">Glendale<br>Apr 4 – 7</p>
-                    <p class="savings">Save $37</p>
-                    <p class="price">
-                      <span class="old-price">$110</span>
-                      <span class="new-price">$98/day</span>
-                    </p>
-                    <p class="fees">$294 excl. taxes & fees</p>
-                  </div>
-                </div>
-            
-              </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container footer-content">
-            <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-            <p>Follow us on social media: [icons go here]</p>
-        </div>
-    </footer>
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media:</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
