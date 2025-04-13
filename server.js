@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const { Server } = require("socket.io");
+const User = require("../models/user");
 
 const app = express();
 const server = http.createServer(app);
@@ -25,31 +26,53 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
+const connectDB = require('./config/connectDB'); // adjust path if needed
+connectDB();
 
 // Routes
+// Static HTML routes
 app.get("/", (req, res) => {
-  res.send("Welcome to Turbo Motors!");
-});
-
+    res.redirect("/home.html");
+  });
+  
 app.get("/home.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "html", "home.html"));
-});
-
-app.get("/about.html", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "html", "about.html"));
-});
-
-app.get("/contact", (req, res) => {
-  res.render("contact", { message: null });
-});
-
-app.get("/chat", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "chat.html"));
-});
-
-app.get("/admin-chat", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "admin-chat.html"));
-});
+    res.sendFile(path.join(__dirname, "public", "html", "home.html"));
+  });
+  
+  app.get("/about.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "about.html"));
+  });
+  
+  app.get("/admin-chat.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "admin-chat.html"));
+  });
+  
+  app.get("/allcars.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "allcars.html"));
+  });
+  
+  app.get("/chat.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "chat.html"));
+  });
+  
+  // contact is already handled with EJS (no need for contact.html route)
+  
+  app.get("/login.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "login.html"));
+  });
+  
+  app.get("/reservation.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "reservation.html"));
+  });
+  
+  app.get("/reviews.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "reviews.html"));
+  });
+  
+  app.get("/signup.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "signup.html"));
+  });
+  
 
 app.post("/send-message", async (req, res) => {
   const { name, email, message } = req.body;
