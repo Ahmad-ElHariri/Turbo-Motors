@@ -19,13 +19,18 @@ const helmet = require("helmet");
 app.use(helmet());
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
-
+app.use((req, res, next) => {
+  res.locals.user = req.cookies.user || null;
+  next();
+});
 
 const server = http.createServer(app);
 
 const io = new Server(server);
 
 // Middleware
+
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
@@ -198,10 +203,6 @@ app.get("/logout", (req, res) => {
 
 
 // Make user available in all EJS files
-app.use((req, res, next) => {
-  res.locals.user = req.cookies.user || null;
-  next();
-});
 
 // // Socket.IO Chat Logic
 // const users = {};
