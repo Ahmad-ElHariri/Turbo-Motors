@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital@0;1&display=swap');
 
-.login {
+.login, .signup {
     height: 100vh;
     display: flex;
     justify-content: center;
