@@ -2,6 +2,7 @@
 require("dotenv").config();
 const PORT = process.env.PORT || 5000; const nodemailer = require("nodemailer");
 
+const Car = require("./models/car");
 
 const express = require("express");
 const http = require("http");
@@ -16,6 +17,8 @@ const { Server } = require("socket.io");
 const User = require("./models/users.js");
 const helmet = require("helmet");
 app.use(helmet());
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
 
 
 const server = http.createServer(app);
@@ -64,8 +67,12 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/reservation", (req, res) => {
-  res.render("reservation");
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
+  
+  res.render("reservation", { user }); // optional: send user info to EJS
 });
+
 
 app.get("/reviews", (req, res) => {
   res.render("reviews");
@@ -125,9 +132,15 @@ app.post("/login", async (req, res) => {
       return res.render("login", { message: "Incorrect password." });
     }
     else {
-
+      res.cookie("user", {
+        id: check._id,
+        name: check.name,
+        isAdmin: check.isAdmin
+      }, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 // 1 day
+      });
       // ✅ Login successful
-      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
       // login process successful, here we should add something so that we use the user info for reservations and things
       // also here we can check if this user is an admin and then change the isAdmin in database to true, based
       // on this lot of things will happen like rendering admin.ejs instead of home.ejs 
@@ -177,6 +190,11 @@ async function sendEmail(name, email, message) {
     throw error;
   }
 }
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("user"); // This deletes the cookie
+  res.redirect("/login");  // Send the user back to login page
+});
 
 
 
