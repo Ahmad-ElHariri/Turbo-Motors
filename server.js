@@ -1,6 +1,6 @@
 // Load environment variables
 require("dotenv").config();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000; const nodemailer = require("nodemailer");
 
 
 const express = require("express");
@@ -11,8 +11,16 @@ const bcrypt = require('bcrypt');
 const collection = require("./config");
 
 const app = express();
+
+const { Server } = require("socket.io");
+const User = require("./models/users.js");
+const helmet = require("helmet");
+app.use(helmet());
+
+
 const server = http.createServer(app);
 
+const io = new Server(server);
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -69,7 +77,7 @@ app.get("/signup", (req, res) => {
 
 // Add route for contact.ejs
 app.get("/contact", (req, res) => {
-  res.render("contact");
+  res.render("contact", { message: null });
 });
 
 
@@ -132,46 +140,45 @@ app.post("/login", async (req, res) => {
 });
 
 
+// Contact us routes
+app.post("/send-message", async (req, res) => {
+  const { name, email, message } = req.body;
+
+  try {
+    await sendEmail(name, email, message);
+    res.render("contact", { message: "Message sent successfully!" });
+  } catch (error) {
+    res.render("contact", { message: "Failed to send message. Please try again." });
+  }
+});
+
+async function sendEmail(name, email, message) {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: `"${name}" <${email}>`,
+      to: "elhariri2023@gmail.com",
+      subject: `Message from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log("Email sent: ", result);
+    return result;
+  } catch (error) {
+    console.error("Error sending email: ", error);
+    throw error;
+  }
+}
 
 
-
-
-// app.post("/send-message", async (req, res) => {
-//   const { name, email, message } = req.body;
-
-//   try {
-//     await sendEmail(name, email, message);
-//     res.render("contact", { message: "Message sent successfully!" });
-//   } catch (error) {
-//     res.render("contact", { message: "Failed to send message. Please try again." });
-//   }
-// });
-
-// async function sendEmail(name, email, message) {
-//   try {
-//     const transporter = nodemailer.createTransport({
-//       service: "gmail",
-//       auth: {
-//         user: process.env.EMAIL,
-//         pass: process.env.PASSWORD,
-//       },
-//     });
-
-//     const mailOptions = {
-//       from: `"${name}" <${email}>`,
-//       to: "mohammadserhanpro@gmail.com",
-//       subject: `Message from ${name}`,
-//       text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
-//     };
-
-//     const result = await transporter.sendMail(mailOptions);
-//     console.log("Email sent: ", result);
-//     return result;
-//   } catch (error) {
-//     console.error("Error sending email: ", error);
-//     throw error;
-//   }
-// }
 
 // // Socket.IO Chat Logic
 // const users = {};
