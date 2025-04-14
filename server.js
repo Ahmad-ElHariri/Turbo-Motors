@@ -16,7 +16,7 @@ const app = express(); // Make sure app is initialized here first
 // Import Internal Modules
 const collection = require("./models/users.js");
 const Car = require("./models/car"); // Import Car model after app initialization
-
+const { Server } = require("socket.io");
 // Define Local Variables
 const PORT = process.env.PORT || 5000;
 
@@ -183,6 +183,96 @@ async function sendEmail(name, email, message) {
     throw error;
   }
 }
+//Chat mechanism 
+
+const users = {};
+const admins = {};
+const chatHistory = {};
+
+io.on("connection", (socket) => {
+  console.log("New user connected");
+
+  socket.on("joinRoom", (username) => {
+    const referer = socket.handshake.headers.referer;
+    const role = referer.includes("/admin-chat") ? "Admin" : "User";
+
+    if (role === "Admin") {
+      socket.role = "Admin";
+      socket.username = username;
+      admins[socket.id] = username;
+      socket.join("adminRoom");
+      socket.emit("message", `Admin ${username} connected`);
+
+      io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username)); 
+
+    } else {
+      socket.role = "User";
+      socket.username = username;
+      socket.room = username;
+      users[socket.id] = { username, room: username };
+      socket.join(socket.room);
+
+      socket.emit("message", `Welcome, ${username}!`);
+
+      io.to("adminRoom").emit("message", `${username} joined the chat`);
+
+      if (!chatHistory[socket.room]) chatHistory[socket.room] = [];
+      chatHistory[socket.room].push(`Welcome, ${username}!`);
+
+      socket.emit("previousMessages", chatHistory[socket.room]);
+      io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
+    }
+  });
+
+  socket.on("switchRoom", (room) => {
+    if (socket.role === "Admin") {
+      socket.leave(socket.room);
+      socket.room = room;
+      socket.join(room);
+      socket.emit("message", `Switched to chat with ${room}`);
+  
+      if (chatHistory[room]) {
+        socket.emit("previousMessages", { room, messages: chatHistory[room] }); // FIXED
+      } else {
+        socket.emit("message", `No previous messages with ${room}`);
+      }
+    }
+  });
+  
+
+  socket.on("chatMessage", (data) => {
+    const room = socket.room || data.roomId;
+    const sender = socket.username || "Admin";
+    const msg = data.text || "No message";
+    const formatted = `${sender}: ${msg}`;
+
+    if (!chatHistory[room]) chatHistory[room] = [];
+    chatHistory[room].push(formatted);
+    if (chatHistory[room].length > 50) chatHistory[room].shift();
+
+    io.to(room).emit("message", formatted);
+  });
+
+  socket.on("requestHistory", (room) => {
+    if (chatHistory[room]) {
+      socket.emit("previousMessages", chatHistory[room]);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    if (users[socket.id]) {
+      const name = users[socket.id].username;
+      delete users[socket.id];
+      io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
+      io.emit("message", `${name} disconnected`);
+    }
+    if (admins[socket.id]) {
+      const name = admins[socket.id];
+      delete admins[socket.id];
+      console.log(`Admin ${name} disconnected`);
+    }
+  });
+});
 
 // Start server
 server.listen(PORT, () => {
