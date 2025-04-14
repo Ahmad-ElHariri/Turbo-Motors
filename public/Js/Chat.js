@@ -3,7 +3,6 @@ const chatBox = document.getElementById("chat-box");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 
-
 let username;
 do {
     username = prompt("Enter your name:").trim();
@@ -19,9 +18,7 @@ function sendMessage() {
     }
 }
 
-sendButton.addEventListener("click", () => {
-    sendMessage();
-});
+sendButton.addEventListener("click", () => sendMessage());
 
 messageInput.addEventListener("keydown", (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -33,43 +30,36 @@ messageInput.addEventListener("keydown", (e) => {
 function displayMessage(sender, message, className) {
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message", className);
-    if (sender === "Greeting") {
-        messageDiv.textContent = message;
-    } else {
-        messageDiv.textContent = `${sender}: ${message}`;
-    }
+    messageDiv.textContent = `${sender}: ${message}`;
     chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
-
 
 socket.on("message", (message) => {
     const colonIndex = message.indexOf(": ");
     if (colonIndex !== -1) {
         const sender = message.substring(0, colonIndex);
         const text = message.substring(colonIndex + 2);
-        const isAdmin = sender === "Admin";
-        const className = isAdmin ? "admin-message" : "user-message";
-        displayMessage(sender, text, className);
+        const isSelf = sender.toLowerCase() === username.toLowerCase();
+        const className = isSelf ? "right" : "left";
+        displayMessage(isSelf ? "You" : sender, text, className);
     } else {
-        displayMessage("Greeting", message, "user-message");
+        displayMessage("System", message, "left");
     }
 });
 
-
 socket.on("previousMessages", (messages) => {
-    chatBox.innerHTML = "";  
+    chatBox.innerHTML = "";
     messages.forEach((message) => {
         const colonIndex = message.indexOf(": ");
         if (colonIndex !== -1) {
             const sender = message.substring(0, colonIndex);
             const text = message.substring(colonIndex + 2);
-            const isAdmin = sender === "Admin";
-            const className = isAdmin ? "admin-message" : "user-message";
-            displayMessage(sender, text, className);
+            const isSelf = sender.toLowerCase() === username.toLowerCase();
+            const className = isSelf ? "right" : "left";
+            displayMessage(isSelf ? "You" : sender, text, className);
         } else {
-            displayMessage("Greeting", message, "user-message");
+            displayMessage("System", message, "left");
         }
     });
-    chatBox.scrollTop = chatBox.scrollHeight;
 });
