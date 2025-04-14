@@ -78,3 +78,24 @@
   font-size: 14px;
   color: #666;
 }
+/* Availability status styling */
+/* Availability status styling */
+.car-status {
+  font-size: 14px;
+  font-weight: bold;
+  margin-top: 5px;
+  padding: 3px 8px;
+  border-radius: 5px;
+  text-transform: uppercase;
+  display: inline-block;
+}
+
+/* Available cars - green font */
+.car-status.available {
+  color: green;
+}
+
+/* Reserved cars - red font */
+.car-status.unavailable {
+  color: red;
+}

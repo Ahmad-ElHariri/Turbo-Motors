@@ -34,21 +34,39 @@
     </div>
     <div class="car-grid">
       <% cars.forEach(car => { %> <!-- Loop through cars array -->
-        <div class="car-box">
+        <div class="car-box" onclick="openModal(this)"
+          data-id="<%= car._id %>"
+          data-name="<%= car.brand %> <%= car.model %>"
+          data-type="<%= car.group %>"
+          data-engine="<%= car.specs.engineSize %>"
+          data-doors="<%= car.specs.doors %>"
+          data-passengers="<%= car.specs.passengers %>"
+          data-fuel="<%= car.specs.fuelType %>"
+          data-gearbox="<%= car.specs.gearbox %>"
+          data-ac="<%= car.specs.hasAC ? 'Yes' : 'No' %>"
+          data-img="<%= car.image %>">
+          
           <img src="/images/<%= car.image %>" alt="<%= car.brand %>">
+          <p class="car-name"><%= car.brand %> <%= car.model %></p>
+          
+          <!-- Display car details (if available) -->
           <div class="car-info">
-            <h3 class="car-name"><%= car.brand %> <%= car.model %></h3>
             <p><strong>Type:</strong> <%= car.group %></p>
             <p><strong>Engine Size:</strong> <%= car.specs.engineSize %> cc</p>
             <p><strong>Doors:</strong> <%= car.specs.doors %></p>
             <p><strong>Passengers:</strong> <%= car.specs.passengers %></p>
-            <p><strong>Fuel:</strong> <%= car.specs.fuelType %></p>
+            <p><strong>Fuel Type:</strong> <%= car.specs.fuelType %></p>
             <p><strong>Gearbox:</strong> <%= car.specs.gearbox %></p>
             <p><strong>AC:</strong> <%= car.specs.hasAC ? 'Yes' : 'No' %></p>
-            <p><strong>Price/Day:</strong> $<%= car.pricePerDay %></p>
           </div>
+    
+          <!-- Availability status line -->
+          <div class="car-status <%= car.available ? 'available' : 'unavailable' %>">
+            <%= car.available ? 'Available' : 'Reserved' %>
+          </div>
+    
         </div>
-      <% }); %>
+      <% }); %> <!-- End of loop -->
     </div>
   </main>
 
