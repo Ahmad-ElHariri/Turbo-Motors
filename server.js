@@ -10,16 +10,16 @@ const http = require("http");
 const path = require("path");
 require("dotenv").config();
 
-// Initialize express app
-const app = express(); // Make sure app is initialized here first
+
 
 // Import Internal Modules
 const collection = require("./models/users.js");
-const Car = require("./models/car"); // Import Car model after app initialization
-// const { Server } = require("socket.io");
-// Define Local Variables
-const PORT = process.env.PORT || 5000;
+const Car = require("./models/car"); 
 
+
+// Local Variables
+const app = express();
+const PORT = process.env.PORT || 5000;
 const server = http.createServer(app); // Initialize server with app
 const io = new Server(server);
 
@@ -183,6 +183,8 @@ async function sendEmail(name, email, message) {
     throw error;
   }
 }
+
+
 //Chat mechanism 
 
 const users = {};
