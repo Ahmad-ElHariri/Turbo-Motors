@@ -1,28 +1,20 @@
-/*
-  The Code Written here connects the 
-  database with the server.js.
-
-  Use the collection thing in other files 
-  to access the database.
-*/
-
-
-
 const mongoose = require('mongoose');
-const connect = mongoose.connect("mongodb+srv://Coder_1:MyPass123@cluster1.xs6lxac.mongodb.net/trial?retryWrites=true&w=majority&appName=Cluster1");
 
-// Check database connected or not
+// Replace the connection string with the one pointing to your All_database
+const connect = mongoose.connect("mongodb+srv://Coder_1:MyPass123@cluster1.xs6lxac.mongodb.net/All_database?retryWrites=true&w=majority&appName=Cluster1");
+
+// Check if the database is connected or not
 connect.then(() => {
     console.log("Database Connected Successfully");
 })
-.catch(() => {
-    console.log("Database cannot be Connected");
+.catch((err) => {
+    console.log("Database cannot be Connected", err);
 })
 
 // Create Schema
 const Loginschema = new mongoose.Schema({
     name: {
-        type:String,
+        type: String,
         required: true
     },
     password: {
@@ -30,21 +22,22 @@ const Loginschema = new mongoose.Schema({
         required: true
     },
     isAdmin: {
-      type: Boolean,
-      default: false
+        type: Boolean,
+        default: false
     },
     age: {
-      type: Number,
-      min: 18,
-      max: 75,
-      default: null
+        type: Number,
+        min: 18,
+        max: 75,
+        default: null
     },
     points: {
-      type: Number,
-      default: 0
+        type: Number,
+        default: 0
     }
 });
 
-// collection part
+// Create collection from schema
 const collection = new mongoose.model("x", Loginschema);
+
 module.exports = collection;
