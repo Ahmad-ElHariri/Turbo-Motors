@@ -1,52 +1,55 @@
-// Load environment variables
-require("dotenv").config();
-const PORT = process.env.PORT || 5000; const nodemailer = require("nodemailer");
-
-const Car = require("./models/car");
-
-const express = require("express");
-const http = require("http");
+// Import External Modules
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const path = require("path");
+const nodemailer = require("nodemailer");
+const { Server } = require("socket.io");
+const express = require("express");
 const bcrypt = require('bcrypt');
-const collection = require("./config");
+const helmet = require("helmet");
+const http = require("http");
+const path = require("path");
 
+
+
+// Import Internal Modules
+const collection = require("./models/users.js");
+const Car = require("./models/car");
+require("dotenv").config();
+
+
+
+// Local Variables
+const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+const io = new Server(server);
 const app = express();
 
-const { Server } = require("socket.io");
-const User = require("./models/users.js");
-const helmet = require("helmet");
-app.use(helmet());
-const cookieParser = require("cookie-parser");
-app.use(cookieParser());
+
+
+// Middleware
+app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   res.locals.user = req.cookies.user || null;
   next();
 });
-
-const server = http.createServer(app);
-
-const io = new Server(server);
-
-// Middleware
-
-
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(helmet());
+
+
 
 // Set view engine for contact form
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 
+
 // Routes
-// Redirect root to /home
 app.get("/", (req, res) => {
   res.redirect("/home");
 });
 
-// Render EJS views from /views folder
 app.get("/home", (req, res) => {
   res.render("home");
 });
@@ -78,7 +81,6 @@ app.get("/reservation", (req, res) => {
   res.render("reservation", { user }); // optional: send user info to EJS
 });
 
-
 app.get("/reviews", (req, res) => {
   res.render("reviews");
 });
@@ -87,10 +89,15 @@ app.get("/signup", (req, res) => {
   res.render("signup");
 });
 
-// Add route for contact.ejs
 app.get("/contact", (req, res) => {
   res.render("contact", { message: null });
 });
+
+app.get("/logout", (req, res) => {
+  res.clearCookie("user"); // This deletes the cookie
+  res.redirect("/login");  // Send the user back to login page
+});
+
 
 
 
@@ -100,16 +107,12 @@ app.post("/signup", async (req, res) => {
     name: req.body.username,
     password: req.body.password
   };
-
   const existingUser = await collection.findOne({ name: data.name });
-
   if (req.body.password !== req.body.confirmPassword) {
     return res.render("signup", { message: "Passwords do not match." });
   }
-
   if (existingUser) {
     return res.render("signup", { message: "Username already exists. Please choose another one." });
-
   } else {
     const hashedPassword = await bcrypt.hash(data.password, 10);
     data.password = hashedPassword;
@@ -158,7 +161,8 @@ app.post("/login", async (req, res) => {
 });
 
 
-// Contact us routes
+
+// Contact us functions
 app.post("/send-message", async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -196,112 +200,106 @@ async function sendEmail(name, email, message) {
   }
 }
 
-app.get("/logout", (req, res) => {
-  res.clearCookie("user"); // This deletes the cookie
-  res.redirect("/login");  // Send the user back to login page
+
+
+// Socket.IO Chat Logic
+
+
+/*
+const users = {};
+const admins = {};
+const chatHistory = {};
+io.on("connection", (socket) => {
+  console.log("New user connected");
+  socket.on("joinRoom", (username) => {
+    const referer = socket.handshake.headers.referer;
+    const role = referer.includes("/admin-chat") ? "Admin" : "User";
+    if (role === "Admin") {
+      socket.role = "Admin";
+      socket.username = username;
+      admins[socket.id] = username;
+      socket.join("adminRoom");
+      socket.emit("message", `Admin ${username} connected`);
+
+      io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
+
+      Object.keys(chatHistory).forEach((room) => {
+        if (chatHistory[room]) {
+          socket.emit("previousMessages", chatHistory[room]);
+        }
+      });
+
+    } else {
+      socket.role = "User";
+      socket.username = username;
+      socket.room = username;
+      users[socket.id] = { username, room: username };
+      socket.join(socket.room);
+
+      socket.emit("message", `Welcome, ${username}!`);
+
+      io.to("adminRoom").emit("message", `${username} joined the chat`);
+
+      if (!chatHistory[socket.room]) chatHistory[socket.room] = [];
+      chatHistory[socket.room].push(`Welcome, ${username}!`);
+
+      socket.emit("previousMessages", chatHistory[socket.room]);
+      io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
+    }
+  });
+
+  socket.on("switchRoom", (room) => {
+    if (socket.role === "Admin") {
+      socket.leave(socket.room);
+      socket.room = room;
+      socket.join(room);
+      socket.emit("message", `Switched to chat with ${room}`);
+
+      if (chatHistory[room]) {
+        socket.emit("previousMessages", chatHistory[room]);
+      } else {
+        socket.emit("message", `No previous messages with ${room}`);
+      }
+    }
+  });
+
+  socket.on("chatMessage", (data) => {
+    const room = socket.room || data.roomId;
+    const sender = socket.username || "Admin";
+    const msg = data.text || "No message";
+    const formatted = `${sender}: ${msg}`;
+
+    if (!chatHistory[room]) chatHistory[room] = [];
+    chatHistory[room].push(formatted);
+    if (chatHistory[room].length > 50) chatHistory[room].shift();
+
+    io.to(room).emit("message", formatted);
+    if (socket.role !== "Admin") {
+      io.to("adminRoom").emit("message", `[${sender}]: ${msg}`);
+    }
+  });
+
+  socket.on("requestHistory", (room) => {
+    if (chatHistory[room]) {
+      socket.emit("previousMessages", chatHistory[room]);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    if (users[socket.id]) {
+      const name = users[socket.id].username;
+      delete users[socket.id];
+      io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
+      io.emit("message", `${name} disconnected`);
+    }
+    if (admins[socket.id]) {
+      const name = admins[socket.id];
+      delete admins[socket.id];
+      console.log(`Admin ${name} disconnected`);
+    }
+  });
 });
-
-
-// Make user available in all EJS files
-
-// // Socket.IO Chat Logic
-// const users = {};
-// const admins = {};
-// const chatHistory = {};
-
-// io.on("connection", (socket) => {
-//   console.log("New user connected");
-
-//   socket.on("joinRoom", (username) => {
-//     const referer = socket.handshake.headers.referer;
-//     const role = referer.includes("/admin-chat") ? "Admin" : "User";
-
-//     if (role === "Admin") {
-//       socket.role = "Admin";
-//       socket.username = username;
-//       admins[socket.id] = username;
-//       socket.join("adminRoom");
-//       socket.emit("message", `Admin ${username} connected`);
-
-//       io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
-
-//       Object.keys(chatHistory).forEach((room) => {
-//         if (chatHistory[room]) {
-//           socket.emit("previousMessages", chatHistory[room]);
-//         }
-//       });
-
-//     } else {
-//       socket.role = "User";
-//       socket.username = username;
-//       socket.room = username;
-//       users[socket.id] = { username, room: username };
-//       socket.join(socket.room);
-
-//       socket.emit("message", `Welcome, ${username}!`);
-
-//       io.to("adminRoom").emit("message", `${username} joined the chat`);
-
-//       if (!chatHistory[socket.room]) chatHistory[socket.room] = [];
-//       chatHistory[socket.room].push(`Welcome, ${username}!`);
-
-//       socket.emit("previousMessages", chatHistory[socket.room]);
-//       io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
-//     }
-//   });
-
-//   socket.on("switchRoom", (room) => {
-//     if (socket.role === "Admin") {
-//       socket.leave(socket.room);
-//       socket.room = room;
-//       socket.join(room);
-//       socket.emit("message", `Switched to chat with ${room}`);
-
-//       if (chatHistory[room]) {
-//         socket.emit("previousMessages", chatHistory[room]);
-//       } else {
-//         socket.emit("message", `No previous messages with ${room}`);
-//       }
-//     }
-//   });
-
-//   socket.on("chatMessage", (data) => {
-//     const room = socket.room || data.roomId;
-//     const sender = socket.username || "Admin";
-//     const msg = data.text || "No message";
-//     const formatted = `${sender}: ${msg}`;
-
-//     if (!chatHistory[room]) chatHistory[room] = [];
-//     chatHistory[room].push(formatted);
-//     if (chatHistory[room].length > 50) chatHistory[room].shift();
-
-//     io.to(room).emit("message", formatted);
-//     if (socket.role !== "Admin") {
-//       io.to("adminRoom").emit("message", `[${sender}]: ${msg}`);
-//     }
-//   });
-
-//   socket.on("requestHistory", (room) => {
-//     if (chatHistory[room]) {
-//       socket.emit("previousMessages", chatHistory[room]);
-//     }
-//   });
-
-//   socket.on("disconnect", () => {
-//     if (users[socket.id]) {
-//       const name = users[socket.id].username;
-//       delete users[socket.id];
-//       io.to("adminRoom").emit("userList", Object.values(users).map(u => u.username));
-//       io.emit("message", `${name} disconnected`);
-//     }
-//     if (admins[socket.id]) {
-//       const name = admins[socket.id];
-//       delete admins[socket.id];
-//       console.log(`Admin ${name} disconnected`);
-//     }
-//   });
-// });
-
+*/
 
 
 // Start server
