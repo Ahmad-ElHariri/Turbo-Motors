@@ -29,11 +29,11 @@ const io = new Server(server);
 // Middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use((req, res, next) => {
   res.locals.user = req.cookies.user || null;
   next();
 });
-app.use(cookieParser());
 app.use(express.json());
 app.use(helmet());
 
