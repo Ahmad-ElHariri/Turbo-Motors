@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add New Car</title>
+  <link rel="stylesheet" href="/css/addcar.css"> 
+</head>
+<body>
+  <div class="form-wrapper">
+    <h1>Add a New Car</h1>
+    <form action="/admin/add-car" method="POST" enctype="multipart/form-data">
+      <label>Group:</label>
+      <input type="text" name="group" required>
+
+      <label>Brand:</label>
+      <input type="text" name="brand" required>
+
+      <label>Model:</label>
+      <input type="text" name="model" required>
+
+      <label>Upload Image:</label>
+      <div class="dropzone" id="dropzone">Drag & drop or click to upload</div>
+      <input type="file" name="image" id="fileInput" accept="image/*" hidden required>
+
+      <h3>Specifications:</h3>
+      <label>Engine Size (cc):</label>
+      <input type="number" name="specs.engineSize" required>
+
+      <label>Doors:</label>
+      <input type="number" name="specs.doors" required>
+
+      <label>Passengers:</label>
+      <input type="number" name="specs.passengers" required>
+
+      <label>Fuel Type:</label>
+      <input type="text" name="specs.fuelType" required>
+
+      <label>Gearbox:</label>
+      <input type="text" name="specs.gearbox" required>
+
+      <label><input type="checkbox" name="specs.hasAC"> Has AC</label>
+      <label><input type="checkbox" name="specs.electricWindows"> Electric Windows</label>
+
+      <label>Price Per Day:</label>
+      <input type="number" name="pricePerDay" required>
+
+      <label><input type="checkbox" name="available" checked> Available</label>
+
+      <button type="submit">Add Car</button>
+    </form>
+  </div>
+
+  <script>
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length) fileInput.files = files;
+    });
+  </script>
+</body>
+</html>
