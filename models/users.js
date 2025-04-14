@@ -38,6 +38,6 @@ const Loginschema = new mongoose.Schema({
 });
 
 // Create collection from schema
-const collection = new mongoose.model("x", Loginschema);
+const collection = new mongoose.model("user", Loginschema);
 
 module.exports = collection;
