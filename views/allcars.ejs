@@ -34,21 +34,21 @@
     </div>
     <div class="car-grid">
       <% cars.forEach(car => { %> <!-- Loop through cars array -->
-        <div class="car-box" onclick="openModal(this)"
-          data-id="<%= car._id %>"   <!-- Pass the car's id here -->
-          data-name="<%= car.brand %> <%= car.model %>"
-          data-type="<%= car.group %>"
-          data-engine="<%= car.engineSize %>"
-          data-doors="<%= car.doors %>"
-          data-passengers="<%= car.passengers %>"
-          data-fuel="<%= car.fuel %>"
-          data-gearbox="<%= car.gearbox %>"
-          data-ac="<%= car.ac ? 'Yes' : 'No' %>"
-          data-img="<%= car.image %>">
+        <div class="car-box">
           <img src="/images/<%= car.image %>" alt="<%= car.brand %>">
-          <p class="car-name"><%= car.brand %> <%= car.model %></p>
+          <div class="car-info">
+            <h3 class="car-name"><%= car.brand %> <%= car.model %></h3>
+            <p><strong>Type:</strong> <%= car.group %></p>
+            <p><strong>Engine Size:</strong> <%= car.specs.engineSize %> cc</p>
+            <p><strong>Doors:</strong> <%= car.specs.doors %></p>
+            <p><strong>Passengers:</strong> <%= car.specs.passengers %></p>
+            <p><strong>Fuel:</strong> <%= car.specs.fuelType %></p>
+            <p><strong>Gearbox:</strong> <%= car.specs.gearbox %></p>
+            <p><strong>AC:</strong> <%= car.specs.hasAC ? 'Yes' : 'No' %></p>
+            <p><strong>Price/Day:</strong> $<%= car.pricePerDay %></p>
+          </div>
         </div>
-      <% }); %>  <!-- End of loop -->
+      <% }); %>
     </div>
   </main>
 
@@ -65,63 +65,6 @@
       </div>
     </div>
   </footer>
- 
-  
-  
-  
-  
-<script>
- // Open Modal function
- function openModal(carBox) {
-  const carId = carBox.getAttribute('data-id');  // Get the carId from the clicked car-box
-
-  // Fetch car details from the server using the carId
-  fetch(`/car-details/${carId}`)
-    .then(response => response.json())
-    .then(car => {
-      // Fill the modal with the car data from the response
-      document.getElementById("modalName").textContent = `${car.brand} ${car.model}`;
-      document.getElementById("modalType").textContent = car.group;
-      document.getElementById("modalEngine").textContent = `${car.engineSize} cc`;
-      document.getElementById("modalDoors").textContent = car.doors;
-      document.getElementById("modalPassengers").textContent = car.passengers;
-      document.getElementById("modalFuel").textContent = car.fuel;
-      document.getElementById("modalGearbox").textContent = car.gearbox;
-      document.getElementById("modalAC").textContent = car.ac ? "Yes" : "No";
-      document.getElementById("modalImage").src = `/images/${car.image}`;
-
-      // Show the modal by changing the display to flex
-      document.getElementById("carModal").style.display = "flex";
-    })
-    .catch(err => {
-      console.log("Error fetching car details:", err);
-    });
-}
-
-
-
-// Close Modal function
-function closeModal() {
-  // Hide the modal
-  document.getElementById("carModal").style.display = "none";
-}
-
-</script>
-<div class="modal" id="carModal">
-  <div class="modal-content">
-    <h3 id="modalName"></h3>
-    <p><strong>Type:</strong> <span id="modalType"></span></p>
-    <p><strong>Engine Size:</strong> <span id="modalEngine"></span></p>
-    <p><strong>Doors:</strong> <span id="modalDoors"></span></p>
-    <p><strong>Passengers:</strong> <span id="modalPassengers"></span></p>
-    <p><strong>Fuel Type:</strong> <span id="modalFuel"></span></p>
-    <p><strong>Gearbox:</strong> <span id="modalGearbox"></span></p>
-    <p><strong>AC:</strong> <span id="modalAC"></span></p>
-    <img id="modalImage" style="max-width: 100%; margin-top: 10px; border-radius: 8px;" />
-    <button onclick="closeModal()">Close</button>
-  </div>
-</div>
-
 
 </body>
 </html>
