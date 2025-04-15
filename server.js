@@ -101,13 +101,14 @@ app.get("/reservation", (req, res) => {
 
 app.get("/reviews", async (req, res) => {
   try {
-    const reviews = await Review.find().sort({ time: -1 }); // Fetch reviews, sorted by latest first
-    res.render("reviews", { reviews }); // Pass the reviews to the ejs view
+    const reviews = await Review.find().sort({ time: -1 }).populate("userId", "displayName profilePicture");
+    res.render("reviews", { reviews });
   } catch (error) {
     console.error("Error fetching reviews:", error);
     res.status(500).send("Error fetching reviews.");
   }
 });
+
 
 app.get("/signup", (req, res) => {
   res.render("signup");
@@ -239,21 +240,24 @@ async function sendEmail(name, email, message) {
 }
 // Route to post a new review
 app.post("/reviews", async (req, res) => {
-  const { title, body, rating } = req.body;
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
 
   try {
     const newReview = new Review({
-      title,
-      body,
-      rating: parseInt(rating),  // Parse rating to ensure it's a number
+      userId: user.id,
+      title: req.body.title,
+      body: req.body.body,
+      rating: parseInt(req.body.rating),
     });
     await newReview.save();
-    res.redirect("/reviews"); // Redirect to reviews page to see the new review
+    res.redirect("/reviews");
   } catch (error) {
     console.error("Error posting review:", error);
     res.status(500).send("Error posting review.");
   }
 });
+
 
 //Chat mechanism 
 

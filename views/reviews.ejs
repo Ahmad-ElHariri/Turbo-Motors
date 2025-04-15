@@ -36,21 +36,25 @@
 
     <!-- Reviews List -->
     <!-- Reviews List -->
-<div class="reviews-list" id="reviews-list">
-    <% reviews.forEach(review => { %>
-      <div class="review">
-        <h4><%= review.title %></h4>
-        <div class="stars">
-          <!-- Show the stars based on rating, with left-to-right order -->
-          <% for (let i = 0; i < 5; i++) { %>
-            <i class="<%= i < review.rating ? 'fas' : 'far' %> fa-star"></i>
-          <% } %>
-        </div>
-        <p><%= review.body %></p>
-        <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
+    <div class="reviews-list" id="reviews-list">
+        <% reviews.forEach(review => { %>
+          <div class="review">
+            <div class="review-user">
+              <img src="<%= review.userId.profilePicture %>" alt="Profile" class="review-avatar">
+              <span><%= review.userId.displayName || review.userId.name %></span>
+            </div>
+            <h4><%= review.title %></h4>
+            <div class="stars">
+              <% for (let i = 0; i < 5; i++) { %>
+                <i class="<%= i < review.rating ? 'fas' : 'far' %> fa-star"></i>
+              <% } %>
+            </div>
+            <p><%= review.body %></p>
+            <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
+          </div>
+        <% }) %>
       </div>
-    <% }) %>
-  </div>
+      
   
   </section>
 
