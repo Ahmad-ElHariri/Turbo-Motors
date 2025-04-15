@@ -4,7 +4,7 @@ const chatBox = document.getElementById("chat-box");
 const userList = document.getElementById("user-list");
 const messageInput = document.getElementById("messageInput");
 
-const adminName = prompt("Enter your admin name:") || "Admin";
+const adminName = document.getElementById("adminName").value;
 socket.emit("joinRoom", adminName);
 
 
