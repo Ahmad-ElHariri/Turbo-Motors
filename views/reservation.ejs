@@ -2,61 +2,89 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservation Page</title>
-    <link rel="stylesheet" href="/css/common_styles.css">
-    <link rel="stylesheet" href="/css/timeline.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservation Page</title>
+  <link rel="stylesheet" href="/css/common_styles.css" />
+  <link rel="stylesheet" href="/css/reservation.css" />
 </head>
 
 <body>
-    <nav>
-        <div class="logo">Turbo Motors</div>
-        <ul class="nav-links">
-            <li><a href="/home">Home</a></li>
-            <li><a href="/allcars">All Cars</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/contact">Contact</a></li>
-            <% if (user) { %>
-                <li><a href="/logout" class="btn">Logout</a></li>
-                <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
-            <% } else { %>
-                <li><a href="/login" class="btn">Sign In</a></li>
-                <li><a href="/signup" class="btn">Sign Up</a></li>
-            <% } %>
-            
-          </ul>
-          
-    </nav>
+  <nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/allcars">All Cars</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact</a></li>
+      <% if (user) { %>
+        <li><a href="/logout" class="btn">Logout</a></li>
+        <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
+      <% } else { %>
+        <li><a href="/login" class="btn">Sign In</a></li>
+        <li><a href="/signup" class="btn">Sign Up</a></li>
+      <% } %>
+    </ul>
+  </nav>
 
-    <main>
-        <section class="timeline">
-            <hr>
-            <div class="step" style="margin-left: 4%;">
-                <p class="circles selected_cricle">1</p>
-                <p>Choose Date & Location</p>
-            </div>
-            <div class="step">
-                <p class="circles">2</p>
-                <p>Add Cars</p>
-            </div>
-            <div class="step">
-                <p class="circles">3</p>
-                <p>Check Out</p>
-            </div>
-        </section>
+  <main class="reservation-ui">
+    <form action="/reservation" method="POST" id="reservationForm">
+      <div class="location-date-wrapper">
+        <div class="location-select">
+          <select id="pickupLocation" name="pickupLocation" required>
+            <option disabled selected>Pick-up Location</option>
+            <option value="kantari">Beirut City Centre Kantari - Lebanon</option>
+            <option value="ashrafieh">Beirut Ashrafieh - Lebanon</option>
+            <option value="sinelfil">Beirut Sin El Fil - Lebanon</option>
+            <option value="airport">Beirut Rafic Hariri International Airport - Lebanon</option>
+          </select>
 
-        <section class="">
-            <h1>Choose Date & Time</h1>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container footer-content">
-            <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-            <p>Follow us on social media: [icons go here]</p>
+          <select id="dropoffLocation" name="dropoffLocation" required>
+            <option disabled selected>Drop-off Location</option>
+            <option>Beirut City Centre Kantari - Lebanon</option>
+            <option>Beirut Ashrafieh - Lebanon</option>
+            <option>Beirut Sin El Fil - Lebanon</option>
+            <option>Beirut Rafic Hariri International Airport - Lebanon</option>
+          </select>
         </div>
-    </footer>
+
+        <div class="datetime-select">
+          <input type="date" id="pickupDate" name="pickupDate" required />
+          <input type="time" id="pickupTime" name="pickupTime" required />
+          <span class="to-label">To</span>
+          <input type="date" id="dropoffDate" name="dropoffDate" required />
+          <input type="time" id="dropoffTime" name="dropoffTime" required />
+        </div>
+      </div>
+
+      <div class="map-box">
+        <div id="map"></div>
+      </div>
+
+      <div class="branch-details">
+        <div id="branchInfo">
+          <h3>Branch Information</h3>
+          <p>Select a location to view details.</p>
+        </div>
+        <button type="submit" class="btn red-btn">Search for Vehicles</button>
+        <div class="options">
+          <label><input type="checkbox" name="returnDifferent" /> Return to Different Location</label>
+          <label><input type="checkbox" name="over30" checked /> Driver aged over 30</label>
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <footer>
+    <div class="container footer-content">
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media: [icons go here]</p>
+    </div>
+  </footer>
+
+  <!-- ✅ Google Maps Script -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD0xx-41UL409XFc74yylwg-ZC3owDeL4&callback=initMap" async defer></script>
+  <script src="/Js/reservation.js"></script>
 </body>
 
 </html>
