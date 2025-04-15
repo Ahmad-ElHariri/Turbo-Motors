@@ -23,31 +23,73 @@
   </nav>
 
   <!-- Filter Section -->
-  <section id="filters">
-    <label for="carTypeFilter">Car Type:</label>
-    <select id="carTypeFilter">
-      <option value="all">All</option>
-      <option value="Electric">Electric</option>
-      <option value="Luxury">Luxury</option>
-      <option value="SUV">SUV</option>
-      <option value="Convertible">Convertible</option>
-    </select>
+ <!-- Filter Section -->
+<section id="filters">
+  <label for="carTypeFilter">Car Type:</label>
+  <select id="carTypeFilter">
+    <option value="all">All</option>
+    <option value="Electric">Electric</option>
+    <option value="Luxury">Luxury</option>
+    <option value="SUV">SUV</option>
+    <option value="Convertible">Convertible</option>
+  </select>
 
-    <label for="fuelTypeFilter">Fuel Type:</label>
-    <select id="fuelTypeFilter">
-      <option value="all">All</option>
-      <option value="Electric">Electric</option>
-      <option value="Gasoline">Gasoline</option>
-      <option value="Diesel">Diesel</option>
-    </select>
+  <label for="fuelTypeFilter">Fuel Type:</label>
+  <select id="fuelTypeFilter">
+    <option value="all">All</option>
+    <option value="Electric">Electric</option>
+    <option value="Gasoline">Gasoline</option>
+    <option value="Diesel">Diesel</option>
+  </select>
 
-    <label for="availabilityFilter">Availability:</label>
-    <select id="availabilityFilter">
-      <option value="all">All</option>
-      <option value="true">Available</option>
-      <option value="false">Reserved</option>
-    </select>
-  </section>
+  <label for="gearboxFilter">Gearbox:</label>
+  <select id="gearboxFilter">
+    <option value="all">All</option>
+    <option value="Automatic">Automatic</option>
+    <option value="Manual">Manual</option>
+  </select>
+
+  <label for="passengersFilter">Passengers:</label>
+  <select id="passengersFilter">
+    <option value="all">All</option>
+    <option value="2">2</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8+</option>
+  </select>
+
+  <label for="doorsFilter">Doors:</label>
+  <select id="doorsFilter">
+    <option value="all">All</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5+</option>
+  </select>
+
+  <label for="acFilter">AC:</label>
+  <select id="acFilter">
+    <option value="all">All</option>
+    <option value="true">Yes</option>
+    <option value="false">No</option>
+  </select>
+
+  <label for="windowsFilter">Electric Windows:</label>
+  <select id="windowsFilter">
+    <option value="all">All</option>
+    <option value="true">Yes</option>
+    <option value="false">No</option>
+  </select>
+
+  <label for="availabilityFilter">Availability:</label>
+  <select id="availabilityFilter">
+    <option value="all">All</option>
+    <option value="true">Available</option>
+    <option value="false">Reserved</option>
+  </select>
+</section>
 
   <!-- MAIN CONTENT -->
   <main>
@@ -59,7 +101,13 @@
         <div class="car-box" 
              data-type="<%= car.group %>" 
              data-fuel="<%= car.specs.fuelType %>" 
+             data-gearbox="<%= car.specs.gearbox %>" 
+             data-passengers="<%= car.specs.passengers %>" 
+             data-doors="<%= car.specs.doors %>" 
+             data-ac="<%= car.specs.hasAC %>" 
+             data-electricwindows="<%= car.specs.electricWindows %>" 
              data-available="<%= car.available %>">
+          
           <img src="/images/<%= car.image %>" alt="<%= car.brand %>">
           <p class="car-name"><%= car.brand %> <%= car.model %></p>
           
@@ -71,15 +119,18 @@
             <p><strong>Fuel Type:</strong> <%= car.specs.fuelType %></p>
             <p><strong>Gearbox:</strong> <%= car.specs.gearbox %></p>
             <p><strong>AC:</strong> <%= car.specs.hasAC ? 'Yes' : 'No' %></p>
+            <p><strong>Electric Windows:</strong> <%= car.specs.electricWindows ? 'Yes' : 'No' %></p>
           </div>
-
+    
           <!-- Availability status line -->
           <div class="car-status <%= car.available ? 'available' : 'unavailable' %>">
             <%= car.available ? 'Available' : 'Reserved' %>
           </div>
+    
         </div>
       <% }); %> <!-- End of loop -->
     </div>
+    
   </main>
 
   <footer>
