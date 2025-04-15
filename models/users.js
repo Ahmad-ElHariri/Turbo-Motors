@@ -34,7 +34,12 @@ const Loginschema = new mongoose.Schema({
     points: {
         type: Number,
         default: 0
+    },
+    profilePicture: {
+      type: String, // Store the image URL or file path
+      default: "/images/default-profile.jpg"
     }
+    
 });
 
 // Create collection from schema

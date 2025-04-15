@@ -2,7 +2,8 @@
 const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "x" },
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" }
+,
   carId: { type: mongoose.Schema.Types.ObjectId, ref: "Car" },
 
   pickupLocation: String,
