@@ -7,6 +7,7 @@ const express = require("express");
 const bcrypt = require('bcrypt');
 const http = require("http");
 const path = require("path");
+const multer = require('multer');
 require("dotenv").config();
 
 
@@ -35,11 +36,30 @@ app.use(express.json());
 // Set view engine for EJS
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'public/images');
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
 
+const upload = multer({ storage });
 // Routes
 app.get("/", (req, res) => {
   res.redirect("/home");
 });
+
+
+app.get("/profile", async (req, res) => {
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
+
+  const currentUser = await collection.findById(user.id);
+  res.render("profile", { user: currentUser, message: null });
+});
+
 
 app.get("/home", (req, res) => {
   res.render("home");
@@ -161,7 +181,24 @@ app.post("/send-message", async (req, res) => {
     res.render("contact", { message: "Failed to send message. Please try again." });
   }
 });
+app.post("/profile", upload.single("profileImage"), async (req, res) => {
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
 
+  const updateData = {
+    displayName: req.body.displayName,
+    age: req.body.age
+  };
+
+  if (req.file) {
+    updateData.profilePicture = `/images/${req.file.filename}`;
+  }
+
+  await collection.findByIdAndUpdate(user.id, updateData);
+
+  const updatedUser = await collection.findById(user.id);
+  res.render("profile", { user: updatedUser, message: "Profile updated successfully!" });
+});
 async function sendEmail(name, email, message) {
   try {
     const transporter = nodemailer.createTransport({

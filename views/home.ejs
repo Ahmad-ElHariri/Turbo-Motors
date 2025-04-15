@@ -20,6 +20,7 @@
       <li><a href="/contact">Contact</a></li>
       <% if (user) { %>
         <li><a href="/logout" class="btn">Logout</a></li>
+        <li><a href="/profile" class="btn">Edit Profile</a></li>
         <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
     <% } else { %>
         <li><a href="/login" class="btn">Sign In</a></li>

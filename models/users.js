@@ -38,7 +38,12 @@ const Loginschema = new mongoose.Schema({
     profilePicture: {
       type: String, // Store the image URL or file path
       default: "/images/default-profile.jpeg"
+    },
+    displayName: {
+      type: String,
+      default: ""
     }
+    
     
 });
 
