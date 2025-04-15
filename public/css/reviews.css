@@ -1,17 +1,18 @@
+/* Use common styles for font consistency */
 body {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Same font as common styles */
     background-color: #f9f9f9;
     color: #333;
   }
   
   .navbar {
-    background-color: #d1ae89;
+    background-color: white;
     padding: 20px;
     text-align: center;
   }
   
   .submit-btn {
-    background-color: #ffcc00;
+    background: linear-gradient(180deg, #3B82F6, #93C5FD);
     color: #fff;
     padding: 10px 20px;
     border-radius: 5px;
@@ -21,7 +22,7 @@ body {
   }
   
   .submit-btn:hover {
-    background-color: #e6b800;
+    background: linear-gradient(180deg, #3B82F6, #93C5FD);
   }
   
   #review-section {
@@ -55,6 +56,7 @@ body {
     line-height: 1.6;
   }
   
+  /* Modal Styling */
   .modal {
     display: none;
     position: fixed;
@@ -87,6 +89,7 @@ body {
     color: #333;
   }
   
+  /* Star rating in modal */
   .star-rating {
     display: flex;
     justify-content: flex-start;
@@ -102,6 +105,7 @@ body {
     cursor: pointer;
   }
   
+  /* Active stars in modal */
   .star-rating input:checked ~ label {
     color: #ffcc00;
   }

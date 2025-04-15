@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reviews</title>
+  <link rel="stylesheet" href="/css/common_styles.css"> <!-- Use common styles for font consistency -->
   <link rel="stylesheet" href="/css/reviews.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
@@ -12,6 +13,17 @@
 </head>
 
 <body>
+    <!-- header.ejs -->
+<nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/allcars">All Cars</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
+  </nav>
+  
   <div class="navbar">
     <h1>Reviews</h1>
   </div>
@@ -28,7 +40,9 @@
         <div class="review">
           <h4><%= review.title %></h4>
           <div class="stars">
-            <%= '★'.repeat(review.rating) %> <!-- Show the stars based on rating -->
+            <!-- Show the stars based on rating, with left-to-right order -->
+            <%= '★'.repeat(review.rating) %>
+            <%= '☆'.repeat(5 - review.rating) %> <!-- Show empty stars based on rating -->
           </div>
           <p><%= review.body %></p>
           <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
@@ -52,16 +66,12 @@
           <textarea id="review-body" name="body" placeholder="Describe your experience" required></textarea>
         </div>
         <div class="star-rating">
-          <label for="star1"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star5" name="rating" value="5">
-          <label for="star2"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star4" name="rating" value="4">
-          <label for="star3"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star3" name="rating" value="3">
-          <label for="star2"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star2" name="rating" value="2">
-          <label for="star1"><i class="fas fa-star"></i></label>
-          <input type="radio" id="star1" name="rating" value="1">
+          <!-- Star rating system: Display stars in left-to-right order -->
+          <input type="radio" id="star5" name="rating" value="5"><label for="star5"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star4" name="rating" value="4"><label for="star4"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star3" name="rating" value="3"><label for="star3"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star2" name="rating" value="2"><label for="star2"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star1" name="rating" value="1"><label for="star1"><i class="fas fa-star"></i></label>
         </div>
         <button type="submit" class="submit-btn">
           <i class="fas fa-paper-plane"></i> Post Review
@@ -69,7 +79,13 @@
       </form>
     </div>
   </div>
-
+<!-- footer.ejs -->
+<footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+    </div>
+  </footer>
+  
   <script>
     // Open Review Modal
     document.getElementById('open-modal').addEventListener('click', function () {
