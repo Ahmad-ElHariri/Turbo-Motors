@@ -20,10 +20,10 @@
       <% if (user) { %>
         <li><a href="/logout" class="btn">Logout</a></li>
         <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
-      <% } else { %>
-        <li><a href="/login" class="btn">Sign In</a></li>
-        <li><a href="/signup" class="btn">Sign Up</a></li>
-      <% } %>
+        <% } else { %>
+          <li><a href="/login" class="btn">Sign In</a></li>
+          <li><a href="/signup" class="btn">Sign Up</a></li>
+          <% } %>
     </ul>
   </nav>
 
@@ -83,7 +83,9 @@
   </footer>
 
   <!-- ✅ Google Maps Script -->
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBD0xx-41UL409XFc74yylwg-ZC3owDeL4&callback=initMap" async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJhUB4auZ8P1buHd4bkPATXljVUb4-6zk&callback=initMap"
+    async defer></script>
+
   <script src="/Js/reservation.js"></script>
 </body>
 
