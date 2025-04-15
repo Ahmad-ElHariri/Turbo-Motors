@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Extras</title>
+    <link rel="stylesheet" href="/css/common_styles.css">
+    <link rel="stylesheet" href="/css/allcarsfull.css">
+    <link rel="stylesheet" href="/css/choosecar.css">
+
+    <style>
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 70%;
+            font-family: Arial, sans-serif;
+        }
+
+        .timeline-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .underline {
+            font-size: 16px;
+            padding-bottom: 5px;
+            border-bottom: 3px solid transparent;
+            color: #555;
+        }
+
+        .active-underline {
+            border-bottom-color: #28a745;
+            /* green underline */
+        }
+
+        .step-label {
+            font-size: 16px;
+            color: #777;
+            font-weight: normal;
+        }
+
+        .active-step {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .separator {
+            width: 2px;
+            height: 20px;
+            background-color: #ccc;
+            margin: 0 8px;
+        }
+
+        .extras-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .extra-card {
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            padding: 20px;
+            width: 400px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .extra-left {
+            flex: 2;
+        }
+
+        .extra-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .extra-desc {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .extra-right {
+            text-align: right;
+        }
+
+        .price {
+            font-weight: bold;
+            font-size: 18px;
+            color: #111;
+        }
+
+        .qty-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .qty-box button {
+            background: crimson;
+            color: white;
+            border: none;
+            font-size: 18px;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .qty-box input {
+            width: 40px;
+            text-align: center;
+            font-size: 16px;
+            margin: 0 8px;
+        }
+
+        .add-toggle {
+            margin-top: 10px;
+            background: crimson;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .submit-btn {
+            display: block;
+            margin: 40px auto 0;
+            background: green;
+            color: white;
+            font-size: 18px;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="logo">Turbo Motors</div>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Timeline -->
+    <div class="timeline">
+        <div class="timeline-step">
+            <div class="underline active-underline">Reservation</div>
+        </div>
+        <div class="separator"></div>
+        <div class="timeline-step">
+            <div class="underline active-underline">Choose Car</div>
+        </div>
+        <div class="separator"></div>
+        <div class="timeline-step">
+            <div class="step-label active-step">
+                <h2>Extras</h2>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <form id="extrasForm" action="/extras" method="POST">
+        <div class="extras-container">
+
+            <!-- Chauffeur -->
+            <div class="extra-card">
+                <div class="extra-left">
+                    <div class="extra-title">Chauffeur</div>
+                    <div class="extra-desc">Enjoy a personal driver for your journey.</div>
+                </div>
+                <div class="extra-right">
+                    <div class="price">USD 50</div>
+                    <button type="button" class="add-toggle" data-name="chauffeur">ADD</button>
+                </div>
+            </div>
+
+            <!-- Baby Seat -->
+            <!-- Baby Seat -->
+            <div class="extra-card">
+                <div class="extra-left">
+                    <div class="extra-title">Baby Seat</div>
+                    <div class="extra-desc">Secure seating for your little one.</div>
+                </div>
+                <div class="extra-right">
+                    <div class="price">USD 20</div>
+                    <button type="button" class="add-toggle" data-name="babySeat">ADD</button>
+                </div>
+            </div>
+
+
+            <!-- Satellite Navigator -->
+            <div class="extra-card">
+                <div class="extra-left">
+                    <div class="extra-title">Satellite Navigator</div>
+                    <div class="extra-desc">Never get lost with our GPS guide.</div>
+                </div>
+                <div class="extra-right">
+                    <div class="price">USD 15</div>
+                    <button type="button" class="add-toggle" data-name="navigator">ADD</button>
+                </div>
+            </div>
+
+            <!-- Insurance Options -->
+            <div class="extra-card">
+                <div class="extra-left">
+                    <div class="extra-title">Insurance Options</div>
+                    <div class="extra-desc">Choose your coverage plan:</div>
+                </div>
+                <div class="extra-right">
+                    <select name="insurance">
+                        <option value="">None</option>
+                        <option value="full">Full Insurance</option>
+                        <option value="tires">Tires & Windscreen</option>
+                        <option value="additionalDriver">Additional Driver Coverage</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Fuel Options -->
+            <div class="extra-card">
+                <div class="extra-left">
+                    <div class="extra-title">Fuel Options</div>
+                    <div class="extra-desc">Choose how you'd like to fuel the car.</div>
+                </div>
+                <div class="extra-right">
+                    <select name="fuel">
+                        <option value="">None</option>
+                        <option value="prepaid">Fuel Prepaid</option>
+                        <option value="payOnReturn">Fuel Pay on Return</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- GPS -->
+            <div class="extra-card">
+                <div class="extra-left">
+                    <div class="extra-title">GPS</div>
+                    <div class="extra-desc">Built-in navigation assistance.</div>
+                </div>
+                <div class="extra-right">
+                    <div class="price">USD 10</div>
+                    <button type="button" class="add-toggle" data-name="gps">ADD</button>
+                </div>
+            </div>
+
+        </div>
+
+        <input type="hidden" name="selectedExtras" id="selectedExtras">
+        <button class="submit-btn" type="submit" style="margin-bottom: 20px;">Continue</button>
+    </form>
+
+    
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+
+    <script>
+        const selected = {};
+
+        document.querySelectorAll('.add-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const name = btn.dataset.name;
+                selected[name] = true;
+                btn.textContent = 'ADDED ✅';
+                btn.disabled = true;
+            });
+        });
+
+        document.querySelectorAll('.qty-box').forEach(box => {
+            const input = box.querySelector('input');
+            const decrease = box.querySelector('.decrease');
+            const increase = box.querySelector('.increase');
+
+            decrease.addEventListener('click', () => {
+                let val = parseInt(input.value);
+                if (val > 0) input.value = val - 1;
+            });
+
+            increase.addEventListener('click', () => {
+                let val = parseInt(input.value);
+                input.value = val + 1;
+            });
+        });
+
+        document.getElementById("extrasForm").addEventListener("submit", function (e) {
+            selected.babySeat = document.querySelector('input[name="babySeat"]').value;
+            selected.insurance = document.querySelector('select[name="insurance"]').value;
+            selected.fuel = document.querySelector('select[name="fuel"]').value;
+            document.getElementById("selectedExtras").value = JSON.stringify(selected);
+        });
+    </script>
+
+</body>
+
+</html>

@@ -135,6 +135,30 @@ router.post("/reservation", async (req, res) => {
     }
 });
 
+router.post("/choose-car", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    try {
+      const selectedCars = JSON.parse(req.body.selectedCars); // parse the array
+  
+      if (!Array.isArray(selectedCars) || selectedCars.length === 0) {
+        return res.status(400).send("No cars selected.");
+      }
+  
+      // You can store it temporarily or pass to next step
+      // For now, log them and redirect
+      console.log("Cars selected:", selectedCars);
+  
+      res.redirect("/extra");
+  
+    } catch (error) {
+      console.error("Error handling car selection:", error);
+      res.status(500).send("Failed to process selected cars.");
+    }
+  });
+  
+
 
 
 // 

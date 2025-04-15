@@ -1,11 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose</title>
+    <link rel="stylesheet" href="/css/common_styles.css">
+    <link rel="stylesheet" href="/css/allcarsfull.css">
+    <link rel="stylesheet" href="/css/choosecar.css">
+    <title>Choose Car</title>
+    <script src="/Js/allcarsJS.js">
+    </script>
+
 </head>
+
 <body>
-    <h1>Choose Car Page</h1>
+    <!-- NAVBAR -->
+    <nav>
+        <div class="logo">Turbo Motors</div>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <!-- <li><a href="/allcars">All Cars</a></li> -->
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Timeline -->
+
+
+    <div class="timeline">
+        <div class="timeline-step">
+            <div class="underline active-underline">Reservation</div>
+        </div>
+        <div class="separator"></div>
+        <div class="timeline-step">
+            <div class="step-label active-step">
+                <h2>Choose Car</h1>
+            </div>
+        </div>
+        <div class="separator"></div>
+        <div class="timeline-step">
+            <div class="step-label">Extras</div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <section id="filters">
+        <label for="carTypeFilter">Car Type:</label>
+        <select id="carTypeFilter">
+            <option value="all">All</option>
+            <option value="Electric">Electric</option>
+            <option value="Luxury">Luxury</option>
+            <option value="SUV">SUV</option>
+            <option value="Convertible">Convertible</option>
+        </select>
+
+        <label for="fuelTypeFilter">Fuel Type:</label>
+        <select id="fuelTypeFilter">
+            <option value="all">All</option>
+            <option value="Electric">Electric</option>
+            <option value="Gasoline">Gasoline</option>
+            <option value="Diesel">Diesel</option>
+        </select>
+
+        <label for="gearboxFilter">Gearbox:</label>
+        <select id="gearboxFilter">
+            <option value="all">All</option>
+            <option value="Automatic">Automatic</option>
+            <option value="Manual">Manual</option>
+        </select>
+
+        <label for="passengersFilter">Passengers:</label>
+        <select id="passengersFilter">
+            <option value="all">All</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8+</option>
+        </select>
+
+        <label for="doorsFilter">Doors:</label>
+        <select id="doorsFilter">
+            <option value="all">All</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5+</option>
+        </select>
+
+        <label for="acFilter">AC:</label>
+        <select id="acFilter">
+            <option value="all">All</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+
+        <label for="windowsFilter">Electric Windows:</label>
+        <select id="windowsFilter">
+            <option value="all">All</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <div class="allcars-container">
+            <h1 class="section-title">All Cars</h1>
+        </div>
+        <div class="car-grid">
+            <% cars.forEach(car=> { %> <!-- Loop through cars array -->
+                <div class="car-box" data-type="<%= car.group %>" data-fuel="<%= car.specs.fuelType %>"
+                    data-gearbox="<%= car.specs.gearbox %>" data-passengers="<%= car.specs.passengers %>"
+                    data-doors="<%= car.specs.doors %>" data-ac="<%= car.specs.hasAC %>"
+                    data-electricwindows="<%= car.specs.electricWindows %>">
+
+
+
+                    <img src="/images/<%= car.image %>" alt="<%= car.brand %>">
+                    <p class="car-name">
+                        <%= car.brand %>
+                            <%= car.model %>
+                    </p>
+
+                    <div class="car-info">
+                        <p><strong>Type:</strong>
+                            <%= car.group %>
+                        </p>
+                        <p><strong>Engine Size:</strong>
+                            <%= car.specs.engineSize %> cc
+                        </p>
+                        <p><strong>Doors:</strong>
+                            <%= car.specs.doors %>
+                        </p>
+                        <p><strong>Passengers:</strong>
+                            <%= car.specs.passengers %>
+                        </p>
+                        <p><strong>Fuel Type:</strong>
+                            <%= car.specs.fuelType %>
+                        </p>
+                        <p><strong>Gearbox:</strong>
+                            <%= car.specs.gearbox %>
+                        </p>
+                        <p><strong>AC:</strong>
+                            <%= car.specs.hasAC ? 'Yes' : 'No' %>
+                        </p>
+                        <p><strong>Electric Windows:</strong>
+                            <%= car.specs.electricWindows ? 'Yes' : 'No' %>
+                        </p>
+                    </div>
+
+                    <button class="choose-btn" data-car-id="<%= car._id %>">Choose</button>
+
+
+                </div>
+                <% }); %> <!-- End of loop -->
+        </div>
+
+    </main>
+
+    <form id="selectedCarsForm" action="/choose-car" method="POST">
+        <input type="hidden" name="selectedCars" id="selectedCarsInput">
+        <button type="submit" class="btn-submit">Proceed to Extras</button>
+    </form>
+
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/Js/choosecar.js"></script>
 </body>
 </html>

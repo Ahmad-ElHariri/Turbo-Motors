@@ -7,149 +7,164 @@ const Review = require("../models/review");
 const Reservation = require("../models/reservations");
 
 router.get("/", (req, res) => {
-  res.redirect("/home");
+    res.redirect("/home");
 });
 
 router.get("/profile", async (req, res) => {
-  const user = req.cookies.user;
-  if (!user) return res.redirect("/login");
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
 
-  const currentUser = await collection.findById(user.id);
-  res.render("profile", { user: currentUser, message: null });
+    const currentUser = await collection.findById(user.id);
+    res.render("profile", { user: currentUser, message: null });
 });
 
 router.get("/home", async (req, res) => {
-  const user = req.cookies.user;
-  const groups = ['Electric', 'Luxury', 'SUV', 'Convertible'];
-  const selectedGroups = groups.sort(() => 0.5 - Math.random()).slice(0, 3);
+    const user = req.cookies.user;
+    const groups = ['Electric', 'Luxury', 'SUV', 'Convertible'];
+    const selectedGroups = groups.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-  try {
-    // Random cars logic (unchanged)
-    const randomCars = [];
-    for (let group of selectedGroups) {
-      const car = await Car.aggregate([
-        { $match: { group: group } },
-        { $sample: { size: 1 } }
-      ]);
-      if (car.length > 0) randomCars.push(car[0]);
+    try {
+        // Random cars logic (unchanged)
+        const randomCars = [];
+        for (let group of selectedGroups) {
+            const car = await Car.aggregate([
+                { $match: { group: group } },
+                { $sample: { size: 1 } }
+            ]);
+            if (car.length > 0) randomCars.push(car[0]);
+        }
+
+        // Get all reviews with user info populated
+        const allReviews = await Review.find()
+            .sort({ time: -1 }) // latest first
+            .populate("userId", "name displayName profilePicture");
+
+        const uniqueUserReviews = [];
+
+        const seenUserIds = new Set();
+        for (const review of allReviews) {
+            const userId = review.userId?._id?.toString();
+            if (!seenUserIds.has(userId)) {
+                uniqueUserReviews.push(review);
+                seenUserIds.add(userId);
+            }
+        }
+
+        let selectedReviews = [];
+
+        if (uniqueUserReviews.length <= 3) {
+            selectedReviews = uniqueUserReviews;
+        } else {
+            // Randomly pick 3 reviews from different users
+            selectedReviews = uniqueUserReviews
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+        }
+
+        res.render("home", {
+            user,
+            cars: randomCars,
+            homepageReviews: selectedReviews,
+        });
+
+    } catch (error) {
+        console.error("Error fetching home data:", error);
+        res.status(500).send("Error fetching home data.");
     }
-
-    // Get all reviews with user info populated
-    const allReviews = await Review.find()
-      .sort({ time: -1 }) // latest first
-      .populate("userId", "name displayName profilePicture");
-
-    const uniqueUserReviews = [];
-
-    const seenUserIds = new Set();
-    for (const review of allReviews) {
-      const userId = review.userId?._id?.toString();
-      if (!seenUserIds.has(userId)) {
-        uniqueUserReviews.push(review);
-        seenUserIds.add(userId);
-      }
-    }
-
-    let selectedReviews = [];
-
-    if (uniqueUserReviews.length <= 3) {
-      selectedReviews = uniqueUserReviews;
-    } else {
-      // Randomly pick 3 reviews from different users
-      selectedReviews = uniqueUserReviews
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
-    }
-
-    res.render("home", {
-      user,
-      cars: randomCars,
-      homepageReviews: selectedReviews,
-    });
-
-  } catch (error) {
-    console.error("Error fetching home data:", error);
-    res.status(500).send("Error fetching home data.");
-  }
 });
 
 router.get("/car/:id", async (req, res) => {
-  const carId = req.params.id;
-  try {
-    const car = await Car.findById(carId);
-    if (!car) return res.status(404).send("Car not found");
-    res.json(car);
-  } catch (error) {
-    console.error("Error fetching car:", error);
-    res.status(500).send("Error fetching car data");
-  }
+    const carId = req.params.id;
+    try {
+        const car = await Car.findById(carId);
+        if (!car) return res.status(404).send("Car not found");
+        res.json(car);
+    } catch (error) {
+        console.error("Error fetching car:", error);
+        res.status(500).send("Error fetching car data");
+    }
 });
 
 router.get("/allcars", async (req, res) => {
-  try {
-    const cars = await Car.find();
-    res.render("allcars", { cars });
-  } catch (error) {
-    console.error("Error fetching cars:", error);
-    res.status(500).send("Error fetching car data");
-  }
+    try {
+        const cars = await Car.find();
+        res.render("allcars", { cars });
+    } catch (error) {
+        console.error("Error fetching cars:", error);
+        res.status(500).send("Error fetching car data");
+    }
+});
+
+router.get("/choose-car", async (req, res) => {
+    try {
+        const cars = await Car.find({ available: true });
+        res.render("choose-car", { cars });
+    } catch (error) {
+        console.error("Error fetching cars:", error);
+        res.status(500).send("Error fetching car data");
+    }
 });
 
 router.get("/chat", (req, res) => {
-  const user = req.cookies.user;
-  if (!user) return res.redirect("/login");
-  res.render("chat", { user });
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+    res.render("chat", { user });
 });
 
 router.get("/admin-chat", (req, res) => {
-  const user = req.cookies.user;
-  if (!user || !user.isAdmin) return res.redirect("/login");
-  res.render("admin-chat", { user });
+    const user = req.cookies.user;
+    if (!user || !user.isAdmin) return res.redirect("/login");
+    res.render("admin-chat", { user });
 });
 
 router.get("/login", (req, res) => {
-  res.render("login");
+    res.render("login");
 });
 
 router.get("/reservation", (req, res) => {
-  const user = req.cookies.user;
-  if (!user) return res.redirect("/login");
-  res.render("reservation", { user });
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+    res.render("reservation", { user });
 });
 
+router.get("/extra", (req, res) => {
+    res.render("extra");
+});
+
+
 router.get("/reviews", async (req, res) => {
-  try {
-    const reviews = await Review.find().sort({ time: -1 }).populate("userId", "displayName profilePicture");
-    res.render("reviews", { reviews });
-  } catch (error) {
-    console.error("Error fetching reviews:", error);
-    res.status(500).send("Error fetching reviews.");
-  }
+    try {
+        const reviews = await Review.find().sort({ time: -1 }).populate("userId", "displayName profilePicture");
+        res.render("reviews", { reviews });
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+        res.status(500).send("Error fetching reviews.");
+    }
 });
 
 router.get("/signup", (req, res) => {
-  res.render("signup");
+    res.render("signup");
 });
 
 router.get("/about", (req, res) => {
-  res.render("about");
+    res.render("about");
 });
 
 router.get("/contact", (req, res) => {
-  res.render("contact", { message: null });
+    res.render("contact", { message: null });
 });
 
 router.get("/choose-car", (req, res) => {
-  res.render("choose-car");
+    res.render("choose-car");
 });
 
 router.get("/addcar", (req, res) => {
-  res.render("addcar");
+    res.render("addcar");
 });
 
 router.get("/logout", (req, res) => {
-  res.clearCookie("user");
-  res.redirect("/login");
+    res.clearCookie("user");
+    res.redirect("/login");
 });
 
 module.exports = router;
