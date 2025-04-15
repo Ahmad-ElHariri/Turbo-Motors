@@ -7,6 +7,7 @@ const Review = require("../models/review");
 const Reservation = require("../models/reservations");
 
 
+
 // Home
 router.get("/", (req, res) => {
     res.redirect("/home");
@@ -68,6 +69,7 @@ router.get("/home", async (req, res) => {
 });
 
 
+
 // Cars
 router.get("/car/:id", async (req, res) => {
     const carId = req.params.id;
@@ -107,6 +109,7 @@ router.get("/admin-chat", (req, res) => {
 });
 
 
+
 // Login / SignUp
 router.get("/login", (req, res) => {
     res.render("login");
@@ -116,8 +119,14 @@ router.get("/signup", (req, res) => {
     res.render("signup");
 });
 
+router.get("/logout", (req, res) => {
+    res.clearCookie("user");
+    res.redirect("/login");
+});
 
-// Profile
+
+
+// Other Pages
 router.get("/profile", async (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
@@ -125,7 +134,6 @@ router.get("/profile", async (req, res) => {
     const currentUser = await collection.findById(user.id);
     res.render("profile", { user: currentUser, message: null });
 });
-
 
 router.get("/reviews", async (req, res) => {
     try {
@@ -136,7 +144,6 @@ router.get("/reviews", async (req, res) => {
         res.status(500).send("Error fetching reviews.");
     }
 });
-
 
 router.get("/about", (req, res) => {
     res.render("about");
@@ -150,10 +157,6 @@ router.get("/addcar", (req, res) => {
     res.render("addcar");
 });
 
-router.get("/logout", (req, res) => {
-    res.clearCookie("user");
-    res.redirect("/login");
-});
 
 
 // Booking Proccess
@@ -190,8 +193,5 @@ router.get("/booking-checkout", (req, res) => {
         selectedExtras
     });
 });
-
-
-
 
 module.exports = router;

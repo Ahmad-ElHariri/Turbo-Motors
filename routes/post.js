@@ -223,7 +223,7 @@ router.post("/reservation", async (req, res) => {
 
 
 
-// choosing cars
+// Choosing cars
 router.post("/choose-car", async (req, res) => {
     try {
         const selectedCars = JSON.parse(req.body.selectedCars || "[]");
