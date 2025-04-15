@@ -152,24 +152,37 @@ app.post("/login", async (req, res) => {
     if (!check) {
       return res.render("login", { message: "Username not found." });
     }
+
     const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
     if (!isPasswordMatch) {
       return res.render("login", { message: "Incorrect password." });
-    } else {
-      res.cookie("user", {
-        id: check._id,
-        name: check.name,
-        isAdmin: check.isAdmin
-      }, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24 // 1 day
-      });
-      res.render("home");
     }
-  } catch {
-    res.render("login", { message: "Something went wrong. Please try again." });
+
+    // Set cookie
+    res.cookie("user", {
+      id: check._id,
+      name: check.name,
+      isAdmin: check.isAdmin
+    }, {
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 // 1 day
+    });
+
+    // Check for missing profile data
+    const needsProfileUpdate = !check.profilePicture || !check.age || !check.displayName;
+
+    if (needsProfileUpdate) {
+      return res.redirect("/profile");
+    } else {
+      return res.redirect("/home");
+    }
+
+  } catch (err) {
+    console.error(err);
+    return res.render("login", { message: "Something went wrong. Please try again." });
   }
 });
+
 
 // Contact us functions
 app.post("/send-message", async (req, res) => {
