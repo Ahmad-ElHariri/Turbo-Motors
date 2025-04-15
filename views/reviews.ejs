@@ -35,20 +35,23 @@
     </button>
 
     <!-- Reviews List -->
-    <div class="reviews-list" id="reviews-list">
-      <% reviews.forEach(review => { %>
-        <div class="review">
-          <h4><%= review.title %></h4>
-          <div class="stars">
-            <!-- Show the stars based on rating, with left-to-right order -->
-            <%= '★'.repeat(review.rating) %>
-            <%= '☆'.repeat(5 - review.rating) %> <!-- Show empty stars based on rating -->
-          </div>
-          <p><%= review.body %></p>
-          <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
+    <!-- Reviews List -->
+<div class="reviews-list" id="reviews-list">
+    <% reviews.forEach(review => { %>
+      <div class="review">
+        <h4><%= review.title %></h4>
+        <div class="stars">
+          <!-- Show the stars based on rating, with left-to-right order -->
+          <% for (let i = 0; i < 5; i++) { %>
+            <i class="<%= i < review.rating ? 'fas' : 'far' %> fa-star"></i>
+          <% } %>
         </div>
-      <% }) %>
-    </div>
+        <p><%= review.body %></p>
+        <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
+      </div>
+    <% }) %>
+  </div>
+  
   </section>
 
   <!-- Review Modal -->

@@ -45,12 +45,33 @@ body {
     font-size: 1.4rem;
     margin-bottom: 10px;
   }
-  
-  .stars {
-    font-size: 1.2rem;
-    color: #ffcc00;
+  /* Star Rating Styling */
+.stars {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 1.8rem; /* Adjusted size */
+    color: #ccc; /* Default empty stars */
+    gap: 5px; /* To prevent space between stars */
   }
   
+  .stars .fas {
+    color: #ffcc00; /* Yellow for filled stars */
+  }
+  
+  .stars .far {
+    color: #ccc; /* Light gray for empty stars */
+  }
+  
+  /* Additional star hover effects */
+  .stars .fas:hover,
+  .stars .far:hover {
+    color: #ffcc00; /* Change color to yellow on hover */
+  }
+  
+
+
+
+
   .review p {
     font-size: 1rem;
     line-height: 1.6;
@@ -90,23 +111,39 @@ body {
   }
   
   /* Star rating in modal */
-  .star-rating {
+  /* STAR RATING SYSTEM - FORM */
+.star-rating {
     display: flex;
-    justify-content: flex-start;
+    flex-direction: row-reverse; /* Left to right order */
+    justify-content: flex-start; /* Align to the left */
+    font-size: 1.8rem; /* Adjusted size */
+    cursor: pointer;
     gap: 5px;
-    font-size: 1.5rem;
+    margin-top: 5px;
+    width: fit-content;
   }
   
-  .star-rating input {
+  /* Hide radio inputs */
+  .star-rating input[type="radio"] {
     display: none;
   }
   
+  /* Default empty star */
   .star-rating label {
+    color: #ccc; /* Light gray stars */
     cursor: pointer;
+    transition: color 0.3s;
   }
   
-  /* Active stars in modal */
-  .star-rating input:checked ~ label {
+  /* Change star color on hover */
+  .star-rating label:hover,
+  .star-rating label:hover ~ label {
+    color: #ffcc00; /* Yellow on hover */
+  }
+  
+  /* When selected, fill stars */
+  .star-rating input[type="radio"]:checked ~ label {
     color: #ffcc00;
   }
+  
   
