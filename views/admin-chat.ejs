@@ -9,6 +9,7 @@
     <script src="/js/admin-chat.js" defer></script>
 </head>
 <body>
+    <input type="hidden" id="adminName" value="<%= user.name %>">
     <nav>
         <div class="logo">Turbo Motors Chat</div>
         <ul class="nav-links">
@@ -27,7 +28,7 @@
           </ul>
           
     </nav>
-    <main>
+    <main >
         <h2 class="admin-header">Admin Chat Dashboard</h2>
     <div class="admin-chat-container">
         <div class="user-list">
