@@ -173,6 +173,10 @@ app.get("/choose-car", (req, res) => {
   res.render("choose-car");
 });
 
+app.get("/addcar", (req, res) => {
+  res.render("addcar");
+});
+
 app.get("/logout", (req, res) => {
   res.clearCookie("user"); // This deletes the cookie
   res.redirect("/login");  // Send the user back to login page
