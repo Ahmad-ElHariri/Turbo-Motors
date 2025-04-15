@@ -1,39 +1,37 @@
-// models/reservation.js
-const mongoose = require("mongoose");
+// models/reservations.js
+
+const mongoose = require('mongoose');
 
 const reservationSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "user" }
-,
-  carId: { type: mongoose.Schema.Types.ObjectId, ref: "Car" },
-
-  pickupLocation: String,
-  dropoffLocation: String,
-  pickupDate: Date,
-  dropoffDate: Date,
-  driverName: String,
-  driverAge: Number,
-
-  services: {
-    chauffeur: Boolean,
-    babySeat: Boolean,
-    navigator: Boolean,
-    gps: Boolean,
-    insurance: {
-      type: String, // "Full", "Tires", "Additional Driver"
-    },
-    fuelOption: {
-      type: String, // "Prepaid", "PayOnReturn"
-    }
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
   },
-
-  status: {
+  pickupLocation: {
     type: String,
-    enum: ["saved", "completed", "cancelled", "quotation"],
-    default: "saved"
+    required: true
   },
-
-  totalPrice: Number,
-  createdAt: { type: Date, default: Date.now }
+  dropoffLocation: {
+    type: String,
+    required: true
+  },
+  pickupDateTime: {
+    type: Date,
+    required: true
+  },
+  dropoffDateTime: {
+    type: Date,
+    required: true
+  },
+  driverAge: {
+    type: Number,
+    required: true,
+    min: 18,
+    max: 75
+  }
 });
 
-module.exports = mongoose.model("Reservation", reservationSchema);
+const Reservation = mongoose.model('Reservation', reservationSchema);
+
+module.exports = Reservation;

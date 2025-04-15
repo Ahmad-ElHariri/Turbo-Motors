@@ -156,6 +156,10 @@ app.get("/signup", (req, res) => {
   res.render("signup");
 });
 
+app.get("/about", (req, res) => {
+  res.render("about");
+});
+
 app.get("/contact", (req, res) => {
   res.render("contact", { message: null });
 });
