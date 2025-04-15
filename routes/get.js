@@ -24,6 +24,7 @@ router.get("/home", async (req, res) => {
   const selectedGroups = groups.sort(() => 0.5 - Math.random()).slice(0, 3);
 
   try {
+    // Random cars logic (unchanged)
     const randomCars = [];
     for (let group of selectedGroups) {
       const car = await Car.aggregate([
@@ -32,10 +33,43 @@ router.get("/home", async (req, res) => {
       ]);
       if (car.length > 0) randomCars.push(car[0]);
     }
-    res.render("home", { user, cars: randomCars });
+
+    // Get all reviews with user info populated
+    const allReviews = await Review.find()
+      .sort({ time: -1 }) // latest first
+      .populate("userId", "name displayName profilePicture");
+
+    const uniqueUserReviews = [];
+
+    const seenUserIds = new Set();
+    for (const review of allReviews) {
+      const userId = review.userId?._id?.toString();
+      if (!seenUserIds.has(userId)) {
+        uniqueUserReviews.push(review);
+        seenUserIds.add(userId);
+      }
+    }
+
+    let selectedReviews = [];
+
+    if (uniqueUserReviews.length <= 3) {
+      selectedReviews = uniqueUserReviews;
+    } else {
+      // Randomly pick 3 reviews from different users
+      selectedReviews = uniqueUserReviews
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 3);
+    }
+
+    res.render("home", {
+      user,
+      cars: randomCars,
+      homepageReviews: selectedReviews,
+    });
+
   } catch (error) {
-    console.error("Error fetching cars:", error);
-    res.status(500).send("Error fetching car data.");
+    console.error("Error fetching home data:", error);
+    res.status(500).send("Error fetching home data.");
   }
 });
 

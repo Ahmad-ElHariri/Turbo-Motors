@@ -68,26 +68,21 @@
     <section class="reviews container">
       <h2 class="section-title">Why Choose Us?<br>See What Our Customers Say</h2>
       <div class="review-grid">
-        <div class="review-card">
-          <h3>Jad Hdeife</h3>
-          <p class="stars">★★★★★</p>
-          <p>"Turbo Motors made my trip unforgettable. Clean car, smooth ride, and excellent service!"</p>
-        </div>
-        <div class="review-card">
-          <h3>Ahmad Hariri</h3>
-          <p class="stars">★★★★☆</p>
-          <p>"Great customer support and lots of car options. I'll definitely rent again!"</p>
-        </div>
-        <div class="review-card">
-          <h3>Mohammad Serhan</h3>
-          <p class="stars">★★★★★</p>
-          <p>"Highly recommended! Pickup and return were super easy. The car was in perfect condition."</p>
-        </div>
+        <% homepageReviews.forEach(review => { %>
+          <div class="review-card">
+            <h3><%= review.userId.displayName || review.userId.name %></h3>
+            <p class="stars">
+              <%= '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating) %>
+            </p>
+            <p>"<%= review.body %>"</p>
+          </div>
+        <% }) %>
       </div>
       <div class="center-text">
         <a href="/reviews" class="buttons">Reviews Page</a>
       </div>
     </section>
+    
 
     <!-- Stats Section -->
     <section class="stats container">
