@@ -1,15 +1,3 @@
-.allcars-container {
-  max-width: 1200px;
-  margin: auto;
-  text-align: center;
-}
-
-.section-title {
-  font-size: 36px;
-  color: #0F172A;
-  margin: 30px 0;
-}
-
 .car-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -27,6 +15,8 @@
   display: flex;
   flex-direction: column;
   padding: 15px;
+  max-width: 450px; /* Limit max width for the car cards */
+  margin: 0 auto; /* Ensure the cards are centered */
 }
 
 .car-box:hover {
@@ -78,7 +68,7 @@
   font-size: 14px;
   color: #666;
 }
-/* Availability status styling */
+
 /* Availability status styling */
 .car-status {
   font-size: 14px;
@@ -99,6 +89,8 @@
 .car-status.unavailable {
   color: red;
 }
+
+/* Filters styling */
 #filters {
   display: flex;
   gap: 20px;
