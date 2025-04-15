@@ -3,11 +3,9 @@ const chatBox = document.getElementById("chat-box");
 const messageInput = document.getElementById("messageInput");
 const sendButton = document.getElementById("sendButton");
 
-let username;
-do {
-    username = prompt("Enter your name:").trim();
-} while (!username);
+const username = document.getElementById("username").value;
 socket.emit("joinRoom", username);
+
 
 function sendMessage() {
     const message = messageInput.value.trim();
@@ -26,40 +24,42 @@ messageInput.addEventListener("keydown", (e) => {
         sendMessage();
     }
 });
-
 function displayMessage(sender, message, className) {
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("message", className);
-    messageDiv.textContent = `${sender}: ${message}`;
+    messageDiv.innerText = `${sender}: ${message}`;
     chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
-}
+  }
+  
 
-socket.on("message", (message) => {
+  socket.on("message", (message) => {
     const colonIndex = message.indexOf(": ");
     if (colonIndex !== -1) {
+      const sender = message.substring(0, colonIndex);
+      const text = message.substring(colonIndex + 2);
+      const isSelf = sender.toLowerCase() === username.toLowerCase();
+      const className = isSelf ? "right" : "left";
+      displayMessage(isSelf ? "You" : sender, text, className);
+    } else {
+      displayMessage("System", message, "left");
+    }
+  });
+  
+
+  socket.on("previousMessages", (messages) => {
+    chatBox.innerHTML = "";
+    messages.forEach((message) => {
+      const colonIndex = message.indexOf(": ");
+      if (colonIndex !== -1) {
         const sender = message.substring(0, colonIndex);
         const text = message.substring(colonIndex + 2);
         const isSelf = sender.toLowerCase() === username.toLowerCase();
         const className = isSelf ? "right" : "left";
         displayMessage(isSelf ? "You" : sender, text, className);
-    } else {
+      } else {
         displayMessage("System", message, "left");
-    }
-});
-
-socket.on("previousMessages", (messages) => {
-    chatBox.innerHTML = "";
-    messages.forEach((message) => {
-        const colonIndex = message.indexOf(": ");
-        if (colonIndex !== -1) {
-            const sender = message.substring(0, colonIndex);
-            const text = message.substring(colonIndex + 2);
-            const isSelf = sender.toLowerCase() === username.toLowerCase();
-            const className = isSelf ? "right" : "left";
-            displayMessage(isSelf ? "You" : sender, text, className);
-        } else {
-            displayMessage("System", message, "left");
-        }
+      }
     });
-});
+  });
+  
