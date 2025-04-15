@@ -61,17 +61,59 @@ app.get("/profile", async (req, res) => {
 });
 
 
-app.get("/home", (req, res) => {
-  res.render("home");
+/// Route to fetch 3 random cars from distinct groups
+app.get("/home", async (req, res) => {
+  const user = req.cookies.user;
+
+  try {
+    // Define the distinct groups you want to fetch from (4 groups)
+    const groups = ['Electric', 'Luxury', 'SUV', 'Convertible'];
+
+    // Randomly select 3 groups from the 4 available groups
+    const selectedGroups = groups.sort(() => 0.5 - Math.random()).slice(0, 3); 
+
+    // Fetch 1 random car from each selected group
+    const randomCars = [];
+    for (let group of selectedGroups) {
+      const car = await Car.aggregate([
+        { $match: { group: group } }, // Match the group
+        { $sample: { size: 1 } } // Randomly sample 1 car from this group
+      ]);
+
+      // Only push valid cars to randomCars
+      if (car.length > 0) {
+        randomCars.push(car[0]);
+      }
+    }
+
+    // Log the cars to verify the structure
+    console.log(randomCars); // Log to ensure each car has an _id field
+
+    res.render("home", { user, cars: randomCars });
+  } catch (error) {
+    console.error("Error fetching cars:", error);
+    res.status(500).send("Error fetching car data.");
+  }
 });
 
-app.get("/about", (req, res) => {
-  res.render("about");
+
+
+// Fetch car details by ID
+// Route to fetch car details by ID
+app.get("/car/:id", async (req, res) => {
+  const carId = req.params.id;
+  try {
+    const car = await Car.findById(carId);
+    if (!car) {
+      return res.status(404).send("Car not found");
+    }
+    res.json(car); // Send car data as JSON
+  } catch (error) {
+    console.error("Error fetching car:", error);
+    res.status(500).send("Error fetching car data");
+  }
 });
 
-app.get("/admin-chat", (req, res) => {
-  res.render("admin-chat");
-});
 
 // Fetch all cars for allcars route
 app.get("/allcars", async (req, res) => {

@@ -26,9 +26,7 @@
         <li><a href="/login" class="btn">Sign In</a></li>
         <li><a href="/signup" class="btn">Sign Up</a></li>
     <% } %>
-    
     </ul>
-
   </nav>
 
   <main>
@@ -43,17 +41,26 @@
     <section class="featured-cars container">
       <h2 class="section-title">Check Out Our Large Collection<br>Of Cars In Different Categories</h2>
       <div class="car-gallery">
-        <div class="car-card"><img src="/images/sports-car-1.jpeg" alt="Car 1" />
-          <p>Sport Cars</p>
-        </div>
-        <div class="car-card"><img src="/images/SUV-car-1.jpg" alt="Car 2" />
-          <p>SUVs</p>
-        </div>
-        <div class="car-card"><img src="/images/tesla-car.jpeg" alt="Car 3" />
-          <p>Battery-Powered Cars</p>
-        </div>
+        <% cars.forEach(car => { %>
+          <div class="car-card" onclick="openCarModal('<%= car._id %>')">
+            <img src="/images/<%= car.image %>" alt="<%= car.model %>" />
+            <p><%= car.group %></p> <!-- Display the group/category of the car -->
+          </div>
+        <% }) %>
       </div>
     </section>
+
+    <!-- Car Modal -->
+    <div id="car-modal" class="modal" onclick="closeCarModal()">
+      <div class="modal-content" onclick="event.stopPropagation()">
+        <span class="close-btn" onclick="closeCarModal()">&times;</span>
+        <h3 id="car-model"></h3>
+        <img id="car-image" src="" alt="Car Image" />
+        <div id="car-specs">
+          <!-- Specifications will be dynamically populated here -->
+        </div>
+      </div>
+    </div>
 
     <!-- Reviews Section -->
     <section class="reviews container">
@@ -74,9 +81,6 @@
           <p class="stars">★★★★★</p>
           <p>"Highly recommended! Pickup and return were super easy. The car was in perfect condition."</p>
         </div>
-
-
-
       </div>
       <div class="center-text">
         <a href="/reviews" class="buttons">Reviews Page</a>
@@ -109,6 +113,35 @@
     </div>
   </footer>
 
+  <script>
+    // Function to open the car modal and fetch car specs
+    function openCarModal(carId) {
+      // Fetch the car details using the car ID
+      fetch(`/car/${carId}`)
+        .then(response => response.json())
+        .then(car => {
+          // Populate modal with car details
+          document.getElementById("car-model").innerText = `${car.brand} ${car.model}`;
+          document.getElementById("car-image").src = "/images/" + car.image; // Correct image path
+          document.getElementById("car-specs").innerHTML = `
+            <p><strong>Engine Size:</strong> ${car.specs.engineSize} CC</p>
+            <p><strong>Doors:</strong> ${car.specs.doors}</p>
+            <p><strong>Passengers:</strong> ${car.specs.passengers}</p>
+            <p><strong>Fuel Type:</strong> ${car.specs.fuelType}</p>
+            <p><strong>Gearbox:</strong> ${car.specs.gearbox}</p>
+            <p><strong>AC:</strong> ${car.specs.hasAC ? 'Yes' : 'No'}</p>
+            <p><strong>Electric Windows:</strong> ${car.specs.electricWindows ? 'Yes' : 'No'}</p>
+            <p><strong>Price Per Day:</strong> $${car.pricePerDay}</p>
+          `;
+          document.getElementById("car-modal").style.display = 'flex'; // Show the modal
+        })
+        .catch(err => console.error('Error fetching car data:', err));
+    }
+
+    function closeCarModal() {
+      document.getElementById("car-modal").style.display = 'none'; // Close the modal
+    }
+  </script>
 </body>
 
 </html>

@@ -131,3 +131,69 @@
   text-align: center;
   margin-bottom: 20px;
 }
+
+/* Modal Styles */
+.car-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); /* Overlay */
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  width: 50%;
+  text-align: center;
+}
+
+.close-btn {
+  font-size: 28px;
+  color: #aaa;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.car-gallery {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.car-card {
+  width: 300px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding-bottom: 10px;
+  cursor: pointer;
+}
+
+.car-card img {
+  width: 100%;
+  height: 200px;
+  display: block;
+}
+
+.car-card p {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #0F172A;
+}
+
