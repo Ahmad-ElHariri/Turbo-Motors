@@ -40,8 +40,19 @@
     padding: 10px;
     border-radius: 5px;
 }
-
+.message {
+    display: inline-block;
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
 .chat-box {
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
     height: 300px;
     overflow-y: auto;
     background-color: #e2e8f0;
@@ -67,4 +78,20 @@
     color: white;
     border: none;
     border-radius: 5px;
+}
+
+.message.right {
+    background-color: #3B82F6; 
+    color: white;
+    align-self: flex-end;
+    border-top-right-radius: 0;
+    margin-left:auto;
+}
+
+.message.left {
+    background-color: #E5E7EB; 
+    color: #111827;
+    align-self: flex-start;
+    border-top-left-radius: 0;
+    margin-right:auto;
 }
