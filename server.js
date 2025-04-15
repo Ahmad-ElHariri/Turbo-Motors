@@ -16,6 +16,8 @@ require("dotenv").config();
 const collection = require("./models/users.js");
 const Car = require("./models/car"); 
 const Review = require("./models/review");
+const Reservation = require("./models/reservations");
+
 
 // Local Variables
 const app = express();
@@ -46,6 +48,9 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+
+
 // Routes
 app.get("/", (req, res) => {
   res.redirect("/home");
@@ -164,6 +169,10 @@ app.get("/contact", (req, res) => {
   res.render("contact", { message: null });
 });
 
+app.get("/choose-car", (req, res) => {
+  res.render("choose-car");
+});
+
 app.get("/logout", (req, res) => {
   res.clearCookie("user"); // This deletes the cookie
   res.redirect("/login");  // Send the user back to login page
@@ -229,6 +238,44 @@ app.post("/login", async (req, res) => {
     return res.render("login", { message: "Something went wrong. Please try again." });
   }
 });
+
+
+// Reservation post function
+app.post("/reservation", async (req, res) => {
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
+
+  try {
+    const {
+      pickupLocation,
+      dropoffLocation,
+      pickupDate,
+      pickupTime,
+      dropoffDate,
+      dropoffTime,
+      
+    } = req.body;
+
+    const pickupDateTime = new Date(`${pickupDate}T${pickupTime}`);
+    const dropoffDateTime = new Date(`${dropoffDate}T${dropoffTime}`);
+
+    const reservation = new Reservation({
+      user: user.id,
+      pickupLocation,
+      dropoffLocation,
+      pickupDateTime,
+      dropoffDateTime,
+      
+    });
+
+    await reservation.save();
+    res.redirect("/choose-car");
+  } catch (err) {
+    console.error("❌ Error creating reservation:", err);
+    res.status(500).send("Something went wrong while creating the reservation.");
+  }
+});
+
 
 
 // Contact us functions

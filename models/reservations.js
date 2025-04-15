@@ -23,12 +23,6 @@ const reservationSchema = new mongoose.Schema({
   dropoffDateTime: {
     type: Date,
     required: true
-  },
-  driverAge: {
-    type: Number,
-    required: true,
-    min: 18,
-    max: 75
   }
 });
 
