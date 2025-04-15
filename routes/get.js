@@ -6,16 +6,10 @@ const Car = require("../models/car");
 const Review = require("../models/review");
 const Reservation = require("../models/reservations");
 
+
+// Home
 router.get("/", (req, res) => {
     res.redirect("/home");
-});
-
-router.get("/profile", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-
-    const currentUser = await collection.findById(user.id);
-    res.render("profile", { user: currentUser, message: null });
 });
 
 router.get("/home", async (req, res) => {
@@ -73,6 +67,8 @@ router.get("/home", async (req, res) => {
     }
 });
 
+
+// Cars
 router.get("/car/:id", async (req, res) => {
     const carId = req.params.id;
     try {
@@ -95,16 +91,9 @@ router.get("/allcars", async (req, res) => {
     }
 });
 
-router.get("/choose-car", async (req, res) => {
-    try {
-        const cars = await Car.find({ available: true });
-        res.render("choose-car", { cars });
-    } catch (error) {
-        console.error("Error fetching cars:", error);
-        res.status(500).send("Error fetching car data");
-    }
-});
 
+
+// Chat
 router.get("/chat", (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
@@ -117,18 +106,24 @@ router.get("/admin-chat", (req, res) => {
     res.render("admin-chat", { user });
 });
 
+
+// Login / SignUp
 router.get("/login", (req, res) => {
     res.render("login");
 });
 
-router.get("/reservation", (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-    res.render("reservation", { user });
+router.get("/signup", (req, res) => {
+    res.render("signup");
 });
 
-router.get("/extra", (req, res) => {
-    res.render("extra");
+
+// Profile
+router.get("/profile", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+
+    const currentUser = await collection.findById(user.id);
+    res.render("profile", { user: currentUser, message: null });
 });
 
 
@@ -142,9 +137,6 @@ router.get("/reviews", async (req, res) => {
     }
 });
 
-router.get("/signup", (req, res) => {
-    res.render("signup");
-});
 
 router.get("/about", (req, res) => {
     res.render("about");
@@ -152,10 +144,6 @@ router.get("/about", (req, res) => {
 
 router.get("/contact", (req, res) => {
     res.render("contact", { message: null });
-});
-
-router.get("/choose-car", (req, res) => {
-    res.render("choose-car");
 });
 
 router.get("/addcar", (req, res) => {
@@ -166,5 +154,44 @@ router.get("/logout", (req, res) => {
     res.clearCookie("user");
     res.redirect("/login");
 });
+
+
+// Booking Proccess
+router.get("/reservation", (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+    res.render("reservation", { user });
+});
+
+router.get("/choose-car", async (req, res) => {
+    try {
+        const cars = await Car.find({ available: true });
+        res.render("choose-car", { cars });
+    } catch (error) {
+        console.error("Error fetching cars:", error);
+        res.status(500).send("Error fetching car data");
+    }
+});
+
+router.get("/extra", (req, res) => {
+    res.render("extra");
+});
+
+router.get("/booking-checkout", (req, res) => {
+    const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+    const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+    const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+
+    if (!reservationData.pickupLocation) return res.redirect("/reservation");
+
+    res.render("booking-checkout", {
+        reservation: reservationData,
+        selectedCars,
+        selectedExtras
+    });
+});
+
+
+
 
 module.exports = router;

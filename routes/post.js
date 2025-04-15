@@ -9,6 +9,8 @@ const multer = require("multer");
 const nodemailer = require("nodemailer");
 const path = require("path");
 
+
+
 // Set up Multer again here if needed
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -20,6 +22,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+
+
 // Email sender function
 async function sendEmail(name, email, message) {
     try {
@@ -30,14 +34,12 @@ async function sendEmail(name, email, message) {
                 pass: process.env.PASSWORD,
             },
         });
-
         const mailOptions = {
             from: `"${name}" <${email}>`,
             to: "elhariri2023@gmail.com",
             subject: `Message from ${name}`,
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
         };
-
         const result = await transporter.sendMail(mailOptions);
         console.log("Email sent: ", result);
         return result;
@@ -47,121 +49,8 @@ async function sendEmail(name, email, message) {
     }
 }
 
-// Signup
-router.post("/signup", async (req, res) => {
-    const data = {
-        name: req.body.username,
-        password: req.body.password
-    };
-    const existingUser = await collection.findOne({ name: data.name });
-    if (req.body.password !== req.body.confirmPassword) {
-        return res.render("signup", { message: "Passwords do not match." });
-    }
-    if (existingUser) {
-        return res.render("signup", { message: "Username already exists." });
-    } else {
-        const hashedPassword = await bcrypt.hash(data.password, 10);
-        data.password = hashedPassword;
-        await collection.insertMany(data);
-        res.redirect("/login");
-    }
-});
 
-
-
-// Login
-router.post("/login", async (req, res) => {
-    try {
-        const check = await collection.findOne({ name: req.body.username });
-        if (!check) return res.render("login", { message: "Username not found." });
-
-        const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
-        if (!isPasswordMatch) return res.render("login", { message: "Incorrect password." });
-
-        res.cookie("user", {
-            id: check._id,
-            name: check.name,
-            isAdmin: check.isAdmin
-        }, {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24
-        });
-
-        const needsProfileUpdate = !check.profilePicture || !check.age || !check.displayName;
-        if (needsProfileUpdate) {
-            return res.redirect("/profile");
-        } else {
-            return res.redirect("/home");
-        }
-
-    } catch (err) {
-        console.error(err);
-        return res.render("login", { message: "Something went wrong." });
-    }
-});
-
-
-// Reservation Functions
-router.post("/reservation", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-
-    try {
-        const {
-            pickupLocation,
-            dropoffLocation,
-            pickupDate,
-            pickupTime,
-            dropoffDate,
-            dropoffTime
-        } = req.body;
-
-        const pickupDateTime = new Date(`${pickupDate}T${pickupTime}`);
-        const dropoffDateTime = new Date(`${dropoffDate}T${dropoffTime}`);
-
-        const reservation = new Reservation({
-            user: user.id,
-            pickupLocation,
-            dropoffLocation,
-            pickupDateTime,
-            dropoffDateTime,
-        });
-
-        await reservation.save();
-        res.redirect("/choose-car");
-    } catch (err) {
-        console.error("❌ Error creating reservation:", err);
-        res.status(500).send("Something went wrong while creating the reservation.");
-    }
-});
-
-router.post("/choose-car", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-  
-    try {
-      const selectedCars = JSON.parse(req.body.selectedCars); // parse the array
-  
-      if (!Array.isArray(selectedCars) || selectedCars.length === 0) {
-        return res.status(400).send("No cars selected.");
-      }
-  
-      // You can store it temporarily or pass to next step
-      // For now, log them and redirect
-      console.log("Cars selected:", selectedCars);
-  
-      res.redirect("/extra");
-  
-    } catch (error) {
-      console.error("Error handling car selection:", error);
-      res.status(500).send("Failed to process selected cars.");
-    }
-  });
-  
-
-
-
-// 
+// Contact Us
 router.post("/send-message", async (req, res) => {
     const { name, email, message } = req.body;
     try {
@@ -232,6 +121,146 @@ router.post("/reviews/:id/delete", async (req, res) => {
     } catch (error) {
         console.error("Error deleting review:", error);
         res.status(500).send("Error deleting review.");
+    }
+});
+
+
+
+// Signup
+router.post("/signup", async (req, res) => {
+    const data = {
+        name: req.body.username,
+        password: req.body.password
+    };
+    const existingUser = await collection.findOne({ name: data.name });
+    if (req.body.password !== req.body.confirmPassword) {
+        return res.render("signup", { message: "Passwords do not match." });
+    }
+    if (existingUser) {
+        return res.render("signup", { message: "Username already exists." });
+    } else {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        data.password = hashedPassword;
+        await collection.insertMany(data);
+        res.redirect("/login");
+    }
+});
+
+
+
+// Login
+router.post("/login", async (req, res) => {
+    try {
+        const check = await collection.findOne({ name: req.body.username });
+        if (!check) return res.render("login", { message: "Username not found." });
+
+        const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
+        if (!isPasswordMatch) return res.render("login", { message: "Incorrect password." });
+
+        res.cookie("user", {
+            id: check._id,
+            name: check.name,
+            isAdmin: check.isAdmin
+        }, {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24
+        });
+
+        const needsProfileUpdate = !check.profilePicture || !check.age || !check.displayName;
+        if (needsProfileUpdate) {
+            return res.redirect("/profile");
+        } else {
+            return res.redirect("/home");
+        }
+
+    } catch (err) {
+        console.error(err);
+        return res.render("login", { message: "Something went wrong." });
+    }
+});
+
+
+
+// Reservation Functions
+
+// Reservation (Date & Location)
+router.post("/reservation", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+
+    try {
+        const {
+            pickupLocation,
+            dropoffLocation,
+            pickupDate,
+            pickupTime,
+            dropoffDate,
+            dropoffTime
+        } = req.body;
+
+        const pickupDateTime = new Date(`${pickupDate}T${pickupTime}`);
+        const dropoffDateTime = new Date(`${dropoffDate}T${dropoffTime}`);
+
+        const reservationData = new Reservation({
+            user: user.id,
+            pickupLocation,
+            dropoffLocation,
+            pickupDateTime,
+            dropoffDateTime,
+        });
+        // Save reservation ID to cookie so you can retrieve it later
+        res.cookie("reservationData", JSON.stringify(reservationData), {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 2
+        });
+
+        res.redirect("/choose-car");
+    } catch (err) {
+        console.error("❌ Error creating reservation:", err);
+        res.status(500).send("Something went wrong while creating the reservation.");
+    }
+});
+
+
+
+// choosing cars
+router.post("/choose-car", async (req, res) => {
+    try {
+        const selectedCars = JSON.parse(req.body.selectedCars || "[]");
+        if (!Array.isArray(selectedCars) || selectedCars.length === 0) {
+            return res.status(400).send("No cars selected.");
+        }
+        res.cookie("selectedCars", JSON.stringify(selectedCars), {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60
+        });
+        res.redirect("/extra");
+    } catch (error) {
+        console.error("Error handling car selection:", error);
+        res.status(500).send("Failed to process selected cars.");
+    }
+});
+
+
+
+// extras 
+router.post("/extras", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+
+    try {
+        const selectedExtras = JSON.parse(req.body.selectedExtras || '{}');
+
+        res.cookie("selectedExtras", JSON.stringify(selectedExtras), {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60
+        });
+
+        res.redirect("/booking-checkout");
+
+    } catch (error) {
+        console.error("❌ Error processing extras:", error);
+        res.status(500).send("Something went wrong while processing extras.");
     }
 });
 
