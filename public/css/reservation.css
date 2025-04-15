@@ -46,6 +46,7 @@
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid #CBD5E1;
+  margin-top: 10px;
 }
 
 #map {
@@ -92,4 +93,14 @@
   margin-top: 10px;
   font-size: 14px;
   color: #1f2937;
+}
+
+#dropoffSection select {
+  margin-top: 10px;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #CBD5E1;
+  border-radius: 8px;
+  background-color: #fff;
+  min-width: 280px;
 }

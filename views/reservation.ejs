@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reservation Page</title>
-  <link rel="stylesheet" href="/css/common_styles.css" />
-  <link rel="stylesheet" href="/css/reservation.css" />
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <link rel="stylesheet" href="/css/reservation.css">
 </head>
 
 <body>
@@ -32,28 +32,30 @@
       <div class="location-date-wrapper">
         <div class="location-select">
           <select id="pickupLocation" name="pickupLocation" required>
-            <option disabled selected>Pick-up Location</option>
+            <option disabled selected value="">Pick-up Location</option>
             <option value="kantari">Beirut City Centre Kantari - Lebanon</option>
             <option value="ashrafieh">Beirut Ashrafieh - Lebanon</option>
             <option value="sinelfil">Beirut Sin El Fil - Lebanon</option>
             <option value="airport">Beirut Rafic Hariri International Airport - Lebanon</option>
           </select>
 
-          <select id="dropoffLocation" name="dropoffLocation" required>
-            <option disabled selected>Drop-off Location</option>
-            <option>Beirut City Centre Kantari - Lebanon</option>
-            <option>Beirut Ashrafieh - Lebanon</option>
-            <option>Beirut Sin El Fil - Lebanon</option>
-            <option>Beirut Rafic Hariri International Airport - Lebanon</option>
-          </select>
+          <div id="dropoffSection" style="display: none;">
+            <select id="dropoffLocation" name="dropoffLocation">
+              <option disabled selected value="kantari">Drop-off Location</option>
+              <option value="kantari">Beirut City Centre Kantari - Lebanon</option>
+              <option value="ashrafieh">Beirut Ashrafieh - Lebanon</option>
+              <option value="sinelfil">Beirut Sin El Fil - Lebanon</option>
+              <option value="airport">Beirut Rafic Hariri International Airport - Lebanon</option>
+            </select>
+          </div>
         </div>
 
         <div class="datetime-select">
-          <input type="date" id="pickupDate" name="pickupDate" required />
-          <input type="time" id="pickupTime" name="pickupTime" required />
+          <input type="date" id="pickupDate" name="pickupDate" required>
+          <input type="time" id="pickupTime" name="pickupTime" required>
           <span class="to-label">To</span>
-          <input type="date" id="dropoffDate" name="dropoffDate" required />
-          <input type="time" id="dropoffTime" name="dropoffTime" required />
+          <input type="date" id="dropoffDate" name="dropoffDate" required>
+          <input type="time" id="dropoffTime" name="dropoffTime" required>
         </div>
       </div>
 
@@ -68,8 +70,12 @@
         </div>
         <button type="submit" class="btn red-btn">Search for Vehicles</button>
         <div class="options">
-          <label><input type="checkbox" name="returnDifferent" /> Return to Different Location</label>
-          <label><input type="checkbox" name="over30" checked /> Driver aged over 30</label>
+          <label>
+            <input type="checkbox" id="returnDiffCheck" name="returnDifferent"> Return to Different Location
+          </label>
+          <label>
+            <input type="checkbox" name="over30" checked> Driver aged between 18 & 75
+          </label>
         </div>
       </div>
     </form>
@@ -82,11 +88,9 @@
     </div>
   </footer>
 
-  <!-- ✅ Google Maps Script -->
+  <script src="/Js/reservation.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJhUB4auZ8P1buHd4bkPATXljVUb4-6zk&callback=initMap"
     async defer></script>
-
-  <script src="/Js/reservation.js"></script>
 </body>
 
 </html>
