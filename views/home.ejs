@@ -22,10 +22,10 @@
         <li><a href="/logout" class="btn">Logout</a></li>
         <li><a href="/profile" class="btn">Edit Profile</a></li>
         <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
-    <% } else { %>
+      <% } else { %>
         <li><a href="/login" class="btn">Sign In</a></li>
         <li><a href="/signup" class="btn">Sign Up</a></li>
-    <% } %>
+      <% } %>
     </ul>
   </nav>
 
@@ -42,25 +42,27 @@
       <h2 class="section-title">Check Out Our Large Collection<br>Of Cars In Different Categories</h2>
       <div class="car-gallery">
         <% cars.forEach(car => { %>
-          <div class="car-card" onclick="openCarModal('<%= car._id %>')">
+          <div class="car-card">
             <img src="/images/<%= car.image %>" alt="<%= car.model %>" />
-            <p><%= car.group %></p> <!-- Display the group/category of the car -->
+            <p><%= car.group %></p>
+          
+            <!-- Arrow to toggle specs -->
+            <div class="arrow" onclick="toggleSpecs('<%= car._id %>')">↓</div>
+          
+            <!-- Car Specs Section (Initially Hidden) -->
+            <div id="specs-<%= car._id %>" class="car-specs">
+              <h3><%= car.brand %> <%= car.model %></h3>
+              <p><strong>Engine Size:</strong> <%= car.specs.engineSize %> CC</p>
+              <p><strong>Doors:</strong> <%= car.specs.doors %></p>
+              <p><strong>Passengers:</strong> <%= car.specs.passengers %></p>
+              <p><strong>Fuel Type:</strong> <%= car.specs.fuelType %></p>
+              <p><strong>Gearbox:</strong> <%= car.specs.gearbox %></p>
+              <p><strong>AC:</strong> <%= car.specs.hasAC ? 'Yes' : 'No' %></p>
+            </div>
           </div>
-        <% }) %>
+        <% }); %>
       </div>
     </section>
-
-    <!-- Car Modal -->
-    <div id="car-modal" class="modal" onclick="closeCarModal()">
-      <div class="modal-content" onclick="event.stopPropagation()">
-        <span class="close-btn" onclick="closeCarModal()">&times;</span>
-        <h3 id="car-model"></h3>
-        <img id="car-image" src="" alt="Car Image" />
-        <div id="car-specs">
-          <!-- Specifications will be dynamically populated here -->
-        </div>
-      </div>
-    </div>
 
     <!-- Reviews Section -->
     <section class="reviews container">
@@ -109,39 +111,29 @@
   <footer>
     <div class="container footer-content">
       <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-      <p>Follow us on social media: [icons go here]</p>
     </div>
   </footer>
 
   <script>
-    // Function to open the car modal and fetch car specs
-    function openCarModal(carId) {
-      // Fetch the car details using the car ID
-      fetch(`/car/${carId}`)
-        .then(response => response.json())
-        .then(car => {
-          // Populate modal with car details
-          document.getElementById("car-model").innerText = `${car.brand} ${car.model}`;
-          document.getElementById("car-image").src = "/images/" + car.image; // Correct image path
-          document.getElementById("car-specs").innerHTML = `
-            <p><strong>Engine Size:</strong> ${car.specs.engineSize} CC</p>
-            <p><strong>Doors:</strong> ${car.specs.doors}</p>
-            <p><strong>Passengers:</strong> ${car.specs.passengers}</p>
-            <p><strong>Fuel Type:</strong> ${car.specs.fuelType}</p>
-            <p><strong>Gearbox:</strong> ${car.specs.gearbox}</p>
-            <p><strong>AC:</strong> ${car.specs.hasAC ? 'Yes' : 'No'}</p>
-            <p><strong>Electric Windows:</strong> ${car.specs.electricWindows ? 'Yes' : 'No'}</p>
-            <p><strong>Price Per Day:</strong> $${car.pricePerDay}</p>
-          `;
-          document.getElementById("car-modal").style.display = 'flex'; // Show the modal
-        })
-        .catch(err => console.error('Error fetching car data:', err));
-    }
+   // Function to toggle car specs visibility and smooth scroll
+    function toggleSpecs(carId) {
+      const specs = document.getElementById(`specs-${carId}`);
+      const arrow = document.querySelector(`#specs-${carId} + .arrow`);
 
-    function closeCarModal() {
-      document.getElementById("car-modal").style.display = 'none'; // Close the modal
+      // Toggle visibility of the specs with smooth scrolling
+      if (specs.style.display === "block") {
+        specs.style.display = "none";
+        arrow.classList.remove("open");
+      } else {
+        specs.style.display = "block";
+        arrow.classList.add("open");
+
+        // Smooth scroll to specs section
+        specs.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
     }
   </script>
+
 </body>
 
 </html>
