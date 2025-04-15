@@ -132,7 +132,14 @@ app.get("/allcars", async (req, res) => {
 });
 
 app.get("/chat", (req, res) => {
-  res.render("chat");
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
+  res.render("chat", { user });
+});
+app.get("/admin-chat", (req, res) => {
+  const user = req.cookies.user;
+  if (!user || !user.isAdmin) return res.redirect("/login");
+  res.render("admin-chat", { user });
 });
 
 app.get("/login", (req, res) => {
