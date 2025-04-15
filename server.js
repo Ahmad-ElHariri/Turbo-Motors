@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 const { Server } = require("socket.io");
 const express = require("express");
 const bcrypt = require('bcrypt');
-const helmet = require("helmet");
 const http = require("http");
 const path = require("path");
 require("dotenv").config();
@@ -32,7 +31,6 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json());
-app.use(helmet());
 
 // Set view engine for EJS
 app.set("view engine", "ejs");

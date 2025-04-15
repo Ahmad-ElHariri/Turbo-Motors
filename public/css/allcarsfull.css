@@ -99,3 +99,26 @@
 .car-status.unavailable {
   color: red;
 }
+#filters {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+#filters label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+#filters select {
+  padding: 5px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#filters select:focus {
+  border-color: #ffcc00;
+  outline: none;
+}
