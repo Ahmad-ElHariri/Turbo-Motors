@@ -42,19 +42,20 @@
     word-wrap: break-word;
 }
 
-.user-message {
+.message.left {
+    background-color: #E5E7EB;
+    color: #111827;
+    align-self: flex-start;
+    border-top-left-radius: 0;
+}
+
+.message.right {
     background-color: #3B82F6;
     color: white;
     align-self: flex-end;
     border-top-right-radius: 0;
 }
 
-.admin-message {
-    background-color: #E5E7EB;
-    color: #111827;
-    align-self: flex-start;
-    border-top-left-radius: 0;
-}
 
 .chat-input {
     display: flex;
