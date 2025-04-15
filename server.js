@@ -257,6 +257,26 @@ app.post("/reviews", async (req, res) => {
     res.status(500).send("Error posting review.");
   }
 });
+// Delete review route
+app.post("/reviews/:id/delete", async (req, res) => {
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
+
+  try {
+    const review = await Review.findById(req.params.id);
+    
+    // Ensure that the logged-in user is the one who posted the review
+    if (review.userId.toString() === user.id) {
+      await Review.findByIdAndDelete(req.params.id);
+      res.redirect("/reviews");
+    } else {
+      res.status(403).send("You cannot delete someone else's review.");
+    }
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    res.status(500).send("Error deleting review.");
+  }
+});
 
 
 //Chat mechanism 

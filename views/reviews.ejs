@@ -38,7 +38,7 @@
     <!-- Reviews List -->
     <div class="reviews-list" id="reviews-list">
         <% reviews.forEach(review => { %>
-          <div class="review">
+          <div class="review" data-id="<%= review._id %>">
             <div class="review-user">
               <img src="<%= review.userId.profilePicture %>" alt="Profile" class="review-avatar">
               <span><%= review.userId.displayName || review.userId.name %></span>
@@ -51,9 +51,16 @@
             </div>
             <p><%= review.body %></p>
             <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
+      
+            <% if (review.userId._id.toString() === user.id.toString()) { %>
+              <form action="/reviews/<%= review._id %>/delete" method="POST" style="display:inline;">
+                <button type="submit" class="delete-btn">Delete</button>
+              </form>
+            <% } %>
           </div>
         <% }) %>
       </div>
+      
       
   
   </section>
