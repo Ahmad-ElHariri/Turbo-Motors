@@ -14,7 +14,7 @@ require("dotenv").config();
 // Import Internal Modules
 const collection = require("./models/users.js");
 const Car = require("./models/car"); 
-
+const Review = require("./models/review");
 
 // Local Variables
 const app = express();
@@ -79,8 +79,14 @@ app.get("/reservation", (req, res) => {
   res.render("reservation", { user }); // optional: send user info to EJS
 });
 
-app.get("/reviews", (req, res) => {
-  res.render("reviews");
+app.get("/reviews", async (req, res) => {
+  try {
+    const reviews = await Review.find().sort({ time: -1 }); // Fetch reviews, sorted by latest first
+    res.render("reviews", { reviews }); // Pass the reviews to the ejs view
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    res.status(500).send("Error fetching reviews.");
+  }
 });
 
 app.get("/signup", (req, res) => {
@@ -181,7 +187,23 @@ async function sendEmail(name, email, message) {
     throw error;
   }
 }
+// Route to post a new review
+app.post("/reviews", async (req, res) => {
+  const { title, body, rating } = req.body;
 
+  try {
+    const newReview = new Review({
+      title,
+      body,
+      rating: parseInt(rating),  // Parse rating to ensure it's a number
+    });
+    await newReview.save();
+    res.redirect("/reviews"); // Redirect to reviews page to see the new review
+  } catch (error) {
+    console.error("Error posting review:", error);
+    res.status(500).send("Error posting review.");
+  }
+});
 
 //Chat mechanism 
 

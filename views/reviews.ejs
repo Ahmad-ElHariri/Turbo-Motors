@@ -2,14 +2,94 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reviews Page</title>
-    <link rel="stylesheet" href="/css/reviews.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reviews</title>
+  <link rel="stylesheet" href="/css/reviews.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <body>
-    <h1>Reviews Page</h1>
+  <div class="navbar">
+    <h1>Reviews</h1>
+  </div>
+
+  <!-- Review Section -->
+  <section id="review-section">
+    <button id="open-modal" class="submit-btn">
+      <i class="fas fa-plus"></i> Submit a Review
+    </button>
+
+    <!-- Reviews List -->
+    <div class="reviews-list" id="reviews-list">
+      <% reviews.forEach(review => { %>
+        <div class="review">
+          <h4><%= review.title %></h4>
+          <div class="stars">
+            <%= '★'.repeat(review.rating) %> <!-- Show the stars based on rating -->
+          </div>
+          <p><%= review.body %></p>
+          <p><em>Posted on: <%= new Date(review.time).toLocaleString() %></em></p>
+        </div>
+      <% }) %>
+    </div>
+  </section>
+
+  <!-- Review Modal -->
+  <div id="review-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h3>Submit a Review</h3>
+      <form id="review-form" class="review-form" action="/reviews" method="POST">
+        <div class="form-group">
+          <label for="review-title">Title</label>
+          <input type="text" id="review-title" name="title" placeholder="Enter review title" required>
+        </div>
+        <div class="form-group">
+          <label for="review-body">Review</label>
+          <textarea id="review-body" name="body" placeholder="Describe your experience" required></textarea>
+        </div>
+        <div class="star-rating">
+          <label for="star1"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star5" name="rating" value="5">
+          <label for="star2"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star4" name="rating" value="4">
+          <label for="star3"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star3" name="rating" value="3">
+          <label for="star2"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star2" name="rating" value="2">
+          <label for="star1"><i class="fas fa-star"></i></label>
+          <input type="radio" id="star1" name="rating" value="1">
+        </div>
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Post Review
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Open Review Modal
+    document.getElementById('open-modal').addEventListener('click', function () {
+      document.getElementById('review-modal').style.display = 'flex';
+    });
+
+    // Close modal when the user clicks the close button
+    document.querySelector('.close-btn').addEventListener('click', function () {
+      document.getElementById('review-modal').style.display = 'none';
+    });
+
+    // Close modal if clicked outside
+    window.onclick = function (event) {
+      const modal = document.getElementById('review-modal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+  </script>
+
 </body>
 
 </html>
