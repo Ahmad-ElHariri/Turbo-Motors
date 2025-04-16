@@ -161,11 +161,22 @@
 
     <div class="section">
         <div class="section-title">Extras</div>
-        <ul>
-            <% Object.keys(selectedExtras).forEach(key => { %>
-                <li><%= key %>: <%= selectedExtras[key] %></li>
-            <% }) %>
-        </ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Extra</th>
+                    <th>Details</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% Object.entries(selectedExtras).forEach(([key, value]) => { %>
+                    <tr>
+                        <td><%= key.charAt(0).toUpperCase() + key.slice(1) %></td>
+                        <td><%= value === true ? "Included" : value %></td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
     </div>
 
     <footer>
