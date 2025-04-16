@@ -151,7 +151,10 @@
                     </div>
 
                     <button class="choose-btn" data-car-id="<%= car._id %>">Choose</button>
-
+                    <button onclick="removeCar('<%= car._id %>')" style="margin-top: 10px; background-color: crimson; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer;">
+                        Remove Car
+                    </button>
+                    
 
                 </div>
                 <% }); %> <!-- End of loop -->
