@@ -20,4 +20,5 @@ document.getElementById("extrasForm").addEventListener("submit", function () {
     if (fuel) selected.fuel = fuel;
 
     document.getElementById("selectedExtras").value = JSON.stringify(selected);
+    
 });

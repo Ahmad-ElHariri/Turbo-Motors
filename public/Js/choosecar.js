@@ -1,33 +1,78 @@
-const selectedCars = [];
+const selectedCars = JSON.parse(localStorage.getItem("selectedCars") || "[]");
+const allCarData = {}; // cache car data (for price & info)
+const reservation = JSON.parse(localStorage.getItem("reservationData") || "{}");
 
-// Handle choosing a car
+
+// Cache all car info
 document.querySelectorAll(".choose-btn").forEach(button => {
+    const carId = button.getAttribute("data-car-id");
+    const carBox = button.closest(".car-box");
+    const brandModel = carBox.querySelector(".car-name").innerText.trim();
+    const price = parseFloat(carBox.querySelector(".car-price").innerText.replace("$", ""));
+
+    allCarData[carId] = {
+        name: brandModel,
+        price: price
+    };
+
+    // Set initial selection state
+    if (selectedCars.includes(carId)) {
+        button.innerText = "Selected ✅";
+        button.disabled = true;
+    }
+
+    // On select
     button.addEventListener("click", (e) => {
-        e.preventDefault(); // Prevent form redirect if any
-
-        const carId = button.getAttribute("data-car-id");
-
+        e.preventDefault();
         if (!selectedCars.includes(carId)) {
             selectedCars.push(carId);
-            button.innerText = "Selected ✅"; // Optional UI feedback
+            localStorage.setItem("selectedCars", JSON.stringify(selectedCars));
+            button.innerText = "Selected ✅";
             button.disabled = true;
+            updateSummary();
         }
     });
 });
 
-// Before submitting, set the hidden input value to the array
-document.getElementById("selectedCarsForm").addEventListener("submit", (e) => {
+document.getElementById("selectedCarsForm").addEventListener("submit", () => {
     document.getElementById("selectedCarsInput").value = JSON.stringify(selectedCars);
 });
 
-const removeCar = (carId) => {
-    const carGrid = document.querySelector('.car-grid');
-    const carBox = document.querySelector(`[data-car-id="${carId}"]`);
-    if (carBox) carGrid.removeChild(carBox);
+function removeCar(carId) {
+    const index = selectedCars.indexOf(carId);
+    if (index > -1) {
+        selectedCars.splice(index, 1);
+        localStorage.setItem("selectedCars", JSON.stringify(selectedCars));
+    }
 
-    // Update cookie (if you're using cookies to store car selection)
-    const selected = JSON.parse(localStorage.getItem('selectedCars') || '[]');
-    const filtered = selected.filter(id => id !== carId);
-    localStorage.setItem('selectedCars', JSON.stringify(filtered));
-    document.cookie = "selectedCars=" + JSON.stringify(filtered) + "; path=/";
-};
+    const chooseBtn = document.querySelector(`.choose-btn[data-car-id="${carId}"]`);
+    if (chooseBtn) {
+        chooseBtn.innerText = "Choose";
+        chooseBtn.disabled = false;
+    }
+
+    updateSummary();
+}
+
+function updateSummary() {
+    const list = document.getElementById("selectedCarsList");
+    const priceSpan = document.getElementById("totalPrice");
+
+    list.innerHTML = "";
+    let total = 0;
+
+    selectedCars.forEach(id => {
+        const car = allCarData[id];
+        if (car) {
+            const li = document.createElement("li");
+            li.textContent = `${car.name} - $${car.price}/day`;
+            list.appendChild(li);
+            total += car.price;
+        }
+    });
+
+    priceSpan.innerText = total.toFixed(2);
+}
+
+// Call once on page load
+updateSummary();

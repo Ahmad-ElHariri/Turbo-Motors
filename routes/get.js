@@ -174,14 +174,26 @@ router.get("/reservation", (req, res) => {
 });
 
 router.get("/choose-car", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+
     try {
         const cars = await Car.find({ available: true });
-        res.render("choose-car", { cars });
+
+        // Get reservation data from cookie
+        const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+
+        res.render("choose-car", {
+            cars,
+            reservation: reservationData // ✅ Now it can be used in EJS
+        });
     } catch (error) {
-        console.error("Error fetching cars:", error);
-        res.status(500).send("Error fetching car data");
+        console.error("Error loading choose-car page:", error);
+        res.status(500).send("Error loading choose car page");
     }
 });
+
+
 
 router.get("/extra", (req, res) => {
     res.render("extra");

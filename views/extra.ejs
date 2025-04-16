@@ -141,6 +141,35 @@
             border-radius: 8px;
             cursor: pointer;
         }
+        .booking-summary {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    width: 260px;
+    background: #f7f7f7;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.booking-summary h3 {
+    margin-top: 0;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.booking-summary ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.booking-summary li {
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
     </style>
 </head>
 
@@ -259,7 +288,12 @@
             </div>
 
         </div>
-
+        <aside class="booking-summary">
+            <h3>Booking Summary</h3>
+            <ul id="summaryList"></ul>
+            <p><strong>Total: $<span id="totalPrice">0</span></strong></p>
+        </aside>
+        
         <input type="hidden" name="selectedExtras" id="selectedExtras">
         <button class="submit-btn" type="submit" style="margin-bottom: 20px;">Continue</button>
     </form>
