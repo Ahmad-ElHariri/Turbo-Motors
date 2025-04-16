@@ -153,7 +153,11 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     z-index: 1000;
 }
-
+.booking-summary.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
 .booking-summary h3 {
     margin-top: 0;
     font-size: 18px;
@@ -288,6 +292,8 @@
             </div>
 
         </div>
+       
+        
         <aside class="booking-summary">
             <h3>Your Booking Summary</h3>
           
@@ -317,6 +323,9 @@
     </footer>
 
     <script src="/Js/extra.js"></script>
+    <button id="toggleSummaryBtn" style="position: fixed; bottom: 20px; right: 20px; z-index: 1100; background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">
+        Hide Summary
+    </button>
 </body>
 
 </html>

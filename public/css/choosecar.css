@@ -220,6 +220,11 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     z-index: 1000;
 }
+.booking-summary.hidden {
+    opacity: 0;
+    transform: translateY(20px);
+    pointer-events: none;
+}
 
 .booking-summary h3 {
     margin-top: 0;

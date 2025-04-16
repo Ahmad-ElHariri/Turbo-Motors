@@ -174,4 +174,15 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Initial render
     updateSummary();
+
+    const toggleBtn = document.getElementById("toggleSummaryBtn");
+    const summaryBox = document.querySelector(".booking-summary");
+    
+    toggleBtn.addEventListener("click", () => {
+        summaryBox.classList.toggle("hidden");
+    
+        toggleBtn.textContent = summaryBox.classList.contains("hidden")
+            ? "Show Summary"
+            : "Hide Summary";
+    }); 
 });

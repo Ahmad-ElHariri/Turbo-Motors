@@ -1,7 +1,11 @@
+window.addEventListener("DOMContentLoaded", () => {
+
 const selectedCars = JSON.parse(localStorage.getItem("selectedCars") || "[]");
 const allCarData = {}; // cache car data (for price & info)
 const reservation = JSON.parse(localStorage.getItem("reservationData") || "{}");
 
+const toggleBtn = document.getElementById("toggleSummaryBtn");
+const summaryBox = document.querySelector(".booking-summary");
 
 // Cache all car info
 document.querySelectorAll(".choose-btn").forEach(button => {
@@ -76,3 +80,11 @@ function updateSummary() {
 
 // Call once on page load
 updateSummary();
+toggleBtn.addEventListener("click", () => {
+    summaryBox.classList.toggle("hidden");
+
+    toggleBtn.textContent = summaryBox.classList.contains("hidden")
+        ? "Show Summary"
+        : "Hide Summary";
+}); 
+});
