@@ -9,6 +9,7 @@ const multer = require("multer");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const Booking = require("../models/booking");
+const calculateTotal = require("../utils/price");
 
 
 
@@ -321,6 +322,56 @@ router.post("/booking/save", async (req, res) => {
   });
   
 
-
+  router.post("/booking/confirm", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+    const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+    const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+  
+    let totalPrice = calculateTotal(selectedCars, selectedExtras); // reuse your helper
+    const coupon = req.body.coupon?.trim();
+  
+    if (coupon === "DISCOUNT10") totalPrice *= 0.9; // Apply 10% discount
+  
+    try {
+      // 1. Save booking
+      const booking = new Booking({
+        user: user.id,
+        reservation: reservationData,
+        selectedCars: selectedCars.map(car => ({
+          car: car._id,
+          dailyRate: car.pricePerDay
+        })),
+        extras: selectedExtras,
+        couponCode: coupon || null,
+        totalPrice,
+        status: req.body.paymentMethod === "online" ? "paid" : "saved"
+      });
+  
+      await booking.save();
+  
+      // 2. Mark cars as unavailable
+      const carIds = selectedCars.map(car => car._id);
+      await Car.updateMany({ _id: { $in: carIds } }, { available: false });
+  
+      // 3. Clear temp cookies
+      res.clearCookie("reservationData");
+      res.clearCookie("selectedCars");
+      res.clearCookie("selectedExtras");
+  
+      res.render("confirmation", {
+        user,
+        booking,
+        message: "Booking confirmed successfully!"
+      });
+  
+    } catch (error) {
+      console.error("❌ Booking confirmation error:", error);
+      res.status(500).send("Failed to finalize booking.");
+    }
+  });
+  
 
 module.exports = router;

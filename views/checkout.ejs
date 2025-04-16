@@ -1,158 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Booking Checkout</title>
-  <link rel="stylesheet" href="/css/common_styles.css" />
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f8f9fa;
-      padding: 20px;
-    }
-
-    .checkout-container {
-      max-width: 900px;
-      margin: auto;
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-
-    h1, h2 {
-      text-align: center;
-      color: #333;
-    }
-
-    .section {
-      margin-bottom: 30px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    th, td {
-      padding: 10px 15px;
-      border: 1px solid #ddd;
-    }
-
-    th {
-      background-color: #f0f0f0;
-    }
-
-    .summary {
-      text-align: right;
-      font-size: 18px;
-    }
-
-    .btn-row {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 30px;
-    }
-
-    .btn {
-      padding: 12px 20px;
-      border: none;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .save { background: #ffc107; color: #000; }
-    .pay { background: #28a745; color: white; }
-    .cancel { background: #dc3545; color: white; }
-    .quote { background: #007bff; color: white; }
-
-    input[type="text"] {
-      padding: 6px;
-      font-size: 16px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Checkout</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
 </head>
 <body>
-  <div class="checkout-container">
-    <h1>Checkout Summary</h1>
+  <h1>Checkout</h1>
 
-    <!-- SECTION 1: Location and Date -->
-    <div class="section">
-      <h2>Reservation Details</h2>
-      <table>
-        <tr><th>Pickup Location</th><td><%= reservation.pickupLocation %></td></tr>
-        <tr><th>Drop-off Location</th><td><%= reservation.dropoffLocation %></td></tr>
-        <tr><th>Pickup Date & Time</th><td><%= new Date(reservation.pickupDateTime).toLocaleString() %></td></tr>
-        <tr><th>Drop-off Date & Time</th><td><%= new Date(reservation.dropoffDateTime).toLocaleString() %></td></tr>
-      </table>
-    </div>
+  <h3>Reservation Details</h3>
+  <p><strong>Pickup:</strong> <%= reservation.pickupLocation %></p>
+  <p><strong>Dropoff:</strong> <%= reservation.dropoffLocation %></p>
 
-    <!-- SECTION 2: Selected Cars -->
-    <div class="section">
-      <h2>Selected Cars</h2>
-      <% selectedCars.forEach(car => { %>
-        <table>
-          <tr><th>Car</th><td><%= car.brand %> <%= car.model %></td></tr>
-          <tr><th>Group</th><td><%= car.group %></td></tr>
-          <tr><th>Specs</th><td>
-            Engine: <%= car.specs.engineSize %>cc |
-            Doors: <%= car.specs.doors %> |
-            Passengers: <%= car.specs.passengers %> |
-            Fuel: <%= car.specs.fuelType %> |
-            Gearbox: <%= car.specs.gearbox %> |
-            AC: <%= car.specs.hasAC ? "Yes" : "No" %> |
-            Windows: <%= car.specs.electricWindows ? "Yes" : "No" %>
-          </td></tr>
-          <tr><th>Daily Rate</th><td>$<%= car.pricePerDay %></td></tr>
-        </table>
-      <% }) %>
-    </div>
+  <h3>Selected Cars</h3>
+  <ul>
+    <% selectedCars.forEach(car => { %>
+      <li><%= car.brand %> <%= car.model %> - $<%= car.pricePerDay %>/day</li>
+    <% }) %>
+  </ul>
 
-    <!-- SECTION 3: Extras -->
-    <div class="section">
-      <h2>Extras</h2>
-      <table>
-        <tr><th>Chauffeur</th><td><%= selectedExtras.chauffeur ? "Yes" : "No" %></td></tr>
-        <tr><th>Baby Seat</th><td><%= selectedExtras.babySeat ? "Yes" : "No" %></td></tr>
-        <tr><th>Navigator</th><td><%= selectedExtras.navigator ? "Yes" : "No" %></td></tr>
-        <tr><th>GPS</th><td><%= selectedExtras.gps ? "Yes" : "No" %></td></tr>
-        <tr><th>Insurance</th><td><%= selectedExtras.insurance || "None" %></td></tr>
-        <tr><th>Fuel Option</th><td><%= selectedExtras.fuel || "None" %></td></tr>
-      </table>
-    </div>
+  <h3>Extras</h3>
+  <ul>
+    <% for (let key in extras) {
+         if (extras[key]) { %>
+           <li><%= key %>: <%= extras[key] %></li>
+    <%   }
+       } %>
+  </ul>
 
-    <!-- SECTION 4: Coupon -->
-    <div class="section">
-      <form method="POST" action="/booking/complete">
-        <h2>Payment</h2>
-        <label>Coupon Code (optional):</label>
-        <input type="text" name="coupon" placeholder="DISCOUNT10" />
-        <div class="summary">
-          <p><strong>Total: $<%= totalPrice %></strong></p>
-        </div>
+  <h3>Total Price: $<%= totalPrice.toFixed(2) %></h3>
 
-        <div class="btn-row">
-          <button type="submit" class="btn pay">Pay Now</button>
-      </form>
+  <form action="/booking/confirm" method="POST">
+    <label>Coupon Code (optional):</label>
+    <input type="text" name="coupon">
 
-      <form method="POST" action="/booking/save">
-        <button type="submit" class="btn save">Save for Later</button>
-      </form>
+    <label>Payment Method:</label>
+    <select name="paymentMethod">
+      <option value="location">Pay at location</option>
+      <option value="online">Pay now</option>
+    </select>
 
-      <form method="POST" action="/booking/cancel">
-        <button type="submit" class="btn cancel">Cancel</button>
-      </form>
-
-      <form method="POST" action="/booking/quote">
-        <button type="submit" class="btn quote">Request Quotation</button>
-      </form>
-    </div>
-  </div>
+    <button type="submit">Finalize Booking</button>
+  </form>
 </body>
 </html>

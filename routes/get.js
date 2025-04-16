@@ -6,6 +6,7 @@ const Car = require("../models/car");
 const Review = require("../models/review");
 const Reservation = require("../models/reservations");
 const Booking = require("../models/booking");
+const calculateTotal = require("../utils/price");
 
 
 // Home
@@ -230,4 +231,29 @@ router.get("/booking/resume", async (req, res) => {
       selectedExtras: booking.extras
     });
   });
+  // routes/get.js
+
+router.get("/checkout", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+
+    try {
+        const booking = await Booking.findOne({ user: user.id, status: "saved" }).populate("selectedCars.car");
+        if (!booking) return res.redirect("/booking-checkout");
+
+        res.render("checkout", {
+            user,
+            booking,
+            reservation: booking.reservation,
+            selectedExtras: booking.extras,
+            cars: booking.selectedCars.map(c => c.car),
+            couponCode: booking.couponCode || "",
+            totalPrice: booking.totalPrice.toFixed(2)
+        });
+    } catch (err) {
+        console.error("Error loading checkout:", err);
+        res.status(500).send("Error loading checkout page.");
+    }
+});
+
 module.exports = router;

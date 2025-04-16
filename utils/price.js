@@ -17,3 +17,4 @@ function calculateTotal(cars, extras) {
     return total;
   }
   
+  module.exports = calculateTotal;
