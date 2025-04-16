@@ -275,6 +275,11 @@ router.post("/extras", async (req, res) => {
         res.status(500).send("Something went wrong while processing extras.");
     }
 });
+
+router.post("/proceed", async (req,res) => {
+    res.redirect("/checkout");
+});
+
 router.post("/booking/save", async (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
@@ -284,7 +289,7 @@ router.post("/booking/save", async (req, res) => {
     const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
   
     try {
-      // Overwrite previous saved booking if exists
+      // Remove previous saved booking (if any)
       await Booking.deleteOne({ user: user.id, status: "saved" });
   
       const booking = new Booking({
@@ -295,31 +300,25 @@ router.post("/booking/save", async (req, res) => {
           dailyRate: car.pricePerDay
         })),
         extras: selectedExtras,
-        totalPrice: calculateTotal(selectedCars, selectedExtras), // Create this helper
+        totalPrice: calculateTotal(selectedCars, selectedExtras),
         status: "saved"
       });
   
       await booking.save();
-      res.redirect("/profile"); // or /booking/saved/confirmation
+  
+      // Clear cookies for a clean state
+      res.clearCookie("reservationData");
+      res.clearCookie("selectedCars");
+      res.clearCookie("selectedExtras");
+  
+      res.redirect("/home");
     } catch (err) {
       console.error("Error saving booking:", err);
       res.status(500).send("Could not save booking.");
     }
   });
+  
 
-  router.post("/booking/complete", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-  
-    const booking = await Booking.findOne({ user: user.id, status: "saved" });
-    if (!booking) return res.status(404).send("No saved booking.");
-  
-    booking.status = "paid";
-    booking.couponCode = req.body.coupon || null;
-    await booking.save();
-  
-    res.send("Booking completed successfully!");
-  });
   
 
   router.post("/booking/confirm", async (req, res) => {

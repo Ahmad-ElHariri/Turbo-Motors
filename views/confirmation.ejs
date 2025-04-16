@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Booking Confirmation</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/profile">My Profile</a></li>
+      <li><a href="/logout" class="btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main style="text-align: center; padding: 60px;">
+    <h1>✅ Booking Confirmed!</h1>
+    <p><strong><%= message %></strong></p>
+    <p>Your booking ID is: <%= booking._id %></p>
+    <a href="/home" class="btn">Return to Home</a>
+  </main>
+</body>
+</html>

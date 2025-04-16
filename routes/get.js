@@ -171,8 +171,13 @@ router.get("/addcar", (req, res) => {
 router.get("/reservation", (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
-    res.render("reservation", { user });
-});
+  
+    const reservationCookie = req.cookies.reservationData;
+    const reservation = reservationCookie ? JSON.parse(reservationCookie) : null;
+  
+    res.render("reservation", { user, reservation });
+  });
+  
 
 router.get("/choose-car", async (req, res) => {
     const user = req.cookies.user;
@@ -233,27 +238,28 @@ router.get("/booking/resume", async (req, res) => {
   });
   // routes/get.js
 
-router.get("/checkout", async (req, res) => {
+  router.get("/checkout", async (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
-
+  
     try {
-        const booking = await Booking.findOne({ user: user.id, status: "saved" }).populate("selectedCars.car");
-        if (!booking) return res.redirect("/booking-checkout");
-
-        res.render("checkout", {
-            user,
-            booking,
-            reservation: booking.reservation,
-            selectedExtras: booking.extras,
-            cars: booking.selectedCars.map(c => c.car),
-            couponCode: booking.couponCode || "",
-            totalPrice: booking.totalPrice.toFixed(2)
-        });
+      const reservation = JSON.parse(req.cookies.reservationData || "{}");
+      const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+      const extras = JSON.parse(req.cookies.selectedExtras || "{}");
+      const totalPrice = calculateTotal(selectedCars, extras);
+  
+      res.render("checkout", {
+        reservation,
+        selectedCars,
+        extras,
+        totalPrice,
+        user
+      });
     } catch (err) {
-        console.error("Error loading checkout:", err);
-        res.status(500).send("Error loading checkout page.");
+      console.error("Error loading checkout:", err);
+      res.status(500).send("Error loading checkout page.");
     }
-});
+  });
+  
 
 module.exports = router;
