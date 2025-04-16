@@ -196,8 +196,11 @@ router.get("/choose-car", async (req, res) => {
 
 
 router.get("/extra", (req, res) => {
-    res.render("extra");
+    const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+    const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+    res.render("extra", { selectedExtras, reservation: reservationData });
 });
+
 
 router.get("/booking-checkout", (req, res) => {
     const reservationData = JSON.parse(req.cookies.reservationData || "{}");
