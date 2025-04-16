@@ -147,6 +147,7 @@
                         <p><strong>Electric Windows:</strong>
                             <%= car.specs.electricWindows ? 'Yes' : 'No' %>
                         </p>
+                        <p class="car-price">$<%= car.pricePerDay %> / day</p>
                     </div>
 
                     <button class="choose-btn" data-car-id="<%= car._id %>">Choose</button>
