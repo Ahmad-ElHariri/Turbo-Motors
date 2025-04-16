@@ -224,22 +224,32 @@ router.post("/reservation", async (req, res) => {
 
 
 // Choosing cars
+const Car = require("../models/car"); // make sure Car model is imported
+
 router.post("/choose-car", async (req, res) => {
     try {
-        const selectedCars = JSON.parse(req.body.selectedCars || "[]");
-        if (!Array.isArray(selectedCars) || selectedCars.length === 0) {
+        const selectedCarIds = JSON.parse(req.body.selectedCars || "[]");
+
+        if (!Array.isArray(selectedCarIds) || selectedCarIds.length === 0) {
             return res.status(400).send("No cars selected.");
         }
+
+        // Fetch full car documents from DB
+        const selectedCars = await Car.find({ _id: { $in: selectedCarIds } });
+
+        // Save full car objects to cookie
         res.cookie("selectedCars", JSON.stringify(selectedCars), {
             httpOnly: true,
             maxAge: 1000 * 60 * 60
         });
+
         res.redirect("/extra");
     } catch (error) {
         console.error("Error handling car selection:", error);
         res.status(500).send("Failed to process selected cars.");
     }
 });
+
 
 
 

@@ -8,22 +8,28 @@
 </head>
 
 <body>
+    <pre>
+        <%= JSON.stringify(selectedCars, null, 2) %>
+        </pre>
+        
     <h1>Booking Summary</h1>
 
     <p><strong>Pickup Location:</strong>
         <%= reservation.pickupLocation %>
+    </p>
+    <p><strong>Drop-off Location:</strong>
+        <%= reservation.dropoffLocation %>
     </p>
     <p><strong>Drop-off Date & Time:</strong>
         <%= reservation.dropoffDateTime %>
     </p>
 
     <p><strong>Cars:</strong></p>
+    
     <ul>
-        <% selectedCars.forEach(carId=> { %>
-            <li>
-                <%= carId %>
-            </li>
-            <% }) %>
+        <% selectedCars.forEach(car=> { %>
+            <li><%= car.group %></li>
+        <% }) %>
     </ul>
 
     <p><strong>Extras:</strong></p>

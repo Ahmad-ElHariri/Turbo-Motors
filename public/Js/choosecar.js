@@ -19,6 +19,3 @@ document.querySelectorAll(".choose-btn").forEach(button => {
 document.getElementById("selectedCarsForm").addEventListener("submit", (e) => {
     document.getElementById("selectedCarsInput").value = JSON.stringify(selectedCars);
 });
-
-
-

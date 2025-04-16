@@ -192,6 +192,7 @@ router.get("/booking-checkout", (req, res) => {
         selectedCars,
         selectedExtras
     });
+    console.log("Selected Cars:", req.cookies.selectedCars);
 });
 
 module.exports = router;
