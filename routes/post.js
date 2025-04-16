@@ -8,6 +8,7 @@ const Review = require("../models/review");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
 const path = require("path");
+const Booking = require("../models/booking");
 
 
 
@@ -273,5 +274,53 @@ router.post("/extras", async (req, res) => {
         res.status(500).send("Something went wrong while processing extras.");
     }
 });
+router.post("/booking/save", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+    const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+    const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+  
+    try {
+      // Overwrite previous saved booking if exists
+      await Booking.deleteOne({ user: user.id, status: "saved" });
+  
+      const booking = new Booking({
+        user: user.id,
+        reservation: reservationData,
+        selectedCars: selectedCars.map(car => ({
+          car: car._id,
+          dailyRate: car.pricePerDay
+        })),
+        extras: selectedExtras,
+        totalPrice: calculateTotal(selectedCars, selectedExtras), // Create this helper
+        status: "saved"
+      });
+  
+      await booking.save();
+      res.redirect("/profile"); // or /booking/saved/confirmation
+    } catch (err) {
+      console.error("Error saving booking:", err);
+      res.status(500).send("Could not save booking.");
+    }
+  });
+
+  router.post("/booking/complete", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    const booking = await Booking.findOne({ user: user.id, status: "saved" });
+    if (!booking) return res.status(404).send("No saved booking.");
+  
+    booking.status = "paid";
+    booking.couponCode = req.body.coupon || null;
+    await booking.save();
+  
+    res.send("Booking completed successfully!");
+  });
+  
+
+
 
 module.exports = router;

@@ -55,7 +55,10 @@
       <p>We'll show your reservation activity here once implemented.</p>
     </section>
   </main>
-
+  <% if (userSavedBooking) { %>
+    <a href="/booking/resume" class="btn">Resume Saved Booking</a>
+  <% } %>
+  
   <footer>
     <div class="footer-content">
       <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>

@@ -5,7 +5,7 @@ const collection = require("../models/users");
 const Car = require("../models/car");
 const Review = require("../models/review");
 const Reservation = require("../models/reservations");
-
+const Booking = require("../models/booking");
 
 
 // Home
@@ -130,10 +130,17 @@ router.get("/logout", (req, res) => {
 router.get("/profile", async (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
-
+  
     const currentUser = await collection.findById(user.id);
-    res.render("profile", { user: currentUser, message: null });
-});
+    const savedBooking = await Booking.findOne({ user: user.id, status: "saved" });
+  
+    res.render("profile", {
+      user: currentUser,
+      message: null,
+      userSavedBooking: !!savedBooking
+    });
+  });
+  
 
 router.get("/reviews", async (req, res) => {
     try {
@@ -193,5 +200,19 @@ router.get("/booking-checkout", (req, res) => {
         selectedExtras
     });
 });
-
+router.get("/booking/resume", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    const booking = await Booking.findOne({ user: user.id, status: "saved" })
+      .populate("selectedCars.car");
+  
+    if (!booking) return res.send("No saved booking to resume.");
+  
+    res.render("booking-checkout", {
+      reservation: booking.reservation,
+      selectedCars: booking.selectedCars.map(c => c.car),
+      selectedExtras: booking.extras
+    });
+  });
 module.exports = router;
