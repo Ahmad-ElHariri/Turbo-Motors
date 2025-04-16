@@ -1,6 +1,6 @@
-
 const selected = {};
 
+// Handle toggle buttons
 document.querySelectorAll('.add-toggle').forEach(btn => {
     btn.addEventListener('click', () => {
         const name = btn.dataset.name;
@@ -10,25 +10,14 @@ document.querySelectorAll('.add-toggle').forEach(btn => {
     });
 });
 
-document.querySelectorAll('.qty-box').forEach(box => {
-    const input = box.querySelector('input');
-    const decrease = box.querySelector('.decrease');
-    const increase = box.querySelector('.increase');
+// Handle form submission
+document.getElementById("extrasForm").addEventListener("submit", function () {
+    // Add dropdowns to the selected object
+    const insurance = document.querySelector('select[name="insurance"]').value;
+    const fuel = document.querySelector('select[name="fuel"]').value;
 
-    decrease.addEventListener('click', () => {
-        let val = parseInt(input.value);
-        if (val > 0) input.value = val - 1;
-    });
+    if (insurance) selected.insurance = insurance;
+    if (fuel) selected.fuel = fuel;
 
-    increase.addEventListener('click', () => {
-        let val = parseInt(input.value);
-        input.value = val + 1;
-    });
-});
-
-document.getElementById("extrasForm").addEventListener("submit", function (e) {
-    selected.babySeat = document.querySelector('input[name="babySeat"]').value;
-    selected.insurance = document.querySelector('select[name="insurance"]').value;
-    selected.fuel = document.querySelector('select[name="fuel"]').value;
     document.getElementById("selectedExtras").value = JSON.stringify(selected);
 });
