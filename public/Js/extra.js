@@ -1,5 +1,5 @@
 window.addEventListener("DOMContentLoaded", () => {
-    // Get extras from localStorage or cookies
+    // Get selected extras from localStorage or cookies
     function getSelectedExtras() {
         const local = localStorage.getItem("selectedExtras");
         if (local) return JSON.parse(local);
@@ -20,7 +20,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const selected = getSelectedExtras();
 
-    // Price table
     const prices = {
         chauffeur: 50,
         babySeat: 20,
@@ -37,7 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-    // Setup button state and toggle logic
+    // Toggle extras button
     document.querySelectorAll(".add-toggle").forEach(btn => {
         const name = btn.dataset.name;
 
@@ -53,13 +52,12 @@ window.addEventListener("DOMContentLoaded", () => {
                 selected[name] = true;
                 btn.textContent = "ADDED ✅";
             }
-
             saveExtras();
             updateSummary();
         });
     });
 
-    // Setup dropdowns
+    // Dropdown listeners
     const insuranceSelect = document.querySelector('select[name="insurance"]');
     const fuelSelect = document.querySelector('select[name="fuel"]');
 
@@ -78,56 +76,102 @@ window.addEventListener("DOMContentLoaded", () => {
         updateSummary();
     });
 
-    // On form submit
-    document.getElementById("extrasForm").addEventListener("submit", function () {
-        document.getElementById("selectedExtras").value = JSON.stringify(selected);
-        saveExtras();
-    });
-
-    // Save extras to localStorage + cookies
+    // Save to storage + cookie
     function saveExtras() {
         const encoded = encodeURIComponent(JSON.stringify(selected));
         localStorage.setItem("selectedExtras", JSON.stringify(selected));
         document.cookie = `selectedExtras=${encoded}; path=/`;
     }
 
-    // Update the summary box
-    function updateSummary() {
-        const extrasList = document.getElementById("extrasList");
-        const priceSpan = document.getElementById("totalPrice");
+    // On form submit
+    document.getElementById("extrasForm").addEventListener("submit", function () {
+        document.getElementById("selectedExtras").value = JSON.stringify(selected);
+        saveExtras();
+    });
 
-        extrasList.innerHTML = "";
+    // Calculate extras total
+    function calculateExtrasTotal() {
         let total = 0;
 
         for (let key in selected) {
             if (!selected[key]) continue;
 
+            if (["insurance", "fuel"].includes(key)) {
+                const value = selected[key];
+                if (value && prices[key][value]) {
+                    total += prices[key][value];
+                }
+            } else {
+                total += prices[key];
+            }
+        }
+
+        return total;
+    }
+
+    // Show extras in summary box
+    function updateSummary() {
+        const extrasList = document.getElementById("extrasList");
+        extrasList.innerHTML = "";
+
+        for (let key in selected) {
+            if (!selected[key]) continue;
+
             let label = key.charAt(0).toUpperCase() + key.slice(1);
-            let price = 0;
             let text = "";
 
             if (["insurance", "fuel"].includes(key)) {
                 const value = selected[key];
                 if (value && prices[key][value]) {
-                    price = prices[key][value];
-                    text = `${label} - ${value.charAt(0).toUpperCase() + value.slice(1)}: $${price}`;
+                    text = `${label} - ${value.charAt(0).toUpperCase() + value.slice(1)}: $${prices[key][value]}`;
                 }
             } else {
-                price = prices[key];
-                text = `${label} - $${price}`;
+                text = `${label} - $${prices[key]}`;
             }
 
-            if (text) {
-                const li = document.createElement("li");
-                li.textContent = text;
-                extrasList.appendChild(li);
-                total += price;
-            }
+            const li = document.createElement("li");
+            li.textContent = text;
+            extrasList.appendChild(li);
         }
 
-        priceSpan.innerText = total.toFixed(2);
+        updateCarSummary(); // Also updates total
     }
 
-    // Run once on load
+    // Fetch car details and update car list and total price
+    function updateCarSummary() {
+        const selectedCarIds = JSON.parse(localStorage.getItem("selectedCars") || "[]");
+        const carList = document.getElementById("selectedCarsList");
+        const priceSpan = document.getElementById("totalPrice");
+
+        if (!carList || !priceSpan) return;
+
+        carList.innerHTML = "";
+
+        let carTotal = 0;
+
+        const promises = selectedCarIds.map(carId => {
+            return fetch(`/car/${carId}`)
+                .then(res => res.json())
+                .then(car => {
+                    const li = document.createElement("li");
+                    li.textContent = `${car.brand} ${car.model} - $${car.pricePerDay}/day`;
+                    carList.appendChild(li);
+                    carTotal += car.pricePerDay;
+                })
+                .catch(err => {
+                    const li = document.createElement("li");
+                    li.textContent = `Car ID: ${carId} (Error loading details)`;
+                    carList.appendChild(li);
+                });
+        });
+
+        Promise.all(promises).then(() => {
+            const extrasTotal = calculateExtrasTotal();
+            const grandTotal = carTotal + extrasTotal;
+            priceSpan.innerText = grandTotal.toFixed(2);
+        });
+    }
+
+    // Initial render
     updateSummary();
 });
