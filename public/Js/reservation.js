@@ -120,16 +120,29 @@ window.initMap = function () {
   
     // 🔵 Update drop-off marker
     dropoffSelect.addEventListener("change", function () {
-      if (!returnDiffCheck.checked) return;
-  
+      if (!returnDiffCheck.checked || !dropoffSelect.value) return;
+    
       const key = this.value;
       const branch = branches[key];
       if (branch) {
         dropoffMarker.setPosition(branch);
         dropoffMarker.setTitle(branch.name);
         dropoffMarker.setVisible(true);
+    
+        // Optional: update branch info to show dropoff too
+        let hoursHtml = "";
+        for (let day in branch.hours) {
+          hoursHtml += `<li><strong>${day}:</strong> ${branch.hours[day]}</li>`;
+        }
+    
+        branchInfo.innerHTML = `
+          <h3>${branch.name}</h3>
+          <p><strong>Address:</strong> ${branch.address}</p>
+          <ul>${hoursHtml}</ul>
+        `;
       }
     });
+    
   
     // Show/hide drop-off options and marker
     returnDiffCheck.addEventListener("change", function () {
@@ -155,6 +168,10 @@ window.initMap = function () {
     // Trigger initial state
     if (pickupSelect.value) {
       pickupSelect.dispatchEvent(new Event("change"));
+    }
+
+    if (returnDiffCheck.checked && dropoffSelect.value) {
+      dropoffSelect.dispatchEvent(new Event("change"));
     }
   };
   
