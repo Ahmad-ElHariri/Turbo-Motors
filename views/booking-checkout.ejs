@@ -5,42 +5,145 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout Details</title>
+    <link rel="stylesheet" href="/css/common_styles.css">
+    <style>
+        /* body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 40px;
+            color: #333;
+        } */
+
+
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        li {
+            padding: 5px 0;
+        }
+
+        .car-details {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+    </style>
 </head>
 
 <body>
-    <pre>
-        <%= JSON.stringify(selectedCars, null, 2) %>
-        </pre>
-        
+
+    <nav>
+        <div class="logo">Turbo Motors</div>
+        <ul class="nav-links">
+            <li><a href="/home">Home</a></li>
+            <!-- <li><a href="/allcars">All Cars</a></li> -->
+            <li><a href="/about">About Us</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </nav>
+
     <h1>Booking Summary</h1>
 
-    <p><strong>Pickup Location:</strong>
-        <%= reservation.pickupLocation %>
-    </p>
-    <p><strong>Drop-off Location:</strong>
-        <%= reservation.dropoffLocation %>
-    </p>
-    <p><strong>Drop-off Date & Time:</strong>
-        <%= reservation.dropoffDateTime %>
-    </p>
+    <div class="section">
+        <p><span class="label">Pickup Location:</span>
+            <%= reservation.pickupLocation %>
+        </p>
+        <p><span class="label">Drop-off Location:</span>
+            <%= reservation.dropoffLocation %>
+        </p>
 
-    <p><strong>Cars:</strong></p>
-    
-    <ul>
-        <% selectedCars.forEach(car=> { %>
-            <li><%= car.group %></li>
-        <% }) %>
-    </ul>
+        <% const dropDate=new Date(reservation.dropoffDateTime); const
+            formattedDate=dropDate.toISOString().split('T')[0]; const
+            formattedTime=dropDate.toISOString().split('T')[1].substring(0, 5); %>
 
-    <p><strong>Extras:</strong></p>
-    <ul>
-        <% Object.keys(selectedExtras).forEach(key=> { %>
-            <li>
-                <%= key %>: <%= selectedExtras[key] %>
-            </li>
-            <% }) %>
-    </ul>
+            <p><span class="label">Drop-off Date:</span>
+                <%= formattedDate %>
+            </p>
+            <p><span class="label">Drop-off Time:</span>
+                <%= formattedTime %>
+            </p>
+    </div>
 
+    <div class="section">
+        <p class="label">Cars Selected:</p>
+        <ul>
+            <% selectedCars.forEach(car=> { %>
+                <li class="car-details">
+                    <p><span class="label">Brand:</span>
+                        <%= car.brand %>
+                    </p>
+                    <p><span class="label">Model:</span>
+                        <%= car.model %>
+                    </p>
+                    <p><span class="label">Year:</span>
+                        <%= car.year %>
+                    </p>
+                    <p><span class="label">Group:</span>
+                        <%= car.group %>
+                    </p>
+                    <p><span class="label">Fuel Type:</span>
+                        <%= car.specs.fuelType %>
+                    </p>
+                    <p><span class="label">Gearbox:</span>
+                        <%= car.specs.gearbox %>
+                    </p>
+                    <p><span class="label">Passengers:</span>
+                        <%= car.specs.passengers %>
+                    </p>
+                    <p><span class="label">Doors:</span>
+                        <%= car.specs.doors %>
+                    </p>
+                    <p><span class="label">AC:</span>
+                        <%= car.specs.hasAC ? 'Yes' : 'No' %>
+                    </p>
+                    <p><span class="label">Electric Windows:</span>
+                        <%= car.specs.electricWindows ? 'Yes' : 'No' %>
+                    </p>
+                    <p><span class="label">Engine Size:</span>
+                        <%= car.specs.engineSize %> cc
+                    </p>
+                </li>
+                <% }) %>
+        </ul>
+    </div>
+
+    <div class="section">
+        <p class="label">Extras Selected:</p>
+        <ul>
+            <% Object.keys(selectedExtras).forEach(key=> { %>
+                <li>
+                    <%= key %>: <%= selectedExtras[key] %>
+                </li>
+                <% }) %>
+        </ul>
+    </div>
+
+
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+        </div>
+    </footer>
 
 </body>
 
