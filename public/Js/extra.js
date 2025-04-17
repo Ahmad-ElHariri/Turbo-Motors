@@ -138,39 +138,62 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     // Fetch car details and update car list and total price
+    function getCookie(key) {
+        const cookies = document.cookie.split("; ");
+        for (const cookie of cookies) {
+            const [k, v] = cookie.split("=");
+            if (k === key) return decodeURIComponent(v);
+        }
+        return null;
+    }
+    
+    function calculateDurationHours() {
+        const pickup = `${getCookie("pickupDate")}T${getCookie("pickupTime")}`;
+        const dropoff = `${getCookie("dropoffDate")}T${getCookie("dropoffTime")}`;
+        const start = new Date(pickup);
+        const end = new Date(dropoff);
+        const hours = (end - start) / (1000 * 60 * 60);
+        return Math.max(24, hours); // Minimum of 1 day
+    }
+    
     function updateCarSummary() {
         const selectedCarIds = JSON.parse(localStorage.getItem("selectedCars") || "[]");
         const carList = document.getElementById("selectedCarsList");
         const priceSpan = document.getElementById("totalPrice");
-
+    
         if (!carList || !priceSpan) return;
-
+    
         carList.innerHTML = "";
-
         let carTotal = 0;
-
+        const duration = calculateDurationHours();
+    
         const promises = selectedCarIds.map(carId => {
             return fetch(`/car/${carId}`)
                 .then(res => res.json())
                 .then(car => {
+                    const perHour = car.pricePerDay / 24;
+                    const cost = perHour * duration;
+    
                     const li = document.createElement("li");
-                    li.textContent = `${car.brand} ${car.model} - $${car.pricePerDay}/day`;
+                    li.textContent = `${car.brand} ${car.model} - $${car.pricePerDay}/day → $${cost.toFixed(2)}`;
                     carList.appendChild(li);
-                    carTotal += car.pricePerDay;
+    
+                    carTotal += cost;
                 })
-                .catch(err => {
+                .catch(() => {
                     const li = document.createElement("li");
                     li.textContent = `Car ID: ${carId} (Error loading details)`;
                     carList.appendChild(li);
                 });
         });
-
+    
         Promise.all(promises).then(() => {
             const extrasTotal = calculateExtrasTotal();
             const grandTotal = carTotal + extrasTotal;
             priceSpan.innerText = grandTotal.toFixed(2);
         });
     }
+    
 
     // Initial render
     updateSummary();
