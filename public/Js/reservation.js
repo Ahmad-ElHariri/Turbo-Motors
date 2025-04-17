@@ -173,5 +173,23 @@ window.initMap = function () {
     if (returnDiffCheck.checked && dropoffSelect.value) {
       dropoffSelect.dispatchEvent(new Event("change"));
     }
+
+    document.querySelector("form").addEventListener("submit", function () {
+      const pickupLocation = document.querySelector("input[name='pickupLocation']").value;
+      const dropoffLocation = document.querySelector("input[name='dropoffLocation']").value;
+      const pickupDate = document.querySelector("input[name='pickupDate']").value;
+      const pickupTime = document.querySelector("input[name='pickupTime']").value;
+      const dropoffDate = document.querySelector("input[name='dropoffDate']").value;
+      const dropoffTime = document.querySelector("input[name='dropoffTime']").value;
+    
+      const reservationData = {
+        pickupLocation,
+        dropoffLocation,
+        pickupDateTime: `${pickupDate}T${pickupTime}`,
+        dropoffDateTime: `${dropoffDate}T${dropoffTime}`
+      };
+    
+      localStorage.setItem("reservationData", JSON.stringify(reservationData));
+    });
   };
   

@@ -1,12 +1,34 @@
 window.addEventListener("DOMContentLoaded", () => {
     const selectedCars = JSON.parse(localStorage.getItem("selectedCars") || "[]");
-    const allCarData = {}; // cache car data (for price & info)
-    const reservation = JSON.parse(localStorage.getItem("reservationData") || "{}");
+    const allCarData = {};
+    function getCookie(key) {
+        const cookies = document.cookie.split("; ");
+        for (const cookie of cookies) {
+            const [k, v] = cookie.split("=");
+            if (k === key) return decodeURIComponent(v);
+        }
+        return null;
+    }
+    
+    const reservation = {
+        pickupLocation: getCookie("pickupLocation"),
+        dropoffLocation: getCookie("dropoffLocation"),
+        pickupDateTime: `${getCookie("pickupDate")}T${getCookie("pickupTime")}`,
+        dropoffDateTime: `${getCookie("dropoffDate")}T${getCookie("dropoffTime")}`
+    };
+    
 
     const toggleBtn = document.getElementById("toggleSummaryBtn");
     const summaryBox = document.querySelector(".booking-summary");
 
-    // Cache all car info
+    // Add booking instructions
+    const summaryHeader = document.querySelector(".booking-summary h3");
+    const info = document.createElement("p");
+    info.innerText = "Note: Car rental is charged hourly, with a minimum of 1 full day (24 hours). Your total is based on duration and daily car rates.";
+    info.style.fontSize = "0.9em";
+    info.style.marginTop = "10px";
+    summaryHeader.after(info);
+
     document.querySelectorAll(".choose-btn").forEach(button => {
         const carId = button.getAttribute("data-car-id");
         const carBox = button.closest(".car-box");
@@ -18,13 +40,11 @@ window.addEventListener("DOMContentLoaded", () => {
             price: price
         };
 
-        // Set initial selection state
         if (selectedCars.includes(carId)) {
             button.innerText = "Selected ✅";
             button.disabled = true;
         }
 
-        // On select
         button.addEventListener("click", (e) => {
             e.preventDefault();
             if (!selectedCars.includes(carId)) {
@@ -41,7 +61,6 @@ window.addEventListener("DOMContentLoaded", () => {
         document.getElementById("selectedCarsInput").value = JSON.stringify(selectedCars);
     });
 
-    // Make removeCar globally available
     window.removeCar = function (carId) {
         const index = selectedCars.indexOf(carId);
         if (index > -1) {
@@ -58,6 +77,15 @@ window.addEventListener("DOMContentLoaded", () => {
         updateSummary();
     };
 
+    function calculateDurationHours(startStr, endStr) {
+        if (!startStr || !endStr) return 24; // fallback if missing
+        const start = new Date(startStr);
+        const end = new Date(endStr);
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) return 24;
+        const duration = (end - start) / (1000 * 60 * 60); // in hours
+        return Math.max(24, duration); // enforce minimum of 1 day
+    }
+
     function updateSummary() {
         const list = document.getElementById("selectedCarsList");
         const priceSpan = document.getElementById("totalPrice");
@@ -65,28 +93,30 @@ window.addEventListener("DOMContentLoaded", () => {
         list.innerHTML = "";
         let total = 0;
 
+        const duration = calculateDurationHours(reservation.pickupDateTime, reservation.dropoffDateTime);
+
         selectedCars.forEach(id => {
             const car = allCarData[id];
             if (car) {
                 const li = document.createElement("li");
-                li.textContent = `${car.name} - $${car.price}/day`;
+                const perHourRate = car.price / 24;
+                const cost = perHourRate * duration;
+                total += cost;
+
+                li.textContent = `${car.name} - $${car.price}/day → $${cost.toFixed(2)}`;
                 list.appendChild(li);
-                total += car.price;
             }
         });
 
         priceSpan.innerText = total.toFixed(2);
     }
 
-    // Summary toggle button
     toggleBtn.addEventListener("click", () => {
         summaryBox.classList.toggle("hidden");
-
         toggleBtn.textContent = summaryBox.classList.contains("hidden")
             ? "Show Summary"
             : "Hide Summary";
     });
 
-    // Initial render
-    updateSummary(); 
+    updateSummary();
 });
