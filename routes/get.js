@@ -1,3 +1,5 @@
+
+
 // routes/get.js
 const express = require("express");
 const router = express.Router();
@@ -71,7 +73,6 @@ router.get("/home", async (req, res) => {
 });
 
 
-
 // Cars
 router.get("/car/:id", async (req, res) => {
     const carId = req.params.id;
@@ -96,7 +97,6 @@ router.get("/allcars", async (req, res) => {
 });
 
 
-
 // Chat
 router.get("/chat", (req, res) => {
     const user = req.cookies.user;
@@ -109,7 +109,6 @@ router.get("/admin-chat", (req, res) => {
     if (!user || !user.isAdmin) return res.redirect("/login");
     res.render("admin-chat", { user });
 });
-
 
 
 // Login / SignUp
@@ -125,7 +124,6 @@ router.get("/logout", (req, res) => {
     res.clearCookie("user");
     res.redirect("/login");
 });
-
 
 
 // Other Pages
@@ -167,7 +165,6 @@ router.get("/addcar", (req, res) => {
 });
 
 
-
 // Booking Proccess
 router.get("/reservation", (req, res) => {
     const user = req.cookies.user;
@@ -201,13 +198,11 @@ router.get("/choose-car", async (req, res) => {
 });
 
 
-
 router.get("/extra", (req, res) => {
     const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
     const reservationData = JSON.parse(req.cookies.reservationData || "{}");
     res.render("extra", { selectedExtras, reservation: reservationData });
 });
-
 
 router.get("/booking-checkout", (req, res) => {
     const reservationData = JSON.parse(req.cookies.reservationData || "{}");
@@ -237,6 +232,7 @@ router.get("/booking/resume", async (req, res) => {
       selectedExtras: booking.extras
     });
   });
+  // routes/get.js
 
   router.get("/checkout", async (req, res) => {
     const user = req.cookies.user;
@@ -368,3 +364,4 @@ router.get("/download-invoice/:bookingId", async (req, res) => {
   
 
 module.exports = router;
+
