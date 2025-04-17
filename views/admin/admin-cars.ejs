@@ -1,0 +1,82 @@
+<!-- views/admin/admin-cars.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Cars</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <style>
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .admin-table th, .admin-table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    .admin-actions form {
+      display: inline;
+    }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn {
+      padding: 8px 14px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="admin-header">
+      <h2>All Cars</h2>
+      <a class="btn" href="/admin/cars/new">+ Add New Car</a>
+    </div>
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Model</th>
+          <th>Year</th>
+          <th>Group</th>
+          <th>Price/Day</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% cars.forEach(car => { %>
+          <tr>
+            <td><%= car.brand %></td>
+            <td><%= car.model %></td>
+            <td><%= car.year %></td>
+            <td><%= car.group %></td>
+            <td>$<%= car.pricePerDay %></td>
+            <td class="admin-actions">
+              <a class="btn btn-secondary" href="/admin/cars/edit/<%= car._id %>">Edit</a>
+              <form method="POST" action="/admin/cars/delete/<%= car._id %>">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
