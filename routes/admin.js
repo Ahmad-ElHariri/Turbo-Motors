@@ -146,4 +146,60 @@ router.post("/bookings/cancel/:id", isAdmin, async (req, res) => {
     res.redirect("/admin/bookings");
 });
 
+const PDFDocument = require("pdfkit");
+
+// Generate invoice as PDF
+router.get("/bookings/invoice/:id", isAdmin, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id)
+      .populate("user")
+      .populate("selectedCars.car");
+
+    if (!booking) return res.status(404).send("Booking not found");
+
+    const doc = new PDFDocument();
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", `attachment; filename=invoice_${booking._id}.pdf`);
+    doc.pipe(res);
+
+    doc.fontSize(18).text("Turbo Motors - Rental Invoice", { align: "center" });
+    doc.moveDown();
+
+    doc.fontSize(12).text(`Invoice ID: ${booking._id}`);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`);
+    doc.text(`Customer: ${booking.user.name} (${booking.user.email || "N/A"})`);
+    doc.moveDown();
+
+    doc.text(`Pickup: ${booking.reservation.pickupLocation} @ ${new Date(booking.reservation.pickupDateTime).toLocaleString()}`);
+    doc.text(`Dropoff: ${booking.reservation.dropoffLocation} @ ${new Date(booking.reservation.dropoffDateTime).toLocaleString()}`);
+    doc.text(`Driver Age: ${booking.reservation.driverAge}`);
+    doc.text(`Status: ${booking.status}`);
+    doc.moveDown();
+
+    doc.fontSize(14).text("Cars Rented:");
+    booking.selectedCars.forEach((item, i) => {
+      doc.text(`${i + 1}. ${item.car.brand} ${item.car.model} — $${item.dailyRate}/day`);
+    });
+    doc.moveDown();
+
+    doc.fontSize(14).text("Extras:");
+    const { chauffeur, babySeat, navigator, gps, insurance, fuel } = booking.extras;
+    if (chauffeur) doc.text("- Chauffeur");
+    if (babySeat) doc.text("- Baby Seat");
+    if (navigator) doc.text("- Satellite Navigator");
+    if (gps) doc.text("- GPS");
+    if (insurance !== "none") doc.text(`- Insurance: ${insurance}`);
+    if (fuel !== "none") doc.text(`- Fuel Option: ${fuel}`);
+    doc.moveDown();
+
+    doc.fontSize(14).text(`Total Price: $${booking.totalPrice.toFixed(2)}`, { align: "right" });
+
+    doc.end();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error generating invoice");
+  }
+});
+
+
 module.exports = router;
