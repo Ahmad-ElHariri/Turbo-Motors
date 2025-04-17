@@ -88,5 +88,5 @@ window.addEventListener("DOMContentLoaded", () => {
     });
 
     // Initial render
-    updateSummary();
+    updateSummary(); 
 });
