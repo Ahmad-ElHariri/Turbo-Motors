@@ -1,109 +1,118 @@
+/* Layout base for sticky footer */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f7fafd;
+  display: flex;
+  flex-direction: column;
+}
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f7fafd;
-  }
-  
-  nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 40px;
-    background-color: #0a1128;
-    color: white;
-    flex-wrap: wrap;
-  }
-  
-  .logo {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: white;
-  }
-  
-  .nav-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    list-style: none;
-    align-items: center;
-    justify-content: flex-end;
-  }
-  
-  
-  .nav-links li a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .nav-links .btn {
-    padding: 8px 14px;
-    background-color: #3B82F6;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    font-weight: bold;
-    text-decoration: none;
-    white-space: nowrap;
-  }
-  
-  .nav-links .btn:hover {
-    background-color: #2563EB;
-  }
-  
-  .nav-links li:last-child {
-    margin-left: 10px;
-  }
-  
-  .container {
-    padding: 40px;
-  }
-  
-  h1, h2, h3 {
-    color: #111827;
-  }
-  footer {
-    background-color: #0F172A;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    transition: background-color 0.3s ease;
-    opacity: 0;
-    animation: fadeInFooter 1s ease forwards;
-  }
-  
-  footer:hover {
-    background-color: #1E293B;
-  }
-  
-  @keyframes fadeInFooter {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  
-  .footer-content p,
-  .footer-content a {
-    margin: 5px 0;
-    color: white;
-    transition: color 0.3s ease;
-    text-decoration: none;
-  }
-  
-  .footer-content a:hover {
-    color: #3B82F6;
-  }
-  
-  .footer-content .social-icons a {
-    margin: 0 8px;
-    color: white;
-    font-size: 20px;
-    transition: transform 0.3s ease, color 0.3s ease;
-  }
-  
-  .footer-content .social-icons a:hover {
-    color: #3B82F6;
-    transform: scale(1.1);
-  }
-  
+main {
+  flex: 1;
+}
+
+/* Navbar */
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  background-color: #0a1128;
+  color: white;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  list-style: none;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.nav-links li a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.nav-links .btn {
+  padding: 8px 14px;
+  background-color: #3B82F6;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-links .btn:hover {
+  background-color: #2563EB;
+}
+
+.nav-links li:last-child {
+  margin-left: 10px;
+}
+
+.container {
+  padding: 40px;
+}
+
+h1, h2, h3 {
+  color: #111827;
+}
+
+/* Footer */
+footer {
+  background-color: #0F172A;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+  opacity: 0;
+  animation: fadeInFooter 1s ease forwards;
+  margin-top: auto;
+}
+
+footer:hover {
+  background-color: #1E293B;
+}
+
+@keyframes fadeInFooter {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.footer-content p,
+.footer-content a {
+  margin: 5px 0;
+  color: white;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.footer-content a:hover {
+  color: #3B82F6;
+}
+
+.footer-content .social-icons a {
+  margin: 0 8px;
+  color: white;
+  font-size: 20px;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.footer-content .social-icons a:hover {
+  color: #3B82F6;
+  transform: scale(1.1);
+}
