@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Car = require("../models/car");
+const User = require("../models/users");
 const path = require("path");
 const multer = require("multer");
 
@@ -21,18 +22,17 @@ function isAdmin(req, res, next) {
     return res.status(403).send("Admins only");
 }
 
-// View all cars
+// ===== CAR MANAGEMENT ===== //
+
 router.get("/cars", isAdmin, async (req, res) => {
     const cars = await Car.find();
     res.render("admin/admin-cars", { cars });
 });
 
-// Show form to add a new car
 router.get("/cars/new", isAdmin, (req, res) => {
     res.render("admin/new-car");
 });
 
-// Handle new car creation
 router.post("/cars", isAdmin, upload.single("image"), async (req, res) => {
     try {
         const { brand, model, year, group, engineSize, doors, passengers, fuelType, gearbox, hasAC, electricWindows, pricePerDay } = req.body;
@@ -60,14 +60,12 @@ router.post("/cars", isAdmin, upload.single("image"), async (req, res) => {
     }
 });
 
-// Show edit form
 router.get("/cars/edit/:id", isAdmin, async (req, res) => {
     const car = await Car.findById(req.params.id);
     if (!car) return res.status(404).send("Car not found");
     res.render("admin/edit-car", { car });
 });
 
-// Handle car update
 router.post("/cars/update/:id", isAdmin, async (req, res) => {
     const { brand, model, year, group, engineSize, doors, passengers, fuelType, gearbox, hasAC, electricWindows, pricePerDay } = req.body;
     await Car.findByIdAndUpdate(req.params.id, {
@@ -89,10 +87,39 @@ router.post("/cars/update/:id", isAdmin, async (req, res) => {
     res.redirect("/admin/cars");
 });
 
-// Delete car
 router.post("/cars/delete/:id", isAdmin, async (req, res) => {
     await Car.findByIdAndDelete(req.params.id);
     res.redirect("/admin/cars");
+});
+
+// ===== USER MANAGEMENT ===== //
+
+router.get("/users", isAdmin, async (req, res) => {
+    const users = await User.find();
+    res.render("admin/admin-users", { users });
+});
+
+router.get("/users/edit/:id", isAdmin, async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).send("User not found");
+    res.render("admin/edit-user", { user });
+});
+
+router.post("/users/update/:id", isAdmin, async (req, res) => {
+    const { name, age, isAdmin, points, displayName } = req.body;
+    await User.findByIdAndUpdate(req.params.id, {
+        name,
+        age,
+        isAdmin: isAdmin === "on",
+        points,
+        displayName
+    });
+    res.redirect("/admin/users");
+});
+
+router.post("/users/delete/:id", isAdmin, async (req, res) => {
+    await User.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/users");
 });
 
 module.exports = router;
