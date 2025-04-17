@@ -89,21 +89,25 @@
     
 
     <!-- Stats Section -->
-    <section class="stats container">
-      <h2 class="section-title">Our Most Popular Car &<br>Average Daily Rental Fee</h2>
-      <p>Most Popular Car: <strong><%= mostPopularCar %></strong></p>
-      <p>Average Daily Rental Fee: <strong>$<%= averageRental %>/day</strong></p>
-    </section>
-    
+
 
     <!-- About Preview -->
-    <section class="about-preview container">
-      <h2 class="section-title">Learn More About Our Story</h2>
-      <p>Discover how Turbo Motors started and where we're headed next...</p>
-      <div class="center-text">
-        <a href="/about" class="buttons">Read More</a>
-      </div>
-    </section>
+  <!-- Stats Section -->
+<!-- Stats Section -->
+<section class="stats container">
+  <h2 class="section-title">Our Most Popular Car &<br>Average Daily Rental Fee</h2>
+
+  <% if (mostPopularCarDoc) { %>
+    <div style="text-align:center;">
+      <img src="/images/<%= mostPopularCarDoc.image %>" alt="Popular Car" style="max-width: 300px; border-radius: 10px; margin-bottom: 10px;" />
+      <p><strong><%= mostPopularCarDoc.brand %> <%= mostPopularCarDoc.model %></strong></p>
+    </div>
+  <% } else { %>
+    <p>No popular car data available.</p>
+  <% } %>
+
+  <p>Average Daily Rental Fee: <strong>$<%= averageRental %>/day</strong></p>
+</section>
 
   </main>
 

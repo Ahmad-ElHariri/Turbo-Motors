@@ -23,7 +23,6 @@ router.get("/home", async (req, res) => {
   const selectedGroups = groups.sort(() => 0.5 - Math.random()).slice(0, 3);
 
   try {
-    // Random featured cars
     const randomCars = [];
     for (let group of selectedGroups) {
       const car = await Car.aggregate([
@@ -33,48 +32,58 @@ router.get("/home", async (req, res) => {
       if (car.length > 0) randomCars.push(car[0]);
     }
 
-    // Get unique reviews
-    const allReviews = await Review.find().sort({ time: -1 }).populate("userId", "name displayName profilePicture");
+    const allReviews = await Review.find()
+      .sort({ time: -1 })
+      .populate("userId", "name displayName profilePicture");
+
+    const uniqueUserReviews = [];
     const seenUserIds = new Set();
-    const homepageReviews = allReviews.filter(r => {
-      const id = r.userId?._id?.toString();
-      if (id && !seenUserIds.has(id)) {
-        seenUserIds.add(id);
-        return true;
-      }
-      return false;
-    }).slice(0, 3);
-
-    // 🧠 STATISTICS
-    const bookings = await Booking.find().populate("selectedCars.car");
-
-    let carFrequency = {};
-    let totalFee = 0;
-    let totalCarDays = 0;
-
-    for (const booking of bookings) {
-      const days = Math.ceil(
-        (new Date(booking.reservation.dropoffDateTime) - new Date(booking.reservation.pickupDateTime)) / (1000 * 60 * 60 * 24)
-      );
-
-      for (const carData of booking.selectedCars) {
-        const carId = carData.car._id.toString();
-        carFrequency[carId] = (carFrequency[carId] || { count: 0, name: `${carData.car.brand} ${carData.car.model}` });
-        carFrequency[carId].count += 1;
-
-        totalFee += carData.dailyRate * days;
-        totalCarDays += days;
+    for (const review of allReviews) {
+      const userId = review.userId?._id?.toString();
+      if (!seenUserIds.has(userId)) {
+        uniqueUserReviews.push(review);
+        seenUserIds.add(userId);
       }
     }
 
-    const mostPopularCar = Object.values(carFrequency).sort((a, b) => b.count - a.count)[0]?.name || "N/A";
-    const averageRental = totalCarDays > 0 ? (totalFee / totalCarDays).toFixed(2) : "0.00";
+    let selectedReviews = [];
+    if (uniqueUserReviews.length <= 3) {
+      selectedReviews = uniqueUserReviews;
+    } else {
+      selectedReviews = uniqueUserReviews.sort(() => 0.5 - Math.random()).slice(0, 3);
+    }
 
+    // 🔥 Popular car + average rental fee stats
+    const bookings = await Booking.find({ status: "paid" }).populate("selectedCars.car");
+
+    const carFrequency = {};
+    let totalPrice = 0;
+    let carCount = 0;
+
+    for (const booking of bookings) {
+      for (const carObj of booking.selectedCars) {
+        const carId = carObj.car._id.toString();
+        carFrequency[carId] = (carFrequency[carId] || 0) + 1;
+
+        totalPrice += carObj.dailyRate;
+        carCount++;
+      }
+    }
+
+    let mostPopularCarDoc = null;
+    if (Object.keys(carFrequency).length > 0) {
+      const mostPopularCarId = Object.entries(carFrequency).sort((a, b) => b[1] - a[1])[0][0];
+      mostPopularCarDoc = await Car.findById(mostPopularCarId);
+    }
+
+    const averageRental = carCount ? (totalPrice / carCount).toFixed(2) : "0.00";
+
+    // 👇 send all to template
     res.render("home", {
       user,
       cars: randomCars,
-      homepageReviews,
-      mostPopularCar,
+      homepageReviews: selectedReviews,
+      mostPopularCarDoc,
       averageRental
     });
 
@@ -83,6 +92,7 @@ router.get("/home", async (req, res) => {
     res.status(500).send("Error fetching home data.");
   }
 });
+
 
 
 
