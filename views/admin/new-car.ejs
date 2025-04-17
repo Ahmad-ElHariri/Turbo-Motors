@@ -1,0 +1,96 @@
+<!-- views/admin/new-car.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add New Car</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .checkbox-inline {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .btn {
+      margin-top: 20px;
+      padding: 10px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Add New Car</h2>
+    <form action="/admin/cars" method="POST" enctype="multipart/form-data">
+      <label>Brand:</label>
+      <input type="text" name="brand" required>
+
+      <label>Model:</label>
+      <input type="text" name="model" required>
+
+      <label>Year:</label>
+      <input type="number" name="year" required>
+
+      <label>Group:</label>
+      <select name="group" required>
+        <option value="SUV">SUV</option>
+        <option value="Electric">Electric</option>
+        <option value="Hybrid">Hybrid</option>
+        <option value="Convertible">Convertible</option>
+        <option value="Bus">Bus</option>
+      </select>
+
+      <label>Engine Size (cc):</label>
+      <input type="number" name="engineSize">
+
+      <label>Number of Doors:</label>
+      <input type="number" name="doors">
+
+      <label>Passengers:</label>
+      <input type="number" name="passengers">
+
+      <label>Fuel Type:</label>
+      <input type="text" name="fuelType">
+
+      <label>Gearbox:</label>
+      <input type="text" name="gearbox">
+
+      <div class="checkbox-inline">
+        <input type="checkbox" name="hasAC" id="ac">
+        <label for="ac">AC</label>
+      </div>
+      <div class="checkbox-inline">
+        <input type="checkbox" name="electricWindows" id="ew">
+        <label for="ew">Electric Windows</label>
+      </div>
+
+      <label>Price Per Day ($):</label>
+      <input type="number" name="pricePerDay" required>
+
+      <label>Upload Image:</label>
+      <input type="file" name="image" required>
+
+      <button type="submit" class="btn">Save Car</button>
+    </form>
+  </div>
+</body>
+</html>
