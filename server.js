@@ -15,6 +15,7 @@ require("dotenv").config();
 // Import Internal Modules
 const postRoutes = require("./routes/post.js");
 const getRoutes = require("./routes/get.js");
+const adminRoutes = require("./routes/admin");
 const collection = require("./models/users.js");
 const Car = require("./models/car"); 
 const Review = require("./models/review");
@@ -64,6 +65,11 @@ app.use("/", getRoutes);
 
 // Post Functions
 app.use("/", postRoutes);
+
+
+
+// Admin Functions
+app.use("/admin", adminRoutes);
 
 
 
