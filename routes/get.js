@@ -241,25 +241,30 @@ router.get("/booking/resume", async (req, res) => {
   router.get("/checkout", async (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
-  
+
     try {
-      const reservation = JSON.parse(req.cookies.reservationData || "{}");
-      const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
-      const extras = JSON.parse(req.cookies.selectedExtras || "{}");
-      const totalPrice = calculateTotal(selectedCars, extras);
-  
-      res.render("checkout", {
-        reservation,
-        selectedCars,
-        extras,
-        totalPrice,
-        user
-      });
+        const reservation = JSON.parse(req.cookies.reservationData || "{}");
+        const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+        const extras = JSON.parse(req.cookies.selectedExtras || "{}");
+
+        const pickup = new Date(reservation.pickupDateTime);
+        const dropoff = new Date(reservation.dropoffDateTime);
+
+        const totalPrice = calculateTotal(selectedCars, extras, pickup, dropoff);
+
+        res.render("checkout", {
+            reservation,
+            selectedCars,
+            extras,
+            totalPrice,
+            user
+        });
     } catch (err) {
-      console.error("Error loading checkout:", err);
-      res.status(500).send("Error loading checkout page.");
+        console.error("Error loading checkout:", err);
+        res.status(500).send("Error loading checkout page.");
     }
-  });
+});
+
   
 
 module.exports = router;
