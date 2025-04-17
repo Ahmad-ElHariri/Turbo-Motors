@@ -7,6 +7,8 @@
   <title>Reservation Page</title>
   <link rel="stylesheet" href="/css/common_styles.css">
   <link rel="stylesheet" href="/css/reservation.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -19,7 +21,6 @@
       <li><a href="/contact">Contact</a></li>
       <% if (user) { %>
         <li><a href="/logout" class="btn">Logout</a></li>
-        <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
       <% } else { %>
         <li><a href="/login" class="btn">Sign In</a></li>
         <li><a href="/signup" class="btn">Sign Up</a></li>
@@ -82,10 +83,17 @@
   </main>
 
   <footer>
-    <div class="container footer-content">
-      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+    <div class="footer-content">
+        <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+        <p>Follow us on social media:</p>
+        <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin"></i></a>
+        </div>
     </div>
-  </footer>
+    </footer>
 
   <script>
     // Save to cookies on submit

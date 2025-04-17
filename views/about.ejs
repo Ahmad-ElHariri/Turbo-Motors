@@ -7,6 +7,8 @@
     <title>About Us</title>
     <link rel="stylesheet" href="/css/common_styles.css">
     <link rel="stylesheet" href="/css/aboutus.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -20,45 +22,45 @@
             <% if (user) { %>
                 <li><a href="/logout" class="btn">Logout</a></li>
                 <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
-            <% } else { %>
-                <li><a href="/login" class="btn">Sign In</a></li>
-                <li><a href="/signup" class="btn">Sign Up</a></li>
-            <% } %>
-            
-          </ul>          
+                <% } else { %>
+                    <li><a href="/login" class="btn">Sign In</a></li>
+                    <li><a href="/signup" class="btn">Sign Up</a></li>
+                    <% } %>
+
+        </ul>
     </nav>
 
     <main>
-           <div class="about-container">
-        <h1>About Us</h1>
-        <p>Welcome to Turbo Motors! We are dedicated to providing top-quality car rental services to our valued customers. Whether you need a car for business, vacation, or just a day trip, we have you covered.</p>
-        
-        <h2>Why Choose Us?</h2>
-        <ul class="features">
-            <li>Wide selection of vehicles</li>
-            <li>Affordable rates</li>
-            <li>Flexible rental options</li>
-            <li>24/7 customer support</li>
-            <li>Easy online booking</li>
-        </ul>
+        <div class="about-container">
+            <h1>About Us</h1>
+            <p>Welcome to Turbo Motors! We are dedicated to providing top-quality car rental services to our valued
+                customers. Whether you need a car for business, vacation, or just a day trip, we have you covered.</p>
 
-        <button class="glow-btn">Learn More</button>
-    </div>
+            <h2 style="margin-top: 70px;">Why Choose Us?</h2>
+            <ul class="features">
+                <li>Wide selection of vehicles</li>
+                <li>Affordable rates</li>
+                <li>Flexible rental options</li>
+                <li>24/7 customer support</li>
+                <li>Easy online booking</li>
+            </ul>
+
+        </div>
 
     </main>
 
-<footer>
-    <div class="footer-content">
-        <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-        <p>Follow us on social media:</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+            <p>Follow us on social media:</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
         </div>
-    </div>
-</footer>
+    </footer>
 </body>
 
 </html>

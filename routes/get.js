@@ -237,7 +237,6 @@ router.get("/booking/resume", async (req, res) => {
       selectedExtras: booking.extras
     });
   });
-  // routes/get.js
 
   router.get("/checkout", async (req, res) => {
     const user = req.cookies.user;
