@@ -1,0 +1,60 @@
+<!-- views/admin/admin-dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/common_styles.css">
+
+    <style>
+        .dashboard-container {
+            max-width: 800px;
+            margin: 40px auto;
+            text-align: center;
+        }
+
+        .dashboard-container h1 {
+            font-size: 2em;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-options {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .dashboard-card {
+            display: block;
+            width: 220px;
+            height: 120px;
+            padding: 20px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .dashboard-card:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-container">
+        <h1>Admin Panel</h1>
+        <div class="dashboard-options">
+            <a href="/admin/users" class="dashboard-card">Manage Users</a>
+            <a href="/admin/cars" class="dashboard-card">Manage Cars</a>
+            <a href="/admin/bookings" class="dashboard-card">Manage Bookings</a>
+        </div>
+    </div>
+</body>
+
+</html>

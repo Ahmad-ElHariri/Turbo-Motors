@@ -201,5 +201,10 @@ router.get("/bookings/invoice/:id", isAdmin, async (req, res) => {
   }
 });
 
+router.get("/", isAdmin, (req, res) => {
+    res.render("admin/admin-dashboard");
+  });
+  
+
 
 module.exports = router;
