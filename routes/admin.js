@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Car = require("../models/car");
 const User = require("../models/users");
+const Booking = require("../models/booking");
 const path = require("path");
 const multer = require("multer");
 
@@ -120,6 +121,29 @@ router.post("/users/update/:id", isAdmin, async (req, res) => {
 router.post("/users/delete/:id", isAdmin, async (req, res) => {
     await User.findByIdAndDelete(req.params.id);
     res.redirect("/admin/users");
+});
+
+// ===== BOOKING MANAGEMENT ===== //
+
+router.get("/bookings", isAdmin, async (req, res) => {
+    const bookings = await Booking.find().populate("user").sort({ createdAt: -1 });
+    res.render("admin/admin-bookings", { bookings });
+});
+
+router.get("/bookings/:id", isAdmin, async (req, res) => {
+    const booking = await Booking.findById(req.params.id).populate("user").populate("selectedCars.car");
+    if (!booking) return res.status(404).send("Booking not found");
+    res.render("admin/view-booking", { booking });
+});
+
+router.post("/bookings/mark-paid/:id", isAdmin, async (req, res) => {
+    await Booking.findByIdAndUpdate(req.params.id, { status: "paid" });
+    res.redirect("/admin/bookings");
+});
+
+router.post("/bookings/cancel/:id", isAdmin, async (req, res) => {
+    await Booking.findByIdAndUpdate(req.params.id, { status: "cancelled" });
+    res.redirect("/admin/bookings");
 });
 
 module.exports = router;
