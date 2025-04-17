@@ -329,13 +329,16 @@ router.post("/booking/save", async (req, res) => {
     const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
     const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
   
-    let totalPrice = calculateTotal(selectedCars, selectedExtras); // reuse your helper
+    // 🧼 Sanitize extras to avoid Mongoose enum error
+    if (selectedExtras.insurance === "") delete selectedExtras.insurance;
+    if (selectedExtras.fuel === "") delete selectedExtras.fuel;
+  
+    let totalPrice = calculateTotal(selectedCars, selectedExtras);
     const coupon = req.body.coupon?.trim();
   
-    if (coupon === "DISCOUNT10") totalPrice *= 0.9; // Apply 10% discount
+    if (coupon === "DISCOUNT10") totalPrice *= 0.9;
   
     try {
-      // 1. Save booking
       const booking = new Booking({
         user: user.id,
         reservation: reservationData,
@@ -351,11 +354,9 @@ router.post("/booking/save", async (req, res) => {
   
       await booking.save();
   
-      // 2. Mark cars as unavailable
       const carIds = selectedCars.map(car => car._id);
       await Car.updateMany({ _id: { $in: carIds } }, { available: false });
   
-      // 3. Clear temp cookies
       res.clearCookie("reservationData");
       res.clearCookie("selectedCars");
       res.clearCookie("selectedExtras");
