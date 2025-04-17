@@ -7,7 +7,8 @@ const Review = require("../models/review");
 const Reservation = require("../models/reservations");
 const Booking = require("../models/booking");
 const calculateTotal = require("../utils/price");
-
+const PDFDocument = require("pdfkit");
+const fs = require("fs");
 
 // Home
 router.get("/", (req, res) => {
@@ -265,6 +266,106 @@ router.get("/booking/resume", async (req, res) => {
     }
 });
 
+const path = require("path");
+
+router.get("/download-invoice/:bookingId", async (req, res) => {
+
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    try {
+      const booking = await Booking.findOne({ _id: req.params.bookingId, user: user.id })
+        .populate("selectedCars.car");
+  
+      const fullUser = await collection.findById(user.id);
+      if (!booking) return res.status(404).send("Booking not found");
+  
+      const doc = new PDFDocument({ margin: 50 });
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename=invoice-${booking._id}.pdf`);
+      doc.pipe(res);
+  
+      // Branding
+      doc
+        .fillColor("#007bff")
+        .fontSize(26)
+        .text("Turbo Motors Invoice", { align: "center" })
+        .moveDown();
+  
+      // Customer Info
+      doc
+        .fillColor("black")
+        .fontSize(12)
+        .text(`Booking ID: ${booking._id}`)
+        .text(`Customer: ${fullUser.name} (${fullUser.displayName || "No display name"})`)
+        .moveDown();
+  
+      // Dates and Locations
+      doc
+        .fontSize(13)
+        .fillColor("#333")
+        .text(`Pickup: ${booking.reservation.pickupLocation} - ${new Date(booking.reservation.pickupDateTime).toLocaleString()}`)
+        .text(`Drop-off: ${booking.reservation.dropoffLocation} - ${new Date(booking.reservation.dropoffDateTime).toLocaleString()}`)
+        .moveDown();
+  
+      // Cars (inline)
+      const carDescriptions = booking.selectedCars.map(c => `${c.car.brand} ${c.car.model} ($${c.dailyRate}/day)`);
+      doc.fillColor("#007bff").fontSize(15).text("Cars:", { underline: true });
+      doc.fillColor("black").fontSize(12).text(carDescriptions.join(", ")).moveDown();
+  
+      // Extras with Prices
+      const prices = {
+        chauffeur: 50,
+        babySeat: 20,
+        navigator: 15,
+        gps: 10,
+        insurance: {
+          full: 30,
+          tires: 20,
+          additionalDriver: 25
+        },
+        fuel: {
+          prepaid: 60,
+          payOnReturn: 70
+        }
+      };
+  
+      const extras = booking.extras || {};
+      const extraList = [];
+  
+      for (const [key, value] of Object.entries(extras)) {
+        if (!value) continue;
+  
+        if (["insurance", "fuel"].includes(key)) {
+          const label = value.charAt(0).toUpperCase() + value.slice(1);
+          const price = prices[key]?.[value] ?? 0;
+          extraList.push(`${key} (${label}) - $${price}`);
+        } else {
+          const price = prices[key] ?? 0;
+          extraList.push(`${key} - $${price}`);
+        }
+      }
+  
+      doc.fillColor("#007bff").fontSize(15).text("Services:", { underline: true });
+      if (extraList.length === 0) {
+        doc.fillColor("black").fontSize(12).text("No extras selected").moveDown();
+      } else {
+        doc.fillColor("black").fontSize(12).text(extraList.join(", ")).moveDown();
+      }
+  
+      // Total
+      doc
+        .fontSize(14)
+        .fillColor("green")
+        .text(`Total Paid: $${booking.totalPrice.toFixed(2)}`, { align: "right" });
+  
+      doc.end();
+    } catch (err) {
+      console.error("❌ Error generating invoice:", err);
+      res.status(500).send("Failed to generate invoice.");
+    }
+  });
+  
   
 
 module.exports = router;
