@@ -372,6 +372,38 @@ router.post("/booking/save", async (req, res) => {
       res.status(500).send("Failed to finalize booking.");
     }
   });
+  router.get("/my-bookings", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
   
-
+    try {
+      const bookings = await Booking.find({ user: user.id }).populate("selectedCars.car").sort({ createdAt: -1 });
+      res.render("my-bookings", { user, bookings });
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      res.status(500).send("Failed to load your bookings.");
+    }
+  });
+  router.post("/my-bookings/:id/delete", async (req, res) => {
+    const user = req.cookies.user;
+    if (!user) return res.redirect("/login");
+  
+    try {
+      const booking = await Booking.findOne({ _id: req.params.id, user: user.id });
+      if (!booking) return res.status(404).send("Booking not found.");
+  
+      // Mark cars as available again
+      const carIds = booking.selectedCars.map(c => c.car);
+      await Car.updateMany({ _id: { $in: carIds } }, { available: true });
+  
+      // Delete booking
+      await Booking.deleteOne({ _id: req.params.id });
+  
+      res.redirect("/my-bookings");
+    } catch (err) {
+      console.error("❌ Error cancelling booking:", err);
+      res.status(500).send("Failed to cancel booking.");
+    }
+  });
+  
 module.exports = router;

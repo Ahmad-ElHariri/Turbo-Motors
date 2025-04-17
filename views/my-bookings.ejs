@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Bookings</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/my-bookings" class="btn">My Bookings</a></li>
+      <li><a href="/logout" class="btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main style="padding: 40px;">
+    <h1>Your Bookings</h1>
+    <% if (bookings.length === 0) { %>
+      <p>No bookings found.</p>
+    <% } else { %>
+      <% bookings.forEach(booking => { %>
+        <div class="booking-card" style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 10px;">
+          <p><strong>Status:</strong> <%= booking.status %></p>
+          <p><strong>Pickup:</strong> <%= booking.reservation.pickupLocation %> | <strong>Dropoff:</strong> <%= booking.reservation.dropoffLocation %></p>
+          <p><strong>Date:</strong> <%= booking.createdAt.toDateString() %></p>
+          <ul>
+            <% booking.selectedCars.forEach(c => { %>
+              <li><%= c.car.brand %> <%= c.car.model %> ($<%= c.dailyRate %>/day)</li>
+            <% }) %>
+          </ul>
+          <p><strong>Total:</strong> $<%= booking.totalPrice %></p>
+          <form action="/my-bookings/<%= booking._id %>/delete" method="POST">
+            <button type="submit" class="btn btn-save" onclick="return confirm('Cancel this booking?')">Cancel Booking</button>
+          </form>
+        </div>
+      <% }) %>
+    <% } %>
+  </main>
+</body>
+</html>
