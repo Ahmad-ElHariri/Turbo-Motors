@@ -1,0 +1,80 @@
+<!-- views/admin/view-booking.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Booking</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <style>
+    .booking-info {
+      max-width: 800px;
+      margin: 30px auto;
+    }
+    h2, h3 {
+      margin-top: 20px;
+    }
+    .info-block {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+    }
+    .info-block p {
+      margin: 6px 0;
+    }
+    .badge {
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: #fff;
+    }
+    .badge.saved { background-color: #ffc107; }
+    .badge.paid { background-color: #28a745; }
+    .badge.cancelled { background-color: #dc3545; }
+    .badge.quotation { background-color: #17a2b8; }
+  </style>
+</head>
+<body>
+  <div class="booking-info">
+    <h2>Booking Details</h2>
+
+    <div class="info-block">
+      <h3>Client Info</h3>
+      <p><strong>Name:</strong> <%= booking.user?.name %></p>
+      <p><strong>Email:</strong> <%= booking.user?.email || '—' %></p>
+    </div>
+
+    <div class="info-block">
+      <h3>Reservation Info</h3>
+      <p><strong>Pickup:</strong> <%= booking.reservation.pickupLocation %> @ <%= new Date(booking.reservation.pickupDateTime).toLocaleString() %></p>
+      <p><strong>Dropoff:</strong> <%= booking.reservation.dropoffLocation %> @ <%= new Date(booking.reservation.dropoffDateTime).toLocaleString() %></p>
+      <p><strong>Driver Age:</strong> <%= booking.reservation.driverAge %></p>
+      <p><strong>Status:</strong> <span class="badge <%= booking.status %>"><%= booking.status %></span></p>
+    </div>
+
+    <div class="info-block">
+      <h3>Selected Cars</h3>
+      <% booking.selectedCars.forEach(item => { %>
+        <p><strong><%= item.car.brand %> <%= item.car.model %></strong> — $<%= item.dailyRate %> per day</p>
+      <% }) %>
+    </div>
+
+    <div class="info-block">
+      <h3>Extras</h3>
+      <ul>
+        <% if (booking.extras.chauffeur) { %><li>Chauffeur</li><% } %>
+        <% if (booking.extras.babySeat) { %><li>Baby Seat</li><% } %>
+        <% if (booking.extras.navigator) { %><li>Satellite Navigator</li><% } %>
+        <% if (booking.extras.gps) { %><li>GPS</li><% } %>
+        <% if (booking.extras.insurance !== 'none') { %><li>Insurance: <%= booking.extras.insurance %></li><% } %>
+        <% if (booking.extras.fuel !== 'none') { %><li>Fuel Option: <%= booking.extras.fuel %></li><% } %>
+      </ul>
+    </div>
+
+    <div class="info-block">
+      <h3>Total Price</h3>
+      <p><strong>$<%= booking.totalPrice.toFixed(2) %></strong></p>
+    </div>
+  </div>
+</body>
+</html>
