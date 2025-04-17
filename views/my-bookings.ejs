@@ -25,12 +25,41 @@
           <p><strong>Status:</strong> <%= booking.status %></p>
           <p><strong>Pickup:</strong> <%= booking.reservation.pickupLocation %> | <strong>Dropoff:</strong> <%= booking.reservation.dropoffLocation %></p>
           <p><strong>Date:</strong> <%= booking.createdAt.toDateString() %></p>
+          
+          <p><strong>Cars:</strong></p>
           <ul>
             <% booking.selectedCars.forEach(c => { %>
               <li><%= c.car.brand %> <%= c.car.model %> ($<%= c.dailyRate %>/day)</li>
             <% }) %>
           </ul>
-          <p><strong>Total:</strong> $<%= booking.totalPrice %></p>
+
+          <p><strong>Extras:</strong></p>
+          <ul>
+            <% if (booking.extras) { %>
+              <% if (booking.extras.chauffeur) { %><li>Chauffeur ($30)</li><% } %>
+              <% if (booking.extras.babySeat) { %><li>Baby Seat ($15)</li><% } %>
+              <% if (booking.extras.navigator) { %><li>Navigator ($20)</li><% } %>
+              <% if (booking.extras.gps) { %><li>GPS ($25)</li><% } %>
+              <% if (booking.extras.insurance && booking.extras.insurance !== "none") { %>
+                <li>Insurance: <%= booking.extras.insurance %> (
+                  $<%= booking.extras.insurance === 'full' ? 50 : 
+                       booking.extras.insurance === 'tires' ? 20 : 
+                       booking.extras.insurance === 'additionalDriver' ? 10 : 0 %>)
+                </li>
+              <% } %>
+              <% if (booking.extras.fuel && booking.extras.fuel !== "none") { %>
+                <li>Fuel Plan: <%= booking.extras.fuel %> (
+                  $<%= booking.extras.fuel === 'prepaid' ? 40 : 
+                       booking.extras.fuel === 'payOnReturn' ? 20 : 0 %>)
+                </li>
+              <% } %>
+            <% } else { %>
+              <li>No extras selected.</li>
+            <% } %>
+          </ul>
+
+          <p><strong>Total:</strong> $<%= booking.totalPrice.toFixed(2) %></p>
+
           <form action="/my-bookings/<%= booking._id %>/delete" method="POST">
             <button type="submit" class="btn btn-save" onclick="return confirm('Cancel this booking?')">Cancel Booking</button>
           </form>
