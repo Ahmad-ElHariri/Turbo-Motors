@@ -1,0 +1,73 @@
+<!-- views/admin/admin-users.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Users</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <style>
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .admin-table th, .admin-table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    .admin-actions form {
+      display: inline;
+    }
+    .btn {
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-danger {
+      background-color: #dc3545;
+    }
+    .btn-secondary {
+      background-color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>All Users</h2>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Admin?</th>
+          <th>Points</th>
+          <th>Display Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.age || '-' %></td>
+            <td><%= user.isAdmin ? '✔️' : '❌' %></td>
+            <td><%= user.points %></td>
+            <td><%= user.displayName || '-' %></td>
+            <td class="admin-actions">
+              <a class="btn btn-secondary" href="/admin/users/edit/<%= user._id %>">Edit</a>
+              <form method="POST" action="/admin/users/delete/<%= user._id %>">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
