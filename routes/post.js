@@ -25,7 +25,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 
-
 // Email sender function
 async function sendEmail(name, email, message) {
     try {
@@ -300,7 +299,7 @@ router.post("/booking/save", async (req, res) => {
           dailyRate: car.pricePerDay
         })),
         extras: selectedExtras,
-        totalPrice: calculateTotal(selectedCars, selectedExtras),
+        totalPrice:calculateTotal(cars, extras, pickupDateTime, dropoffDateTime),
         status: "saved"
       });
   
@@ -328,12 +327,19 @@ router.post("/booking/save", async (req, res) => {
     const reservationData = JSON.parse(req.cookies.reservationData || "{}");
     const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
     const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
-  
+    const pickup = new Date(reservationData.pickupDateTime);
+  const dropoff = new Date(reservationData.dropoffDateTime);
     // 🧼 Sanitize extras to avoid Mongoose enum error
     if (selectedExtras.insurance === "") delete selectedExtras.insurance;
     if (selectedExtras.fuel === "") delete selectedExtras.fuel;
   
-    let totalPrice = calculateTotal(selectedCars, selectedExtras);
+    let totalPrice = calculateTotal(
+  selectedCars,
+  selectedExtras,
+  pickup,
+  dropoff
+);
+
     const coupon = req.body.coupon?.trim();
   
     if (coupon === "DISCOUNT10") totalPrice *= 0.9;

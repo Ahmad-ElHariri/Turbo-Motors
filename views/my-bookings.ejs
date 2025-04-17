@@ -23,8 +23,12 @@
       <% bookings.forEach(booking => { %>
         <div class="booking-card" style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 10px;">
           <p><strong>Status:</strong> <%= booking.status %></p>
-          <p><strong>Pickup:</strong> <%= booking.reservation.pickupLocation %> | <strong>Dropoff:</strong> <%= booking.reservation.dropoffLocation %></p>
-          <p><strong>Date:</strong> <%= booking.createdAt.toDateString() %></p>
+          
+          <p><strong>Pickup Location:</strong> <%= booking.reservation.pickupLocation %></p>
+          <p><strong>Pickup Date & Time:</strong> <%= new Date(booking.reservation.pickupDateTime).toLocaleString() %></p>
+          
+          <p><strong>Dropoff Location:</strong> <%= booking.reservation.dropoffLocation %></p>
+          <p><strong>Dropoff Date & Time:</strong> <%= new Date(booking.reservation.dropoffDateTime).toLocaleString() %></p>
           
           <p><strong>Cars:</strong></p>
           <ul>
