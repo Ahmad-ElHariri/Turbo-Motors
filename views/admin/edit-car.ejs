@@ -1,0 +1,93 @@
+<!-- views/admin/edit-car.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Car</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <style>
+    .form-container {
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 15px;
+    }
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .checkbox-inline {
+      display: inline-block;
+      margin-right: 10px;
+    }
+    .btn {
+      margin-top: 20px;
+      padding: 10px 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2>Edit Car</h2>
+    <form action="/admin/cars/update/<%= car._id %>" method="POST">
+      <label>Brand:</label>
+      <input type="text" name="brand" value="<%= car.brand %>" required>
+
+      <label>Model:</label>
+      <input type="text" name="model" value="<%= car.model %>" required>
+
+      <label>Year:</label>
+      <input type="number" name="year" value="<%= car.year %>" required>
+
+      <label>Group:</label>
+      <select name="group" required>
+        <option value="SUV" <%= car.group === 'SUV' ? 'selected' : '' %>>SUV</option>
+        <option value="Electric" <%= car.group === 'Electric' ? 'selected' : '' %>>Electric</option>
+        <option value="Hybrid" <%= car.group === 'Hybrid' ? 'selected' : '' %>>Hybrid</option>
+        <option value="Convertible" <%= car.group === 'Convertible' ? 'selected' : '' %>>Convertible</option>
+        <option value="Bus" <%= car.group === 'Bus' ? 'selected' : '' %>>Bus</option>
+      </select>
+
+      <label>Engine Size (cc):</label>
+      <input type="number" name="engineSize" value="<%= car.specs.engineSize %>">
+
+      <label>Number of Doors:</label>
+      <input type="number" name="doors" value="<%= car.specs.doors %>">
+
+      <label>Passengers:</label>
+      <input type="number" name="passengers" value="<%= car.specs.passengers %>">
+
+      <label>Fuel Type:</label>
+      <input type="text" name="fuelType" value="<%= car.specs.fuelType %>">
+
+      <label>Gearbox:</label>
+      <input type="text" name="gearbox" value="<%= car.specs.gearbox %>">
+
+      <div class="checkbox-inline">
+        <input type="checkbox" name="hasAC" id="ac" <%= car.specs.hasAC ? 'checked' : '' %>>
+        <label for="ac">AC</label>
+      </div>
+      <div class="checkbox-inline">
+        <input type="checkbox" name="electricWindows" id="ew" <%= car.specs.electricWindows ? 'checked' : '' %>>
+        <label for="ew">Electric Windows</label>
+      </div>
+
+      <label>Price Per Day ($):</label>
+      <input type="number" name="pricePerDay" value="<%= car.pricePerDay %>" required>
+
+      <button type="submit" class="btn">Update Car</button>
+    </form>
+  </div>
+</body>
+</html>
