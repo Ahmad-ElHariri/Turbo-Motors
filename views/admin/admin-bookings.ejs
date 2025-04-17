@@ -1,0 +1,87 @@
+<!-- views/admin/admin-bookings.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin - Bookings</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <style>
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .admin-table th, .admin-table td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+    .admin-actions form {
+      display: inline;
+    }
+    .btn {
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .btn-secondary { background-color: #6c757d; }
+    .btn-success { background-color: #28a745; }
+    .btn-danger { background-color: #dc3545; }
+    .badge {
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: white;
+      font-size: 0.8em;
+    }
+    .badge.saved { background: #ffc107; }
+    .badge.paid { background: #28a745; }
+    .badge.cancelled { background: #dc3545; }
+    .badge.quotation { background: #17a2b8; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>All Bookings</h2>
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Pickup Date</th>
+          <th>Dropoff Date</th>
+          <th>Status</th>
+          <th>Total Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% bookings.forEach(b => { %>
+          <tr>
+            <td><%= b.user?.name || 'Unknown' %></td>
+            <td><%= new Date(b.reservation.pickupDateTime).toLocaleDateString() %></td>
+            <td><%= new Date(b.reservation.dropoffDateTime).toLocaleDateString() %></td>
+            <td><span class="badge <%= b.status %>"><%= b.status %></span></td>
+            <td>$<%= b.totalPrice.toFixed(2) %></td>
+            <td class="admin-actions">
+              <a class="btn btn-secondary" href="/admin/bookings/<%= b._id %>">View</a>
+              <% if (b.status !== 'paid') { %>
+                <form action="/admin/bookings/mark-paid/<%= b._id %>" method="POST">
+                  <button class="btn btn-success" type="submit">Mark Paid</button>
+                </form>
+              <% } %>
+              <% if (b.status !== 'cancelled') { %>
+                <form action="/admin/bookings/cancel/<%= b._id %>" method="POST">
+                  <button class="btn btn-danger" type="submit">Cancel</button>
+                </form>
+              <% } %>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
