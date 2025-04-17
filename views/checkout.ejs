@@ -137,21 +137,39 @@
         <option value="online">Pay now</option>
       </select>
 
-      <label for="creditCard">Credit Card (8 digits - for demo only):</label>
-      <input type="text" id="creditCard" name="creditCard" pattern="\d{8}" placeholder="12345678" required>
+      <div id="creditCardSection">
+        <label for="creditCard">Credit Card (8 digits - for demo only):</label>
+        <input type="text" id="creditCard" name="creditCard" pattern="\d{8}" placeholder="12345678">
+      </div>
 
       <div class="actions">
-        <!-- Save for Later button -->
-        <form action="/booking/save" method="POST">
-          <button type="submit" class="btn btn-save">Save for Later</button>
-        </form>
-
-        <!-- Pay Now button -->
         <a href="/home" class="btn btn-save">Pay Later</a>
-
+        <button type="submit" id="confirmButton" class="btn btn-pay">Confirm Booking</button>
       </div>
     </form>
   </div>
+
+  <script>
+    const paymentSelect = document.getElementById("paymentMethod");
+    const creditCardSection = document.getElementById("creditCardSection");
+    const creditCardInput = document.getElementById("creditCard");
+    const confirmButton = document.getElementById("confirmButton");
+
+    function toggleCreditCardField() {
+      if (paymentSelect.value === "location") {
+        creditCardSection.style.display = "none";
+        creditCardInput.removeAttribute("required");
+        confirmButton.textContent = "Confirm Booking";
+      } else {
+        creditCardSection.style.display = "block";
+        creditCardInput.setAttribute("required", "true");
+        confirmButton.textContent = "Pay Now";
+      }
+    }
+
+    paymentSelect.addEventListener("change", toggleCreditCardField);
+    window.addEventListener("DOMContentLoaded", toggleCreditCardField);
+  </script>
 
 </body>
 </html>
