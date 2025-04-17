@@ -32,6 +32,17 @@
     .badge.paid { background-color: #28a745; }
     .badge.cancelled { background-color: #dc3545; }
     .badge.quotation { background-color: #17a2b8; }
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      margin-top: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -75,6 +86,8 @@
       <h3>Total Price</h3>
       <p><strong>$<%= booking.totalPrice.toFixed(2) %></strong></p>
     </div>
+
+    <a class="btn" href="/admin/bookings/invoice/<%= booking._id %>">Download Invoice (PDF)</a>
   </div>
 </body>
 </html>
