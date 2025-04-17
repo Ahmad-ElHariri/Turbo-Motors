@@ -20,15 +20,14 @@
       <li><a href="/about">About Us</a></li>
       <li><a href="/contact">Contact</a></li>
       <% if (user) { %>
+        <li><a href="/my-bookings">My Bookings</a></li>
+      <% } %>
+      <% if (user) { %>
         <li><a href="/logout" class="btn">Logout</a></li>
         <li><a href="/profile" class="btn">Edit Profile</a></li>
-        <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
       <% } else { %>
         <li><a href="/login" class="btn">Sign In</a></li>
         <li><a href="/signup" class="btn">Sign Up</a></li>
-      <% } %>
-      <% if (user) { %>
-        <li><a href="/my-bookings">My Bookings</a></li>
       <% } %>
       
     </ul>
