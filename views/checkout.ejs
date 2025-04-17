@@ -50,7 +50,7 @@
       margin: 10px 0 5px;
     }
 
-    input[type="text"] {
+    input[type="text"], select {
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
@@ -74,15 +74,12 @@
     }
 
     .btn-save {
-      background-color: #6c757d;
+      background-color: #007bff;
       color: white;
-      text-decoration: none;
-      text-align: center;
-      display: inline-block;
     }
 
     .btn-save:hover {
-      background-color: #5a6268;
+      background-color: #0056b3;
     }
 
     .btn-pay {
@@ -134,15 +131,24 @@
       <label for="coupon">Coupon Code (optional):</label>
       <input type="text" id="coupon" name="coupon" placeholder="e.g., DISCOUNT10">
 
+      <label for="paymentMethod">Payment Method:</label>
+      <select name="paymentMethod" id="paymentMethod" required>
+        <option value="location">Pay at location</option>
+        <option value="online">Pay now</option>
+      </select>
+
       <label for="creditCard">Credit Card (8 digits - for demo only):</label>
       <input type="text" id="creditCard" name="creditCard" pattern="\d{8}" placeholder="12345678" required>
 
       <div class="actions">
-        <!-- Pay Later = just go home -->
+        <!-- Save for Later button -->
+        <form action="/booking/save" method="POST">
+          <button type="submit" class="btn btn-save">Save for Later</button>
+        </form>
+
+        <!-- Pay Now button -->
         <a href="/home" class="btn btn-save">Pay Later</a>
 
-        <!-- Pay Now = submit form -->
-        <button type="submit" class="btn btn-pay">Pay Now</button>
       </div>
     </form>
   </div>
