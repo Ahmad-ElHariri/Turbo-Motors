@@ -4,16 +4,27 @@ function calculateTotal(cars, extras, pickupDateTime, dropoffDateTime) {
   const start = new Date(pickupDateTime);
   const end = new Date(dropoffDateTime);
 
-  // If pickup is after dropoff, return 0
   if (start >= end) return 0;
 
   const durationInMs = end - start;
-  const days = durationInMs / (1000 * 60 * 60 * 24); // may be a float like 2.5
+  const totalHours = durationInMs / (1000 * 60 * 60);
+  const fullDays = Math.floor(totalHours / 24);
+  const remainingHours = Math.ceil(totalHours % 24); // round up hours
 
-  // Car price per day × number of days
-  total += cars.reduce((sum, car) => sum + (car.pricePerDay * days), 0);
+  total += cars.reduce((sum, car) => {
+    const pricePerDay = car.pricePerDay;
+    const pricePerHour = pricePerDay / 24;
 
-  // Extra charges
+    // 1 day minimum
+    if (totalHours <= 24) {
+      return sum + pricePerDay;
+    }
+
+    // Full days + remaining hours
+    return sum + (fullDays * pricePerDay) + (remainingHours * pricePerHour);
+  }, 0);
+
+  // Extras (flat fee)
   if (extras.chauffeur) total += 50;
   if (extras.babySeat) total += 20;
   if (extras.navigator) total += 15;
