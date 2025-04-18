@@ -9,136 +9,153 @@
 </head>
 <body>
 
-  <div class="container">
-    <h1>Finalize Your Booking</h1>
+<div class="container">
+  <h1>Finalize Your Booking</h1>
 
-    <div class="section">
-      <h3>Reservation</h3>
-      <p><strong>Pickup:</strong> <%= reservation.pickupLocation %></p>
-      <p><strong>Dropoff:</strong> <%= reservation.dropoffLocation %></p>
-    </div>
-
-    <div class="section">
-      <h3>Selected Cars</h3>
-      <ul>
-        <% selectedCars.forEach(car => { %>
-          <li><%= car.brand %> <%= car.model %> - $<%= car.pricePerDay %>/day</li>
-        <% }) %>
-      </ul>
-    </div>
-
-    <div class="section">
-      <h3>Extras</h3>
-      <ul>
-        <% for (let key in extras) {
-             if (extras[key]) { %>
-               <li><%= key %>: <%= extras[key] %></li>
-        <%   }
-           } %>
-      </ul>
-    </div>
-
-    <div class="section">
-      <h3 id="priceLabel">Total Price: $<span id="priceValue"><%= totalPrice.toFixed(2) %></span></h3>
-      <% if (user && user.points >= 10) { %>
-        <label>
-          <input type="checkbox" id="usePoints" />
-          Use 10 loyalty points for 10% discount (You have <%= user.points %> points)
-        </label>
-      <% } else if (user) { %>
-        <p>You have <%= user.points %> points. You need at least 10 points to use a discount.</p>
-      <% } %>
-    </div>
-
-    <form action="/booking/confirm" method="POST">
-      <label for="coupon">Coupon Code (optional):</label>
-      <input type="text" id="coupon" name="coupon" placeholder="e.g., DISCOUNT10">
-
-      <label for="paymentMethod">Payment Method:</label>
-      <select name="paymentMethod" id="paymentMethod" required>
-        <option value="location">Pay at location</option>
-        <option value="online">Pay now</option>
-      </select>
-
-      <div id="creditCardSection">
-        <label for="creditCard">Credit Card (8 digits - for demo only):</label>
-        <input type="text" id="creditCard" name="creditCard" pattern="\d{8}" placeholder="12345678">
-      </div>
-
-      <!-- Hidden input for points -->
-      <input type="hidden" id="usePointsUsed" name="usePointsUsed" value="false" />
-
-      <div class="actions">
-        <a href="/home" class="btn btn-save">Pay Later</a>
-        <button type="submit" id="confirmButton" class="btn btn-pay">Confirm Booking</button>
-      </div>
-    </form>
+  <div class="section">
+    <h3>Reservation</h3>
+    <p><strong>Pickup:</strong> <%= reservation.pickupLocation %></p>
+    <p><strong>Dropoff:</strong> <%= reservation.dropoffLocation %></p>
   </div>
 
-  <footer>
-    <div class="footer-content">
-        <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-        <p>Follow us on social media:</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-        </div>
+  <div class="section">
+    <h3>Selected Cars</h3>
+    <ul>
+      <% selectedCars.forEach(car => { %>
+        <li><%= car.brand %> <%= car.model %> - $<%= car.pricePerDay %>/day</li>
+      <% }) %>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3>Extras</h3>
+    <ul>
+      <% for (let key in extras) {
+           if (extras[key]) { %>
+             <li><%= key %>: <%= extras[key] %></li>
+      <%   }
+         } %>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h3 id="priceLabel">Total Price: $<span id="priceValue"><%= totalPrice.toFixed(2) %></span></h3>
+    <% if (user && user.points >= 10) { %>
+      <label>
+        <input type="checkbox" id="usePoints" />
+        Use 10 loyalty points for 10% discount (You have <%= user.points %> points)
+      </label>
+    <% } else if (user) { %>
+      <p>You have <%= user.points %> points. You need at least 10 points to use a discount.</p>
+    <% } %>
+  </div>
+
+  <form action="/booking/confirm" method="POST" id="checkoutForm">
+    <label for="coupon">Coupon Code (optional):</label>
+    <input type="text" id="coupon" name="coupon" placeholder="e.g., DISCOUNT10">
+
+    <label for="paymentMethod">Payment Method:</label>
+    <select name="paymentMethod" id="paymentMethod" required>
+      <option value="location">Pay at location</option>
+      <option value="online">Pay now</option>
+      <option value="quotation">Quotation</option>
+    </select>
+
+    <div id="creditCardSection">
+      <label for="creditCard">Credit Card (8 digits - for demo only):</label>
+      <input type="text" id="creditCard" name="creditCard" pattern="\d{8}" placeholder="12345678">
     </div>
-  </footer>
 
-  <script>
-    const paymentSelect = document.getElementById("paymentMethod");
-    const creditCardSection = document.getElementById("creditCardSection");
-    const creditCardInput = document.getElementById("creditCard");
-    const confirmButton = document.getElementById("confirmButton");
+    <div id="quotationSection" style="display: none;">
+      <label for="demandedPrice">Your Desired Price ($):</label>
+      <input type="number" id="demandedPrice" name="demandedPrice" placeholder="e.g. 250" min="1">
+    </div>
 
-    const basePrice = parseFloat("<%= totalPrice.toFixed(2) %>");
+    <input type="hidden" id="usePointsUsed" name="usePointsUsed" value="false" />
 
-    const priceDisplay = document.getElementById("priceValue");
-    const couponInput = document.getElementById("coupon");
-    const usePointsCheckbox = document.getElementById("usePoints");
-    const usePointsHidden = document.getElementById("usePointsUsed");
+    <div class="actions">
+      <a href="/home" class="btn btn-save">Pay Later</a>
+      <button type="submit" id="confirmButton" class="btn btn-pay">Confirm Booking</button>
+      <button type="submit" id="quoteButton" class="btn btn-quote" style="display: none;" formaction="/booking/quotation">Request Quotation</button>
+    </div>
+  </form>
+</div>
 
-    function toggleCreditCardField() {
-      if (paymentSelect.value === "location") {
-        creditCardSection.style.display = "none";
-        creditCardInput.removeAttribute("required");
-        confirmButton.textContent = "Confirm Booking";
-      } else {
-        creditCardSection.style.display = "block";
-        creditCardInput.setAttribute("required", "true");
-        confirmButton.textContent = "Pay Now";
-      }
+<footer>
+  <div class="footer-content">
+    <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+    <p>Follow us on social media:</p>
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook"></i></a>
+      <a href="#"><i class="fab fa-twitter"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+      <a href="#"><i class="fab fa-linkedin"></i></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const paymentSelect = document.getElementById("paymentMethod");
+  const creditCardSection = document.getElementById("creditCardSection");
+  const creditCardInput = document.getElementById("creditCard");
+  const confirmButton = document.getElementById("confirmButton");
+  const quoteButton = document.getElementById("quoteButton");
+  const quotationSection = document.getElementById("quotationSection");
+
+  const basePrice = parseFloat("<%= totalPrice.toFixed(2) %>");
+  const priceDisplay = document.getElementById("priceValue");
+  const couponInput = document.getElementById("coupon");
+  const usePointsCheckbox = document.getElementById("usePoints");
+  const usePointsHidden = document.getElementById("usePointsUsed");
+
+  function toggleSections() {
+    const method = paymentSelect.value;
+
+    if (method === "online") {
+      creditCardSection.style.display = "block";
+      quotationSection.style.display = "none";
+      quoteButton.style.display = "none";
+      confirmButton.style.display = "inline-block";
+      creditCardInput.setAttribute("required", "true");
+    } else if (method === "quotation") {
+      quotationSection.style.display = "block";
+      creditCardSection.style.display = "none";
+      confirmButton.style.display = "none";
+      quoteButton.style.display = "inline-block";
+      creditCardInput.removeAttribute("required");
+    } else {
+      creditCardSection.style.display = "none";
+      quotationSection.style.display = "none";
+      quoteButton.style.display = "none";
+      confirmButton.style.display = "inline-block";
+      creditCardInput.removeAttribute("required");
     }
+  }
 
-    function calculateFinalPrice() {
-      let price = basePrice;
-      const coupon = couponInput.value.trim();
-      const usingCoupon = coupon === "DISCOUNT10";
-      const usingPoints = usePointsCheckbox && usePointsCheckbox.checked;
+  function calculateFinalPrice() {
+    let price = basePrice;
+    const coupon = couponInput.value.trim();
+    const usingCoupon = coupon === "DISCOUNT10";
+    const usingPoints = usePointsCheckbox && usePointsCheckbox.checked;
 
-      if (usingCoupon) price *= 0.9;
-      if (usingPoints) price *= 0.9;
+    if (usingCoupon) price *= 0.9;
+    if (usingPoints) price *= 0.9;
 
-      priceDisplay.textContent = price.toFixed(2);
-      usePointsHidden.value = usingPoints;
-    }
+    priceDisplay.textContent = price.toFixed(2);
+    usePointsHidden.value = usingPoints;
+  }
 
-    // Initialize
-    window.addEventListener("DOMContentLoaded", () => {
-      toggleCreditCardField();
-      calculateFinalPrice();
-    });
+  window.addEventListener("DOMContentLoaded", () => {
+    toggleSections();
+    calculateFinalPrice();
+  });
 
-    // Event listeners
-    paymentSelect.addEventListener("change", toggleCreditCardField);
-    couponInput.addEventListener("input", calculateFinalPrice);
-    if (usePointsCheckbox) {
-      usePointsCheckbox.addEventListener("change", calculateFinalPrice);
-    }
-  </script>
+  paymentSelect.addEventListener("change", toggleSections);
+  couponInput.addEventListener("input", calculateFinalPrice);
+  if (usePointsCheckbox) {
+    usePointsCheckbox.addEventListener("change", calculateFinalPrice);
+  }
+</script>
 
 </body>
 </html>

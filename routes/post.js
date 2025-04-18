@@ -317,77 +317,101 @@ router.post("/booking/save", async (req, res) => {
     }
   });
   
+router.post("/booking/confirm", async (req, res) => {
+  const userCookie = req.cookies.user;
+  if (!userCookie) return res.redirect("/login");
 
-  router.post("/booking/confirm", async (req, res) => {
-    const userCookie = req.cookies.user;
-    if (!userCookie) return res.redirect("/login");
+  const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+  const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+  const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
 
-    const reservationData = JSON.parse(req.cookies.reservationData || "{}");
-    const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
-    const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+  const pickup = new Date(reservationData.pickupDateTime);
+  const dropoff = new Date(reservationData.dropoffDateTime);
 
-    const pickup = new Date(reservationData.pickupDateTime);
-    const dropoff = new Date(reservationData.dropoffDateTime);
+  if (selectedExtras.insurance === "") delete selectedExtras.insurance;
+  if (selectedExtras.fuel === "") delete selectedExtras.fuel;
 
-    if (selectedExtras.insurance === "") delete selectedExtras.insurance;
-    if (selectedExtras.fuel === "") delete selectedExtras.fuel;
+  let totalPrice = calculateTotal(selectedCars, selectedExtras, pickup, dropoff);
 
-    let totalPrice = calculateTotal(selectedCars, selectedExtras, pickup, dropoff);
+  const coupon = req.body.coupon?.trim();
+  const usePoints = req.body.usePointsUsed === "true";
+  const paymentMethod = req.body.paymentMethod;
+  const demandedPrice = req.body.demandedPrice; // only for quotation
+  let discountMessage = "";
 
-    const coupon = req.body.coupon?.trim();
-    const usePoints = req.body.usePointsUsed === "true";
-    let discountMessage = "";
+  const user = await collection.findById(userCookie.id);
 
-    if (coupon === "DISCOUNT10") {
-        totalPrice *= 0.9;
-        discountMessage += "Coupon applied. ";
+  // Apply discounts
+  if (coupon === "DISCOUNT10") {
+    totalPrice *= 0.9;
+    discountMessage += "Coupon applied. ";
+  }
+
+  if (usePoints) {
+    if (user.points < 10) {
+      return res.status(400).send("You need at least 10 points to use them.");
     }
+    totalPrice *= 0.9;
+    user.points -= 10;
+    discountMessage += "10 points used. ";
+  }
 
-    const user = await collection.findById(userCookie.id);
-    if (usePoints) {
-        if (user.points < 10) {
-            return res.status(400).send("You need at least 10 points to use them.");
-        }
-        totalPrice *= 0.9;
-        user.points -= 10;
-        discountMessage += "10 points used. ";
+  // Build base booking object
+  const booking = new Booking({
+    user: user._id,
+    reservation: reservationData,
+    selectedCars: selectedCars.map(car => ({
+      car: car._id,
+      dailyRate: car.pricePerDay
+    })),
+    extras: selectedExtras,
+    couponCode: coupon || null,
+    totalPrice,
+    status: paymentMethod === "online" ? "paid" : "saved"
+  });
+
+  // If quotation selected
+  if (paymentMethod === "quotation") {
+    booking.status = "quotation";
+    if (demandedPrice && !isNaN(demandedPrice)) {
+      booking.totalPrice = parseFloat(demandedPrice);
     }
-
-    const booking = new Booking({
-        user: user._id,
-        reservation: reservationData,
-        selectedCars: selectedCars.map(car => ({
-            car: car._id,
-            dailyRate: car.pricePerDay
-        })),
-        extras: selectedExtras,
-        couponCode: coupon || null,
-        totalPrice,
-        status: req.body.paymentMethod === "online" ? "paid" : "saved"
-    });
-
     await booking.save();
-    await Car.updateMany(
-        { _id: { $in: selectedCars.map(car => car._id) } },
-        { available: false }
-    );
-
-    // ✅ Add points: 1 point per $100
-    const earnedPoints = Math.floor(totalPrice / 100);
-    user.points += earnedPoints;
-
-    await user.save();
 
     res.clearCookie("reservationData");
     res.clearCookie("selectedCars");
     res.clearCookie("selectedExtras");
 
-    res.render("confirmation", {
-        user,
-        booking,
-        message: `Booking confirmed successfully! ${discountMessage}You earned ${earnedPoints} point(s).`
-    });
+    return res.redirect("/home");
+  }
+
+  // Save for paid/saved normally
+  await booking.save();
+
+  // Mark cars unavailable
+  await Car.updateMany(
+    { _id: { $in: selectedCars.map(car => car._id) } },
+    { available: false }
+  );
+
+  // Earn points
+  const earnedPoints = Math.floor(totalPrice / 100);
+  user.points += earnedPoints;
+  await user.save();
+
+  // Clear cookies
+  res.clearCookie("reservationData");
+  res.clearCookie("selectedCars");
+  res.clearCookie("selectedExtras");
+
+  // Show confirmation
+  res.render("confirmation", {
+    user,
+    booking,
+    message: `Booking confirmed successfully! ${discountMessage}You earned ${earnedPoints} point(s).`
+  });
 });
+
 
 router.get("/my-bookings", async (req, res) => {
     const userCookie = req.cookies.user;
@@ -432,5 +456,48 @@ router.get("/my-bookings", async (req, res) => {
     }
   });
   
+  router.post("/booking/quotation", async (req, res) => {
+    const userCookie = req.cookies.user;
+    if (!userCookie) return res.redirect("/login");
+  
+    const reservationData = JSON.parse(req.cookies.reservationData || "{}");
+    const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
+    const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+  
+    const demandedPrice = parseFloat(req.body.demandedPrice);
+    if (isNaN(demandedPrice) || demandedPrice <= 0) {
+      return res.status(400).send("Invalid quotation price.");
+    }
+  
+    try {
+      const user = await collection.findById(userCookie.id);
+  
+      const booking = new Booking({
+        user: user._id,
+        reservation: reservationData,
+        selectedCars: selectedCars.map(car => ({
+          car: car._id,
+          dailyRate: car.pricePerDay
+        })),
+        extras: selectedExtras,
+        totalPrice: demandedPrice,
+        status: "quotation"
+      });
+  
+      await booking.save();
+  
+      res.clearCookie("reservationData");
+      res.clearCookie("selectedCars");
+      res.clearCookie("selectedExtras");
+  
+      res.render("quotations", {
+        booking,
+        message: "Quotation submitted successfully!"
+      });
+    } catch (err) {
+      console.error("❌ Quotation error:", err);
+      res.status(500).send("Failed to submit quotation.");
+    }
+  });
   
 module.exports = router;

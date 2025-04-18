@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quotation Sent</title>
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/profile">My Profile</a></li>
+      <li><a href="/logout" class="btn">Logout</a></li>
+    </ul>
+  </nav>
+
+  <main style="text-align: center; padding: 60px;">
+    <h1>📩 Quotation Sent!</h1>
+    <p><strong><%= message %></strong></p>
+    <p>Your quotation ID is: <%= booking._id %></p>
+    <a href="/home" class="btn">Return to Home</a>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media:</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const fieldsToClear = [
+      "pickupLocation",
+      "dropoffLocation",
+      "pickupDate",
+      "pickupTime",
+      "dropoffDate",
+      "dropoffTime"
+    ];
+    fieldsToClear.forEach(field => {
+      document.cookie = `${field}=; path=/; max-age=0`;
+    });
+    document.cookie = "selectedExtras=; path=/; max-age=0";
+    document.cookie = "selectedCars=; path=/; max-age=0";
+    localStorage.removeItem("selectedCars");
+    localStorage.removeItem("selectedExtras");
+    localStorage.removeItem("reservationData");
+  </script>
+</body>
+</html>
