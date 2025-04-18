@@ -8,7 +8,6 @@
   <link rel="stylesheet" href="/css/common_styles.css">
   <link rel="stylesheet" href="/css/reservation.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
 </head>
 
 <body>
@@ -69,63 +68,83 @@
           <h3>Branch Information</h3>
           <p>Select a location to view details.</p>
         </div>
-        <button type="submit" class="btn red-btn">Search for Vehicles</button>
+
+        <!-- Display-only Profile Info -->
+        <div class="profile-preview">
+          <label for="driverName">Driver Display Name:</label>
+          <input type="text" id="driverName" value="<%= user.displayName || user.name %>" readonly>
+
+          <label for="driverAge">Driver Age:</label>
+          <input type="number" id="driverAge" value="<%= user.age || '' %>" readonly>
+
+          <div style="margin-top: 10px;">
+            <a href="/profile" class="btn">Update Profile</a>
+          </div>
+        </div>
+
         <div class="options">
           <label>
-            <input type="checkbox" id="returnDiffCheck" name="returnDifferent"> Return to Different Location
-          </label>
-          <label>
-            <input type="checkbox" name="over30" checked> Driver aged between 18 & 75
+            <input type="checkbox" id="returnDiffCheck" name="returnDifferent">
+            Return to Different Location
           </label>
         </div>
+
+        <button type="submit" class="btn red-btn">Search for Vehicles</button>
       </div>
     </form>
   </main>
 
   <footer>
     <div class="footer-content">
-        <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-        <p>Follow us on social media:</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-        </div>
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media:</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
     </div>
-    </footer>
+  </footer>
 
+  <!-- Save cookies -->
   <script>
-    // Save to cookies on submit
-    document.getElementById("reservationForm").addEventListener("submit", () => {
+    document.getElementById("reservationForm").addEventListener("submit", (e) => {
+      const age = parseInt(document.getElementById("driverAge").value);
+      if (isNaN(age) || age < 18 || age > 75) {
+        e.preventDefault();
+        alert("Driver age must be between 18 and 75. Please update your profile.");
+        return;
+      }
+
       const fields = ["pickupLocation", "dropoffLocation", "pickupDate", "pickupTime", "dropoffDate", "dropoffTime"];
       fields.forEach(id => {
         const value = document.getElementById(id)?.value;
-        if (value) document.cookie = `${id}=${value}; path=/; max-age=7200`; // 2 hours
+        if (value) document.cookie = `${id}=${value}; path=/; max-age=7200`;
       });
     });
 
-    // Restore from cookies
+    // Load cookies
     window.addEventListener("DOMContentLoaded", () => {
       const cookies = document.cookie.split(";").reduce((acc, c) => {
         const [key, val] = c.trim().split("=");
         acc[key] = decodeURIComponent(val);
         return acc;
       }, {});
-
       ["pickupLocation", "dropoffLocation", "pickupDate", "pickupTime", "dropoffDate", "dropoffTime"].forEach(id => {
         const el = document.getElementById(id);
         if (el && cookies[id]) {
           el.value = cookies[id];
-          if (id === "dropoffLocation") document.getElementById("dropoffSection").style.display = "block";
+          if (id === "dropoffLocation") {
+            document.getElementById("dropoffSection").style.display = "block";
+          }
         }
       });
     });
   </script>
 
   <script src="/Js/reservation.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJhUB4auZ8P1buHd4bkPATXljVUb4-6zk&callback=initMap"
-    async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJhUB4auZ8P1buHd4bkPATXljVUb4-6zk&callback=initMap" async defer></script>
 </body>
 
 </html>

@@ -189,16 +189,23 @@ router.get("/addcar", (req, res) => {
 
 
 // Booking Proccess
-router.get("/reservation", (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-  
-    const reservationCookie = req.cookies.reservationData;
-    const reservation = reservationCookie ? JSON.parse(reservationCookie) : null;
-  
-    res.render("reservation", { user, reservation });
-  });
-  
+router.get("/reservation", async (req, res) => {
+  const cookieUser = req.cookies.user;
+  if (!cookieUser) return res.redirect("/login");
+
+  try {
+      // Re-fetch full updated user info from DB
+      const user = await collection.findById(cookieUser.id);
+      const reservationCookie = req.cookies.reservationData;
+      const reservation = reservationCookie ? JSON.parse(reservationCookie) : null;
+
+      res.render("reservation", { user, reservation });
+  } catch (err) {
+      console.error("Error loading reservation:", err);
+      res.status(500).send("Failed to load reservation page.");
+  }
+});
+
 
 router.get("/choose-car", async (req, res) => {
     const user = req.cookies.user;
