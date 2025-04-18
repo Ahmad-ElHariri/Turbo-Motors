@@ -1,85 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>My Bookings</title>
   <link rel="stylesheet" href="/css/common_styles.css">
 </head>
+
 <body>
   <nav>
     <div class="logo">Turbo Motors</div>
     <ul class="nav-links">
       <li><a href="/home">Home</a></li>
+      <li><a href="/allcars">All Cars</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact</a></li>
       <li><a href="/logout" class="btn">Logout</a></li>
+      <li><a href="/profile" class="btn">Edit Profile</a></li>
+      <li style="color: #fff; margin-right: 10px; font-weight: bold;">My Points: <%= user.points %>
     </ul>
   </nav>
 
   <main style="padding: 40px;">
     <h1>Your Bookings</h1>
     <p style="margin-top: 10px; margin-bottom: 30px; font-size: 1.05rem; color: #555;">
-      At Turbo Motors, all rentals are charged for a minimum of 1 day. For bookings that exceed one day, we calculate full daily rates plus additional charges based on hourly usage beyond 24 hours. Extras like GPS, insurance, and fuel plans are added as fixed costs. Here's a detailed summary of each of your bookings:
+      At Turbo Motors, all rentals are charged for a minimum of 1 day. For bookings that exceed one day, we calculate
+      full daily rates plus additional charges based on hourly usage beyond 24 hours. Extras like GPS, insurance, and
+      fuel plans are added as fixed costs. Here's a detailed summary of each of your bookings:
     </p>
 
-    <% if (bookings.length === 0) { %>
+    <% if (bookings.length===0) { %>
       <p>No bookings found.</p>
-    <% } else { %>
-      <% bookings.forEach(booking => { %>
-        <div class="booking-card" style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 10px;">
-          <p><strong>Status:</strong> <%= booking.status %></p>
-          
-          <p><strong>Pickup Location:</strong> <%= booking.reservation.pickupLocation %></p>
-          <p><strong>Pickup Date & Time:</strong> <%= new Date(booking.reservation.pickupDateTime).toLocaleString() %></p>
-          
-          <p><strong>Dropoff Location:</strong> <%= booking.reservation.dropoffLocation %></p>
-          <p><strong>Dropoff Date & Time:</strong> <%= new Date(booking.reservation.dropoffDateTime).toLocaleString() %></p>
-          
-          <p><strong>Cars:</strong></p>
-          <ul>
-            <% booking.selectedCars.forEach(c => { %>
-              <li><%= c.car.brand %> <%= c.car.model %> ($<%= c.dailyRate %>/day)</li>
-            <% }) %>
-          </ul>
+      <% } else { %>
+        <% bookings.forEach(booking=> { %>
+          <div class="booking-card"
+            style="border: 1px solid #ccc; padding: 20px; margin-bottom: 20px; border-radius: 10px;">
+            <p><strong>Status:</strong>
+              <%= booking.status %>
+            </p>
 
-          <p><strong>Extras:</strong></p>
-          <ul>
-            <% if (booking.extras) { %>
-              <% if (booking.extras.chauffeur) { %><li>Chauffeur ($30)</li><% } %>
-              <% if (booking.extras.babySeat) { %><li>Baby Seat ($15)</li><% } %>
-              <% if (booking.extras.navigator) { %><li>Navigator ($20)</li><% } %>
-              <% if (booking.extras.gps) { %><li>GPS ($25)</li><% } %>
-              <% if (booking.extras.insurance && booking.extras.insurance !== "none") { %>
-                <li>Insurance: <%= booking.extras.insurance %> (
-                  $<%= booking.extras.insurance === 'full' ? 50 : 
-                       booking.extras.insurance === 'tires' ? 20 : 
-                       booking.extras.insurance === 'additionalDriver' ? 10 : 0 %>)
+            <p><strong>Pickup Location:</strong>
+              <%= booking.reservation.pickupLocation %>
+            </p>
+            <p><strong>Pickup Date & Time:</strong>
+              <%= new Date(booking.reservation.pickupDateTime).toLocaleString() %>
+            </p>
+
+            <p><strong>Dropoff Location:</strong>
+              <%= booking.reservation.dropoffLocation %>
+            </p>
+            <p><strong>Dropoff Date & Time:</strong>
+              <%= new Date(booking.reservation.dropoffDateTime).toLocaleString() %>
+            </p>
+
+            <p><strong>Cars:</strong></p>
+            <ul>
+              <% booking.selectedCars.forEach(c=> { %>
+                <li>
+                  <%= c.car.brand %>
+                    <%= c.car.model %> ($<%= c.dailyRate %>/day)
                 </li>
-              <% } %>
-              <% if (booking.extras.fuel && booking.extras.fuel !== "none") { %>
-                <li>Fuel Plan: <%= booking.extras.fuel %> (
-                  $<%= booking.extras.fuel === 'prepaid' ? 40 : 
-                       booking.extras.fuel === 'payOnReturn' ? 20 : 0 %>)
-                </li>
-              <% } %>
-            <% } else { %>
-              <li>No extras selected.</li>
-            <% } %>
-          </ul>
+                <% }) %>
+            </ul>
 
-          <p><strong>Total:</strong> $<%= booking.totalPrice.toFixed(2) %></p>
+            <p><strong>Extras:</strong></p>
+            <ul>
+              <% if (booking.extras) { %>
+                <% if (booking.extras.chauffeur) { %>
+                  <li>Chauffeur ($30)</li>
+                  <% } %>
+                    <% if (booking.extras.babySeat) { %>
+                      <li>Baby Seat ($15)</li>
+                      <% } %>
+                        <% if (booking.extras.navigator) { %>
+                          <li>Navigator ($20)</li>
+                          <% } %>
+                            <% if (booking.extras.gps) { %>
+                              <li>GPS ($25)</li>
+                              <% } %>
+                                <% if (booking.extras.insurance && booking.extras.insurance !=="none" ) { %>
+                                  <li>Insurance: <%= booking.extras.insurance %> (
+                                      $<%= booking.extras.insurance==='full' ? 50 : booking.extras.insurance==='tires' ?
+                                        20 : booking.extras.insurance==='additionalDriver' ? 10 : 0 %>)
+                                  </li>
+                                  <% } %>
+                                    <% if (booking.extras.fuel && booking.extras.fuel !=="none" ) { %>
+                                      <li>Fuel Plan: <%= booking.extras.fuel %> (
+                                          $<%= booking.extras.fuel==='prepaid' ? 40 :
+                                            booking.extras.fuel==='payOnReturn' ? 20 : 0 %>)
+                                      </li>
+                                      <% } %>
+                                        <% } else { %>
+                                          <li>No extras selected.</li>
+                                          <% } %>
+            </ul>
 
-          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-            <form action="/my-bookings/<%= booking._id %>/delete" method="POST">
-              <button type="submit" class="btn btn-save" onclick="return confirm('Cancel this booking?')">Cancel Booking</button>
-            </form>
+            <p><strong>Total:</strong> $<%= booking.totalPrice.toFixed(2) %>
+            </p>
 
-            <form action="/download-invoice/<%= booking._id %>" method="GET">
-              <button type="submit" class="btn btn-save" style="background-color: #444;">Download Invoice</button>
-            </form>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
+              <form action="/my-bookings/<%= booking._id %>/delete" method="POST">
+                <button type="submit" class="btn btn-save" onclick="return confirm('Cancel this booking?')">Cancel
+                  Booking</button>
+              </form>
+
+              <form action="/download-invoice/<%= booking._id %>" method="GET">
+                <button type="submit" class="btn btn-save" style="background-color: #444;">Download Invoice</button>
+              </form>
+            </div>
           </div>
-        </div>
-      <% }) %>
-    <% } %>
+          <% }) %>
+            <% } %>
   </main>
 </body>
-</html>
 
+</html>
