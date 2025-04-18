@@ -109,6 +109,54 @@
 
   <!-- Save cookies -->
   <script>
+    const branchHours = {
+      kantari: {
+        Monday: ["08:00", "20:00"],
+        Tuesday: ["08:00", "20:00"],
+        Wednesday: ["08:00", "20:00"],
+        Thursday: ["08:00", "20:00"],
+        Friday: ["08:00", "20:00"],
+        Saturday: ["08:00", "17:00"],
+        Sunday: ["10:00", "17:00"]
+      },
+      ashrafieh: {
+        Monday: ["08:30", "18:00"],
+        Tuesday: ["08:30", "18:00"],
+        Wednesday: ["08:30", "18:00"],
+        Thursday: ["08:30", "18:00"],
+        Friday: ["08:30", "18:00"],
+        Saturday: ["08:30", "13:00"],
+        Sunday: null
+      },
+      sinelfil: {
+        Monday: ["09:00", "18:00"],
+        Tuesday: ["09:00", "18:00"],
+        Wednesday: ["09:00", "18:00"],
+        Thursday: ["09:00", "18:00"],
+        Friday: ["09:00", "18:00"],
+        Saturday: ["09:00", "14:00"],
+        Sunday: null
+      },
+      airport: {
+        Monday: ["00:00", "23:59"],
+        Tuesday: ["00:00", "23:59"],
+        Wednesday: ["00:00", "23:59"],
+        Thursday: ["00:00", "23:59"],
+        Friday: ["00:00", "23:59"],
+        Saturday: ["00:00", "23:59"],
+        Sunday: ["00:00", "23:59"]
+      }
+    };
+  
+    function isTimeWithinRange(timeStr, open, close) {
+      return timeStr >= open && timeStr <= close;
+    }
+  
+    function getWeekday(dateStr) {
+      const dayIndex = new Date(dateStr).getDay();
+      return ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"][dayIndex];
+    }
+  
     document.getElementById("reservationForm").addEventListener("submit", (e) => {
       const age = parseInt(document.getElementById("driverAge").value);
       if (isNaN(age) || age < 18 || age > 75) {
@@ -116,14 +164,39 @@
         alert("Driver age must be between 18 and 75. Please update your profile.");
         return;
       }
-
+  
+      const pickupLoc = document.getElementById("pickupLocation").value;
+      const dropoffLoc = document.getElementById("dropoffLocation").value || pickupLoc;
+      const pickupDate = document.getElementById("pickupDate").value;
+      const pickupTime = document.getElementById("pickupTime").value;
+      const dropoffDate = document.getElementById("dropoffDate").value;
+      const dropoffTime = document.getElementById("dropoffTime").value;
+  
+      const pickupDay = getWeekday(pickupDate);
+      const dropoffDay = getWeekday(dropoffDate);
+  
+      const pickupHours = branchHours[pickupLoc]?.[pickupDay];
+      const dropoffHours = branchHours[dropoffLoc]?.[dropoffDay];
+  
+      if (!pickupHours || !isTimeWithinRange(pickupTime, pickupHours[0], pickupHours[1])) {
+        e.preventDefault();
+        alert(`Pickup time must be between ${pickupHours ? pickupHours.join(" and ") : "closed"} on ${pickupDay}`);
+        return;
+      }
+  
+      if (!dropoffHours || !isTimeWithinRange(dropoffTime, dropoffHours[0], dropoffHours[1])) {
+        e.preventDefault();
+        alert(`Dropoff time must be between ${dropoffHours ? dropoffHours.join(" and ") : "closed"} on ${dropoffDay}`);
+        return;
+      }
+  
       const fields = ["pickupLocation", "dropoffLocation", "pickupDate", "pickupTime", "dropoffDate", "dropoffTime"];
       fields.forEach(id => {
         const value = document.getElementById(id)?.value;
         if (value) document.cookie = `${id}=${value}; path=/; max-age=7200`;
       });
     });
-
+  
     // Load cookies
     window.addEventListener("DOMContentLoaded", () => {
       const cookies = document.cookie.split(";").reduce((acc, c) => {
@@ -142,6 +215,7 @@
       });
     });
   </script>
+  
 
   <script src="/Js/reservation.js"></script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJhUB4auZ8P1buHd4bkPATXljVUb4-6zk&callback=initMap" async defer></script>
