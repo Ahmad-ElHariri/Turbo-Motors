@@ -389,32 +389,41 @@ router.post("/booking/save", async (req, res) => {
     });
 });
 
-  router.get("/my-bookings", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
+router.get("/my-bookings", async (req, res) => {
+    const userCookie = req.cookies.user;
+    if (!userCookie) return res.redirect("/login");
   
     try {
-      const bookings = await Booking.find({ user: user.id }).populate("selectedCars.car").sort({ createdAt: -1 });
-      res.render("my-bookings", { user, bookings });
+      const bookings = await Booking.find({ user: userCookie.id })
+        .populate("selectedCars.car")
+        .sort({ createdAt: -1 });
+  
+      const user = await collection.findById(userCookie.id); // ✅ fetch full user with points
+  
+      res.render("my-bookings", { user, bookings }); // ✅ pass user with points
     } catch (error) {
       console.error("Error fetching bookings:", error);
       res.status(500).send("Failed to load your bookings.");
     }
   });
   router.post("/my-bookings/:id/delete", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
+    const userCookie = req.cookies.user;
+    if (!userCookie) return res.redirect("/login");
   
     try {
-      const booking = await Booking.findOne({ _id: req.params.id, user: user.id });
+      const booking = await Booking.findOne({ _id: req.params.id, user: userCookie.id });
       if (!booking) return res.status(404).send("Booking not found.");
   
-      // Mark cars as available again
+      // ✅ Mark cars available
       const carIds = booking.selectedCars.map(c => c.car);
       await Car.updateMany({ _id: { $in: carIds } }, { available: true });
   
-      // Delete booking
-      await Booking.deleteOne({ _id: req.params.id });
+      // ✅ Remove loyalty points earned
+      const earnedPoints = Math.floor(booking.totalPrice / 100);
+      await collection.findByIdAndUpdate(userCookie.id, { $inc: { points: -earnedPoints } });
+  
+      // ✅ Delete booking
+      await Booking.deleteOne({ _id: booking._id });
   
       res.redirect("/my-bookings");
     } catch (err) {
@@ -422,5 +431,6 @@ router.post("/booking/save", async (req, res) => {
       res.status(500).send("Failed to cancel booking.");
     }
   });
+  
   
 module.exports = router;
