@@ -16,9 +16,10 @@ const fs = require("fs");
 router.get("/", (req, res) => {
     res.redirect("/home");
 });
-
 router.get("/home", async (req, res) => {
-  const user = req.cookies.user;
+  const cookieUser = req.cookies.user;
+  const user = cookieUser ? await collection.findById(cookieUser.id) : null;
+
   const groups = ['Electric', 'Luxury', 'SUV', 'Convertible'];
   const selectedGroups = groups.sort(() => 0.5 - Math.random()).slice(0, 3);
 
@@ -53,9 +54,7 @@ router.get("/home", async (req, res) => {
       selectedReviews = uniqueUserReviews.sort(() => 0.5 - Math.random()).slice(0, 3);
     }
 
-    // 🔥 Popular car + average rental fee stats
     const bookings = await Booking.find({ status: "paid" }).populate("selectedCars.car");
-
     const carFrequency = {};
     let totalPrice = 0;
     let carCount = 0;
@@ -64,7 +63,6 @@ router.get("/home", async (req, res) => {
       for (const carObj of booking.selectedCars) {
         const carId = carObj.car._id.toString();
         carFrequency[carId] = (carFrequency[carId] || 0) + 1;
-
         totalPrice += carObj.dailyRate;
         carCount++;
       }
@@ -78,9 +76,8 @@ router.get("/home", async (req, res) => {
 
     const averageRental = carCount ? (totalPrice / carCount).toFixed(2) : "0.00";
 
-    // 👇 send all to template
     res.render("home", {
-      user,
+      user, // full user object from DB with points
       cars: randomCars,
       homepageReviews: selectedReviews,
       mostPopularCarDoc,
@@ -92,6 +89,7 @@ router.get("/home", async (req, res) => {
     res.status(500).send("Error fetching home data.");
   }
 });
+
 
 
 
