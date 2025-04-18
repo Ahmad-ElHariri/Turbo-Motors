@@ -21,16 +21,17 @@
       <li><a href="/contact">Contact</a></li>
       <% if (user) { %>
         <li><a href="/my-bookings">My Bookings</a></li>
-      <% } %>
-      <% if (user) { %>
-        <li><a href="/logout" class="btn">Logout</a></li>
-        <li><a href="/profile" class="btn">Edit Profile</a></li>
-        <li style="color: #fff; margin-right: 10px; font-weight: bold;">My Points: <%= user.points %></li>
-      <% } else { %>
-        <li><a href="/login" class="btn">Sign In</a></li>
-        <li><a href="/signup" class="btn">Sign Up</a></li>
-      <% } %>
-      
+        <% } %>
+          <% if (user) { %>
+            <li><a href="/logout" class="btn">Logout</a></li>
+            <li><a href="/profile" class="btn">Edit Profile</a></li>
+            <li style="color: #fff; margin-right: 10px; font-weight: bold;">My Points: <%= user.points %>
+            </li>
+            <% } else { %>
+              <li><a href="/login" class="btn">Sign In</a></li>
+              <li><a href="/signup" class="btn">Sign Up</a></li>
+              <% } %>
+
     </ul>
   </nav>
 
@@ -46,26 +47,43 @@
     <section class="featured-cars container">
       <h2 class="section-title">Check Out Our Large Collection<br>Of Cars In Different Categories</h2>
       <div class="car-gallery">
-        <% cars.forEach(car => { %>
+        <% cars.forEach(car=> { %>
           <div class="car-card">
             <img src="/images/<%= car.image %>" alt="<%= car.model %>" />
-            <p><%= car.group %></p>
-          
+            <p>
+              <%= car.group %>
+            </p>
+
             <!-- Arrow to toggle specs -->
             <div class="arrow" onclick="toggleSpecs('<%= car._id %>')">↓</div>
-          
+
             <!-- Car Specs Section (Initially Hidden) -->
             <div id="specs-<%= car._id %>" class="car-specs">
-              <h3><%= car.brand %> <%= car.model %></h3>
-              <p><strong>Engine Size:</strong> <%= car.specs.engineSize %> CC</p>
-              <p><strong>Doors:</strong> <%= car.specs.doors %></p>
-              <p><strong>Passengers:</strong> <%= car.specs.passengers %></p>
-              <p><strong>Fuel Type:</strong> <%= car.specs.fuelType %></p>
-              <p><strong>Gearbox:</strong> <%= car.specs.gearbox %></p>
-              <p><strong>AC:</strong> <%= car.specs.hasAC ? 'Yes' : 'No' %></p>
+              <h3>
+                <%= car.brand %>
+                  <%= car.model %>
+              </h3>
+              <p><strong>Engine Size:</strong>
+                <%= car.specs.engineSize %> CC
+              </p>
+              <p><strong>Doors:</strong>
+                <%= car.specs.doors %>
+              </p>
+              <p><strong>Passengers:</strong>
+                <%= car.specs.passengers %>
+              </p>
+              <p><strong>Fuel Type:</strong>
+                <%= car.specs.fuelType %>
+              </p>
+              <p><strong>Gearbox:</strong>
+                <%= car.specs.gearbox %>
+              </p>
+              <p><strong>AC:</strong>
+                <%= car.specs.hasAC ? 'Yes' : 'No' %>
+              </p>
             </div>
           </div>
-        <% }); %>
+          <% }); %>
       </div>
     </section>
 
@@ -73,61 +91,79 @@
     <section class="reviews container">
       <h2 class="section-title">Why Choose Us?<br>See What Our Customers Say</h2>
       <div class="review-grid">
-        <% homepageReviews.forEach(review => { %>
+        <% homepageReviews.forEach(review=> { %>
           <div class="review-card">
-            <h3><%= review.userId.displayName || review.userId.name %></h3>
+            <h3>
+              <%= review.userId.displayName || review.userId.name %>
+            </h3>
             <p class="stars">
-              <%= '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating) %>
+              <%= '★' .repeat(review.rating) + '☆' .repeat(5 - review.rating) %>
             </p>
             <p>"<%= review.body %>"</p>
           </div>
-        <% }) %>
+          <% }) %>
       </div>
       <div class="center-text">
         <a href="/reviews" class="buttons">Reviews Page</a>
       </div>
     </section>
-    
+
 
     <!-- Stats Section -->
 
 
     <!-- About Preview -->
-  <!-- Stats Section -->
-<!-- Stats Section -->
-<section class="stats container">
-  <h2 class="section-title">Our Most Popular Car &<br>Average Daily Rental Fee</h2>
+    <!-- Stats Section -->
+    <!-- Stats Section -->
+    <section class="stats container">
+      <h2 class="section-title">Our Most Popular Car &<br>Average Daily Rental Fee</h2>
 
-  <% if (mostPopularCarDoc) { %>
-    <div style="text-align:center;">
-      <img src="/images/<%= mostPopularCarDoc.image %>" alt="Popular Car" style="max-width: 300px; border-radius: 10px; margin-bottom: 10px;" />
-      <p><strong><%= mostPopularCarDoc.brand %> <%= mostPopularCarDoc.model %></strong></p>
-    </div>
-  <% } else { %>
-    <p>No popular car data available.</p>
-  <% } %>
+      <% if (mostPopularCarDoc) { %>
+        <div style="text-align:center;">
+          <img src="/images/<%= mostPopularCarDoc.image %>" alt="Popular Car"
+            style="max-width: 300px; border-radius: 10px; margin-bottom: 10px;" />
+          <p><strong>
+              <%= mostPopularCarDoc.brand %>
+                <%= mostPopularCarDoc.model %>
+            </strong></p>
+        </div>
+        <% } else { %>
+          <p>No popular car data available.</p>
+          <% } %>
 
-  <p>Average Daily Rental Fee: <strong>$<%= averageRental %>/day</strong></p>
-</section>
+            <p>Average Daily Rental Fee: <strong>$<%= averageRental %>/day</strong></p>
+    </section>
+
+
+    <!-- Chat With Agent Section -->
+    <section class="chat-agent container">
+      <h2 class="section-title">Need Help?<br>Chat With Our Agent</h2>
+      <div class="center-text">
+        <p>Our support agents are ready to assist you with any questions or booking inquiries.</p>
+        <a href="/chat" class="buttons">Chat With Agent</a>
+      </div>
+    </section>
+
+
 
   </main>
 
   <!-- Footer -->
   <footer>
     <div class="footer-content">
-        <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-        <p>Follow us on social media:</p>
-        <div class="social-icons">
-            <a href="#"><i class="fab fa-facebook"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-linkedin"></i></a>
-        </div>
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media:</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
     </div>
-    </footer>
+  </footer>
 
   <script>
-   // Function to toggle car specs visibility and smooth scroll
+    // Function to toggle car specs visibility and smooth scroll
     function toggleSpecs(carId) {
       const specs = document.getElementById(`specs-${carId}`);
       const arrow = document.querySelector(`#specs-${carId} + .arrow`);
