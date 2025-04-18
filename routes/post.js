@@ -37,7 +37,7 @@ async function sendEmail(name, email, message) {
         });
         const mailOptions = {
             from: `"${name}" <${email}>`,
-            to: "elhariri2023@gmail.com",
+            to: "elhariri.ahmad06@gmail.com",
             subject: `Message from ${name}`,
             text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
         };
