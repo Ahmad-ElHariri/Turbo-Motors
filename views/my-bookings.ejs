@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <title>My Bookings</title>
   <link rel="stylesheet" href="/css/common_styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
 </head>
 
 <body>
@@ -38,21 +40,18 @@
             <p><strong>Status:</strong>
               <%= booking.status %>
             </p>
-
             <p><strong>Pickup Location:</strong>
               <%= booking.reservation.pickupLocation %>
             </p>
             <p><strong>Pickup Date & Time:</strong>
               <%= new Date(booking.reservation.pickupDateTime).toLocaleString() %>
             </p>
-
             <p><strong>Dropoff Location:</strong>
               <%= booking.reservation.dropoffLocation %>
             </p>
             <p><strong>Dropoff Date & Time:</strong>
               <%= new Date(booking.reservation.dropoffDateTime).toLocaleString() %>
             </p>
-
             <p><strong>Cars:</strong></p>
             <ul>
               <% booking.selectedCars.forEach(c=> { %>
@@ -62,7 +61,6 @@
                 </li>
                 <% }) %>
             </ul>
-
             <p><strong>Extras:</strong></p>
             <ul>
               <% if (booking.extras) { %>
@@ -103,7 +101,6 @@
                 <button type="submit" class="btn btn-save" onclick="return confirm('Cancel this booking?')">Cancel
                   Booking</button>
               </form>
-
               <form action="/download-invoice/<%= booking._id %>" method="GET">
                 <button type="submit" class="btn btn-save" style="background-color: #444;">Download Invoice</button>
               </form>
@@ -112,6 +109,20 @@
           <% }) %>
             <% } %>
   </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media:</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+      </div>
+    </div>
+  </footer>
 </body>
 
 </html>

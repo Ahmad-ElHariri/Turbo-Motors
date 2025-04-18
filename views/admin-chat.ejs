@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Turbo Motors - Admin Chat</title>
@@ -9,6 +10,7 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/admin-chat.js" defer></script>
 </head>
+
 <body>
     <input type="hidden" id="adminName" value="<%= user.name %>">
     <nav>
@@ -21,31 +23,31 @@
             <% if (user) { %>
                 <li><a href="/logout" class="btn">Logout</a></li>
                 <li><a href="#" class="btn">Hi, <%= user.name %></a></li>
-            <% } else { %>
-                <li><a href="/login" class="btn">Sign In</a></li>
-                <li><a href="/signup" class="btn">Sign Up</a></li>
-            <% } %>
-            
-          </ul>
-          
+                <% } else { %>
+                    <li><a href="/login" class="btn">Sign In</a></li>
+                    <li><a href="/signup" class="btn">Sign Up</a></li>
+                    <% } %>
+        </ul>
     </nav>
-    <main >
+
+    <main>
         <h2 class="admin-header">Admin Chat Dashboard</h2>
-    <div class="admin-chat-container">
-        <div class="user-list">
-            <h3>Active Users:</h3>
-            <ul id="user-list"></ul>
+        <div class="admin-chat-container">
+            <div class="user-list">
+                <h3>Active Users:</h3>
+                <ul id="user-list"></ul>
+            </div>
+            <div class="chat-area">
+                <div id="chat-box" class="chat-box" data-current-room=""></div>
+                <form id="chat-form" class="chat-form">
+                    <input id="messageInput" type="text" placeholder="Type your message..." autocomplete="off"
+                        class="chat-input">
+                    <button id="sendButton" type="submit" class="chat-send-btn">Send</button>
+                </form>
+            </div>
         </div>
-        <div class="chat-area">
-            <div id="chat-box" class="chat-box" data-current-room=""></div>
-            <form id="chat-form" class="chat-form">
-                <input id="messageInput" type="text" placeholder="Type your message..." autocomplete="off" class="chat-input">
-                <button id="sendButton" type="submit" class="chat-send-btn">Send</button>
-            </form>
-        </div>
-    </div>
     </main>
-    
+
     <footer>
         <div class="footer-content">
             <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
@@ -57,7 +59,7 @@
                 <a href="#"><i class="fab fa-linkedin"></i></a>
             </div>
         </div>
-        </footer>
+    </footer>
+</body>
 
-    </body>
-    </html>
+</html>

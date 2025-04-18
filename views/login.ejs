@@ -1,67 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <link rel="stylesheet" href="/css/login.css">
-    <link rel="stylesheet" href="/css/common_styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/common_styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 </head>
 
 <body>
 
-    <nav>
-        <div class="logo">Turbo Motors</div>
-        <ul class="nav-links">
-            <li><a href="/home">Home</a></li>
-            <li><a href="/allcars">All Cars</a></li>
-            <li><a href="/about">About Us</a></li>
-            <li><a href="/contact">Contact</a></li>
-          </ul>
-          
-    </nav>
+  <nav>
+    <div class="logo">Turbo Motors</div>
+    <ul class="nav-links">
+      <li><a href="/home">Home</a></li>
+      <li><a href="/allcars">All Cars</a></li>
+      <li><a href="/about">About Us</a></li>
+      <li><a href="/contact">Contact</a></li>
+    </ul>
 
-    <div class="login">
-      <div id="container">
-        <h1>Login</h1>
-    
-        <% if (typeof message !== "undefined") { %>
-          <div class="alert" style="color: red; margin-bottom: 15px;"><%= message %></div>
+  </nav>
+  <div class="login">
+    <div id="container">
+      <h1>Login</h1>
+      <% if (typeof message !=="undefined" ) { %>
+        <div class="alert" style="color: red; margin-bottom: 15px;">
+          <%= message %>
+        </div>
         <% } %>
-    
-        <form action="/login" method="POST">
-          <div class="form-group">
-            <p>Username</p>
-            <input type="text" name="username" placeholder="Enter your username" required autocomplete="off">
-          </div>
-          <div class="form-group">
-            <p>Password</p>
-            <input type="password" name="password" placeholder="Enter your password" required>
-          </div>
-          <button type="submit">Login</button>
-        </form>
-    
-        <p class="signup-text" style="margin-top: 15px;">New to Turbo? <a href="/signup">Sign Up</a></p>
+
+          <form action="/login" method="POST">
+            <div class="form-group">
+              <p>Username</p>
+              <input type="text" name="username" placeholder="Enter your username" required autocomplete="off">
+            </div>
+            <div class="form-group">
+              <p>Password</p>
+              <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit">Login</button>
+          </form>
+
+          <p class="signup-text" style="margin-top: 15px;">New to Turbo? <a href="/signup">Sign Up</a></p>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
+      <p>Follow us on social media:</p>
+      <div class="social-icons">
+        <a href="#"><i class="fab fa-facebook"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
       </div>
     </div>
-    
-      
-
-    <footer>
-      <div class="footer-content">
-          <p>&copy; 2025 Turbo Motors. All Rights Reserved.</p>
-          <p>Follow us on social media:</p>
-          <div class="social-icons">
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-instagram"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-          </div>
-      </div>
-      </footer>
+  </footer>
 </body>
 
 </html>
