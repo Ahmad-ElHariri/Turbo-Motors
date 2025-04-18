@@ -246,20 +246,24 @@ router.get("/booking-checkout", (req, res) => {
     });
 });
 router.get("/booking/resume", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-  
-    const booking = await Booking.findOne({ user: user.id, status: "saved" })
-      .populate("selectedCars.car");
-  
-    if (!booking) return res.send("No saved booking to resume.");
-  
-    res.render("booking-checkout", {
-      reservation: booking.reservation,
-      selectedCars: booking.selectedCars.map(c => c.car),
-      selectedExtras: booking.extras
-    });
+  const user = req.cookies.user;
+  if (!user) return res.redirect("/login");
+
+  const booking = await Booking.findOne({ user: user.id, status: "saved" })
+    .populate("selectedCars.car");
+
+  if (!booking) {
+    // If no saved booking exists, redirect to start a new one
+    return res.redirect("/reservation");
+  }
+
+  res.render("booking-checkout", {
+    reservation: booking.reservation,
+    selectedCars: booking.selectedCars.map(c => c.car),
+    selectedExtras: booking.extras
   });
+});
+
   // routes/get.js
 
   router.get("/checkout", async (req, res) => {
