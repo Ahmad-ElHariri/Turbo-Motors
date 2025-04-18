@@ -6,7 +6,6 @@
   <link rel="stylesheet" href="/css/common_styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="stylesheet" href="/css/checkout.css">
-
 </head>
 <body>
 
@@ -40,7 +39,15 @@
     </div>
 
     <div class="section">
-      <h3>Total Price: $<%= totalPrice.toFixed(2) %></h3>
+      <h3 id="priceLabel">Total Price: $<span id="priceValue"><%= totalPrice.toFixed(2) %></span></h3>
+      <% if (user && user.points >= 10) { %>
+        <label>
+          <input type="checkbox" id="usePoints" />
+          Use 10 loyalty points for 10% discount (You have <%= user.points %> points)
+        </label>
+      <% } else if (user) { %>
+        <p>You have <%= user.points %> points. You need at least 10 points to use a discount.</p>
+      <% } %>
     </div>
 
     <form action="/booking/confirm" method="POST">
@@ -58,13 +65,14 @@
         <input type="text" id="creditCard" name="creditCard" pattern="\d{8}" placeholder="12345678">
       </div>
 
+      <!-- Hidden input for points -->
+      <input type="hidden" id="usePointsUsed" name="usePointsUsed" value="false" />
+
       <div class="actions">
         <a href="/home" class="btn btn-save">Pay Later</a>
         <button type="submit" id="confirmButton" class="btn btn-pay">Confirm Booking</button>
       </div>
     </form>
-
-    
   </div>
 
   <footer>
@@ -78,13 +86,20 @@
             <a href="#"><i class="fab fa-linkedin"></i></a>
         </div>
     </div>
-    </footer>
+  </footer>
 
   <script>
     const paymentSelect = document.getElementById("paymentMethod");
     const creditCardSection = document.getElementById("creditCardSection");
     const creditCardInput = document.getElementById("creditCard");
     const confirmButton = document.getElementById("confirmButton");
+
+    const basePrice = parseFloat("<%= totalPrice.toFixed(2) %>");
+
+    const priceDisplay = document.getElementById("priceValue");
+    const couponInput = document.getElementById("coupon");
+    const usePointsCheckbox = document.getElementById("usePoints");
+    const usePointsHidden = document.getElementById("usePointsUsed");
 
     function toggleCreditCardField() {
       if (paymentSelect.value === "location") {
@@ -98,8 +113,31 @@
       }
     }
 
+    function calculateFinalPrice() {
+      let price = basePrice;
+      const coupon = couponInput.value.trim();
+      const usingCoupon = coupon === "DISCOUNT10";
+      const usingPoints = usePointsCheckbox && usePointsCheckbox.checked;
+
+      if (usingCoupon) price *= 0.9;
+      if (usingPoints) price *= 0.9;
+
+      priceDisplay.textContent = price.toFixed(2);
+      usePointsHidden.value = usingPoints;
+    }
+
+    // Initialize
+    window.addEventListener("DOMContentLoaded", () => {
+      toggleCreditCardField();
+      calculateFinalPrice();
+    });
+
+    // Event listeners
     paymentSelect.addEventListener("change", toggleCreditCardField);
-    window.addEventListener("DOMContentLoaded", toggleCreditCardField);
+    couponInput.addEventListener("input", calculateFinalPrice);
+    if (usePointsCheckbox) {
+      usePointsCheckbox.addEventListener("change", calculateFinalPrice);
+    }
   </script>
 
 </body>

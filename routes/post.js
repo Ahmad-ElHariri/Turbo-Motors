@@ -318,66 +318,77 @@ router.post("/booking/save", async (req, res) => {
   });
   
 
-  
-
   router.post("/booking/confirm", async (req, res) => {
-    const user = req.cookies.user;
-    if (!user) return res.redirect("/login");
-  
+    const userCookie = req.cookies.user;
+    if (!userCookie) return res.redirect("/login");
+
     const reservationData = JSON.parse(req.cookies.reservationData || "{}");
     const selectedCars = JSON.parse(req.cookies.selectedCars || "[]");
     const selectedExtras = JSON.parse(req.cookies.selectedExtras || "{}");
+
     const pickup = new Date(reservationData.pickupDateTime);
-  const dropoff = new Date(reservationData.dropoffDateTime);
-    // 🧼 Sanitize extras to avoid Mongoose enum error
+    const dropoff = new Date(reservationData.dropoffDateTime);
+
     if (selectedExtras.insurance === "") delete selectedExtras.insurance;
     if (selectedExtras.fuel === "") delete selectedExtras.fuel;
-  
-    let totalPrice = calculateTotal(
-  selectedCars,
-  selectedExtras,
-  pickup,
-  dropoff
-);
+
+    let totalPrice = calculateTotal(selectedCars, selectedExtras, pickup, dropoff);
 
     const coupon = req.body.coupon?.trim();
-  
-    if (coupon === "DISCOUNT10") totalPrice *= 0.9;
-  
-    try {
-      const booking = new Booking({
-        user: user.id,
+    const usePoints = req.body.usePointsUsed === "true";
+    let discountMessage = "";
+
+    if (coupon === "DISCOUNT10") {
+        totalPrice *= 0.9;
+        discountMessage += "Coupon applied. ";
+    }
+
+    const user = await collection.findById(userCookie.id);
+    if (usePoints) {
+        if (user.points < 10) {
+            return res.status(400).send("You need at least 10 points to use them.");
+        }
+        totalPrice *= 0.9;
+        user.points -= 10;
+        discountMessage += "10 points used. ";
+    }
+
+    const booking = new Booking({
+        user: user._id,
         reservation: reservationData,
         selectedCars: selectedCars.map(car => ({
-          car: car._id,
-          dailyRate: car.pricePerDay
+            car: car._id,
+            dailyRate: car.pricePerDay
         })),
         extras: selectedExtras,
         couponCode: coupon || null,
         totalPrice,
         status: req.body.paymentMethod === "online" ? "paid" : "saved"
-      });
-  
-      await booking.save();
-  
-      const carIds = selectedCars.map(car => car._id);
-      await Car.updateMany({ _id: { $in: carIds } }, { available: false });
-  
-      res.clearCookie("reservationData");
-      res.clearCookie("selectedCars");
-      res.clearCookie("selectedExtras");
-  
-      res.render("confirmation", {
+    });
+
+    await booking.save();
+    await Car.updateMany(
+        { _id: { $in: selectedCars.map(car => car._id) } },
+        { available: false }
+    );
+
+    // ✅ Add points: 1 point per $100
+    const earnedPoints = Math.floor(totalPrice / 100);
+    user.points += earnedPoints;
+
+    await user.save();
+
+    res.clearCookie("reservationData");
+    res.clearCookie("selectedCars");
+    res.clearCookie("selectedExtras");
+
+    res.render("confirmation", {
         user,
         booking,
-        message: "Booking confirmed successfully!"
-      });
-  
-    } catch (error) {
-      console.error("❌ Booking confirmation error:", error);
-      res.status(500).send("Failed to finalize booking.");
-    }
-  });
+        message: `Booking confirmed successfully! ${discountMessage}You earned ${earnedPoints} point(s).`
+    });
+});
+
   router.get("/my-bookings", async (req, res) => {
     const user = req.cookies.user;
     if (!user) return res.redirect("/login");
