@@ -8,6 +8,13 @@
   <link rel="stylesheet" href="/css/home.css">
   <link rel="stylesheet" href="/css/common_styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <meta property="og:title" content="Turbo Motors - Rent Your Ride!" />
+  <meta property="og:description" content="Discover and rent the best cars with Turbo Motors." />
+  <meta property="og:image" content="https://turbo-motors-j54g.onrender.com/images/audi-a5-9.jpeg" />
+  <meta property="og:url" content="https://turbo-motors-j54g.onrender.com/home" />
+  <meta property="og:type" content="website" />
+
 </head>
 
 <body>
@@ -93,8 +100,8 @@
         <% homepageReviews.forEach(review=> { %>
           <div class="review-card">
             <h3>
-              <%= review.userId ? (review.userId.displayName || review.userId.name || 'Anonymous') : 'Anonymous' %>
-            </h3>            
+              <%= review.userId ? (review.userId.displayName || review.userId.name || 'Anonymous' ) : 'Anonymous' %>
+            </h3>
             <p class="stars">
               <%= '★' .repeat(review.rating) + '☆' .repeat(5 - review.rating) %>
             </p>
