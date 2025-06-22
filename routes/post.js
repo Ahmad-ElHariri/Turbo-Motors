@@ -1,7 +1,7 @@
 // routes/post.js
 const express = require("express");
 const router = express.Router();
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const collection = require("../models/users");
 const Reservation = require("../models/reservations");
 const Review = require("../models/review");
