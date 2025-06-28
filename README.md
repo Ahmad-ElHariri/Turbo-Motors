@@ -3,7 +3,7 @@
 Turbo Motors is a full-stack car rental platform that allows users to browse, filter, and book vehicles with custom options and secure checkout. It includes user authentication, real-time booking logic, and automated invoice generation.
 
 🌐 **Live Demo**  
-(https://your-deployed-link.com) <!-- Replace with actual URL -->
+(https://turbo-motors-j54g.onrender.com)
 
 ---
 
