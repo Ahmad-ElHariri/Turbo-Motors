@@ -37,11 +37,13 @@ Turbo Motors is a full-stack car rental platform that allows users to browse, fi
 ```bash
 git clone https://github.com/Ahmad-ElHariri/turbo-motors.git
 cd turbo-motors
+```
 
 2. Install backend dependencies:
 ```bash
 cd server
 npm install
+```
 
 3. Create a `.env` file in `/server` and add:
 ```ini
